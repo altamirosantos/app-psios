@@ -1,0 +1,99 @@
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+export default function WelcomeScreen() {
+    const router = useRouter();
+    return (
+        <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.container}>
+            <View style={styles.container}>
+                <Image
+                    source={require('../../assets/images/logo.png')} // coloque sua logo aqui
+                    style={styles.logo}
+                    resizeMode="contain"
+                />
+
+                <Text style={styles.title}>Bem-vindo(a)!</Text>
+
+                <Text style={styles.subtitle}>
+                    Pronto(a) para tranformar sua vida?{'\n'}
+                    Mude a forma de pensar, sentir e agir{'\n'}
+                    com novas conexões e{'\n'}
+                    autoconsciência.
+                </Text>
+
+                <View style={styles.card}>
+                    <Text style={styles.cardText}>
+                        📝 A autoavaliação é um pequeno{'\n'}
+                        passo com grande impacto. É{'\n'}
+                        simples, e pode fazer diferença no{'\n'}
+                        seu bem-estar.
+                    </Text>
+                    <Text style={styles.cardText}>
+                        💙 Você merece esse cuidado!
+                    </Text>
+                </View>
+
+                <TouchableOpacity style={styles.button}  onPress={() => router.push('/autoavaliacao1')}>
+                    <Text style={styles.buttonText}>Começar minha avaliação</Text>
+                </TouchableOpacity>
+            </View>
+        </LinearGradient>
+    );
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        /*backgroundColor: '#DA5CE3',*/
+        alignItems: 'center',
+        /*justifyContent: 'center',*/
+        paddingHorizontal: 24,
+        paddingVertical: 40,
+    },
+    logo: {
+        width: 80,
+        height: 80,
+        marginBottom: 24,
+    },
+    title: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginBottom: 12,
+    },
+    subtitle: {
+        fontSize: 16,
+        textAlign: 'center',
+        color: '#fff',
+        marginBottom: 24,
+        lineHeight: 24,
+    },
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: 16,
+        padding: 20,
+        marginBottom: 32,
+        width: '100%',
+    },
+    cardText: {
+        fontSize: 16,
+        color: '#000',
+        textAlign: 'center',
+        marginBottom: 12,
+    },
+    button: {
+        backgroundColor: '#4438F2',
+        paddingVertical: 16,
+        paddingHorizontal: 32,
+        borderRadius: 50,
+        width: '100%',
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+});
