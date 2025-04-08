@@ -1,6 +1,6 @@
+import { saveUserToApi } from '@/lib/api';
+import { auth } from '@/lib/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { saveUserToApi } from '../api';
-import { auth } from '../firebaseConfig';
 
 export async function registerUser(
   email: string,

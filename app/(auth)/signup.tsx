@@ -1,10 +1,11 @@
-import { registerUser } from '@/services/signup.service';
+import { registerUser } from '@/app/services/signup.service';
 import { Feather } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
+    Alert,
     Image,
     Platform,
     StyleSheet,
@@ -20,10 +21,15 @@ export default function SignUpScreen() {
     const [showDatePicker, setShowDatePicker] = useState(false);
 
     const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [fullName, setFullName] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [nickname, setNickname] = useState('');
     const [birthDate, setBirthDate] = useState(new Date());
 
     const router = useRouter();
+    const [loading, setLoading] = useState(false);
 
     const handleSignUp = async () => {
         try {
