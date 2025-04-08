@@ -1,10 +1,12 @@
-
+import { registerUser } from '@/services/signup.service';
 import { Feather } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
     Image,
+    Platform,
     StyleSheet,
     Text,
     TextInput,
@@ -15,26 +17,89 @@ import {
 export default function SignUpScreen() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [showDatePicker, setShowDatePicker] = useState(false);
+
+    const [name, setName] = useState('');
+    const [nickname, setNickname] = useState('');
+    const [birthDate, setBirthDate] = useState(new Date());
+
     const router = useRouter();
+
+    const handleSignUp = async () => {
+        try {
+            setLoading(true);
+            await registerUser(email, password, {
+                nome: fullName,
+                apelido: nickname,
+                nascimento: birthDate,
+            });
+            Alert.alert('Sucesso', 'Conta criada com sucesso!');
+            router.push('/login');
+        } catch (error: any) {
+            Alert.alert('Erro', error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.container}>
             <View style={styles.container}>
-                 <Image source={require('../../assets/images/logo.png')} style={styles.logoImage} resizeMode="contain" />
+                <Image source={require('../../assets/images/logo.png')} style={styles.logoImage} resizeMode="contain" />
 
                 <View style={styles.formContainer}>
                     <Text style={styles.title}>Criar Minha Conta</Text>
                     <Text style={styles.subtitle}>Para criar sua conta insira os dados abaixo.</Text>
 
+                    {/* Nome completo */}
+                    <TextInput
+                        placeholder="Nome completo"
+                        placeholderTextColor="#555"
+                        style={styles.input}
+                        value={name}
+                        onChangeText={setName}
+                    />
+
+                    {/* Apelido */}
+                    <Text style={{ marginBottom: 4 }}>Como você gostaria de ser chamado?</Text>
+                    <TextInput
+                        placeholder="Apelido"
+                        placeholderTextColor="#555"
+                        style={styles.input}
+                        value={nickname}
+                        onChangeText={setNickname}
+                    />
+
+                    {/* Data de nascimento */}
+                    <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.input}>
+                        <Text style={{ color: birthDate ? '#000' : '#555' }}>
+                            {birthDate ? birthDate.toLocaleDateString() : 'Data de nascimento'}
+                        </Text>
+                    </TouchableOpacity>
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={birthDate}
+                            mode="date"
+                            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                            onChange={(event, selectedDate) => {
+                                setShowDatePicker(false);
+                                if (selectedDate) setBirthDate(selectedDate);
+                            }}
+                            maximumDate={new Date()}
+                        />
+                    )}
+
+                    {/* Email */}
                     <TextInput
                         placeholder="Email"
                         placeholderTextColor="#555"
                         style={styles.input}
                     />
 
+                    {/* Senha */}
                     <View style={styles.inputWithIcon}>
                         <TextInput
-                            placeholder="Password"
+                            placeholder="Senha"
                             placeholderTextColor="#555"
                             secureTextEntry={!showPassword}
                             style={styles.inputField}
@@ -44,9 +109,10 @@ export default function SignUpScreen() {
                         </TouchableOpacity>
                     </View>
 
+                    {/* Confirmar Senha */}
                     <View style={styles.inputWithIcon}>
                         <TextInput
-                            placeholder="Confirm Password"
+                            placeholder="Confirma Senha"
                             placeholderTextColor="#555"
                             secureTextEntry={!showConfirmPassword}
                             style={styles.inputField}
@@ -56,8 +122,12 @@ export default function SignUpScreen() {
                         </TouchableOpacity>
                     </View>
 
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Criar Conta</Text>
+                    <TouchableOpacity style={styles.button} onPress={handleSignUp} disabled={loading}>
+                        {loading ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <Text style={styles.buttonText}>Criar Conta</Text>
+                        )}
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => router.push('/login')}>
@@ -149,5 +219,5 @@ const styles = StyleSheet.create({
         height: 50,
         marginBottom: 20,
         alignSelf: 'center',
-      },
+    },
 });
