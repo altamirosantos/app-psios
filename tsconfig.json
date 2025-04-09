@@ -9,6 +9,10 @@
     }
   },
   "moduleResolution": "nodenext",
+  "types": ["react", "react-native"],
+  "typeRoots": ["./node_modules/@types"],
+  "allowSyntheticDefaultImports": true,
+  "esModuleInterop": true,
   "include": [
     "**/*.ts",
     "**/*.tsx",

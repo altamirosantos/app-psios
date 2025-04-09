@@ -1,49 +1,72 @@
+import { login } from '@/app/services/auth.service';
 import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function LoginScreen() {
+    const navigation = useNavigation();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const handleLogin = async () => {
+        setLoading(true);
+        try {
+            const user = await login(email, password);
+            console.log("Usuário logado:", user.email);
+            // redirecionar ou guardar dados se quiser
+            navigation.navigate('home' as never);
+        } catch (error: any) {
+            Alert.alert("Erro de login", error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
     const [showPassword, setShowPassword] = useState(false);
     return (
         <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.container}>
-        <View style={styles.container}>
-            <Image source={require('../../assets/images/logo.png')} style={styles.logoImage} resizeMode="contain" />
+            <View style={styles.container}>
+                <Image source={require('../../assets/images/logo.png')} style={styles.logoImage} resizeMode="contain" />
 
-            <View style={styles.card}>
-                <Text style={styles.title}>Iniciar</Text>
-                <Text style={styles.subtitle}>Preencha os dados abaixo</Text>
+                <View style={styles.card}>
+                    <Text style={styles.title}>Iniciar</Text>
+                    <Text style={styles.subtitle}>Preencha os dados abaixo</Text>
 
-                <TextInput placeholder="E-mail" placeholderTextColor="#555" style={styles.input} />
-                <View style={styles.passwordContainer}>
-                    <TextInput placeholder="Senha" placeholderTextColor="#555" secureTextEntry={!showPassword} style={styles.inputPassword} />
-                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                        <Feather name={showPassword ? 'eye-off' : 'eye'} size={20} color="#999" />
+                    <TextInput placeholder="E-mail" placeholderTextColor="#555" style={styles.input} value={email} onChangeText={setEmail} />
+                    <View style={styles.passwordContainer}>
+                        <TextInput placeholder="Senha" placeholderTextColor="#555" secureTextEntry={!showPassword} style={styles.inputPassword} value={password} onChangeText={setPassword} />
+                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                            <Feather name={showPassword ? 'eye-off' : 'eye'} size={20} color="#999" />
+                        </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                        {loading ? (
+                            <ActivityIndicator color="#fff" />
+                        ) : (
+                            <Text style={styles.loginText}>Login</Text>
+                        )}
                     </TouchableOpacity>
+
+                    <Text style={styles.orText}>Ou Login com</Text>
+
+                    <TouchableOpacity style={styles.socialButton}>
+                        <Text style={styles.socialIcon}>🟢</Text>
+                        <Text style={styles.socialText}>Continue com Google</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.socialButton}>
+                        <Text style={styles.socialIcon}></Text>
+                        <Text style={styles.socialText}>Continue com Apple</Text>
+                    </TouchableOpacity>
+
+                    <Text style={styles.signupText}>
+                        Não tem uma conta?
+                        <Text style={styles.link}> Cadastre-se aqui</Text>
+                    </Text>
                 </View>
-
-                <TouchableOpacity style={styles.loginButton}>
-                    <Text style={styles.loginText}>Login</Text>
-                </TouchableOpacity>
-
-                <Text style={styles.orText}>Ou Login com</Text>
-
-                <TouchableOpacity style={styles.socialButton}>
-                    <Text style={styles.socialIcon}>🟢</Text>
-                    <Text style={styles.socialText}>Continue com Google</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.socialButton}>
-                    <Text style={styles.socialIcon}></Text>
-                    <Text style={styles.socialText}>Continue com Apple</Text>
-                </TouchableOpacity>
-
-                <Text style={styles.signupText}>
-                    Não tem uma conta?
-                    <Text style={styles.link}> Cadastre-se aqui</Text>
-                </Text>
             </View>
-        </View>
         </LinearGradient>
     );
 }
@@ -152,5 +175,5 @@ const styles = StyleSheet.create({
         height: 50,
         marginBottom: 20,
         alignSelf: 'center',
-      },
+    },
 });
