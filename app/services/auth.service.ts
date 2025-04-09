@@ -1,4 +1,5 @@
 import { auth } from '@/lib/firebaseConfig';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 // Se usar AsyncStorage, ative essa linha abaixo
 // import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,7 +9,7 @@ export const login = async (email: string, password: string) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
     // Se quiser salvar algum token ou info localmente:
-    // await AsyncStorage.setItem('user', JSON.stringify(userCredential.user));
+   await AsyncStorage.setItem('user', JSON.stringify(userCredential.user));
 
     return userCredential.user;
   } catch (error: any) {
@@ -21,7 +22,7 @@ export const logout = async () => {
     await signOut(auth);
 
     // Apagar dados locais se estiver usando AsyncStorage ou SecureStore
-    // await AsyncStorage.removeItem('user');
+    await AsyncStorage.removeItem('user');
   } catch (error: any) {
     console.error('Erro ao fazer logout:', error.message);
   }

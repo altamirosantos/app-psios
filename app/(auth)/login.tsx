@@ -2,6 +2,7 @@ import { login } from '@/app/services/auth.service';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -16,8 +17,10 @@ export default function LoginScreen() {
             const user = await login(email, password);
             console.log("Usuário logado:", user.email);
             // redirecionar ou guardar dados se quiser
-            navigation.navigate('home' as never);
+            //navigation.navigate('(tabs)/home' as never);
+            router.replace('/(tabs)/home');
         } catch (error: any) {
+            console.log("Erro ao fazer login:", error.message);
             Alert.alert("Erro de login", error.message);
         } finally {
             setLoading(false);
