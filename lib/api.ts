@@ -4,6 +4,7 @@ export async function saveUserToApi(userData: {
     nickname: string;
     birthDate: string;
     email: string;
+    gender: string;
   }) {
     await fetch('https://sua-api.com/usuarios', {
       method: 'POST',

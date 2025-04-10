@@ -9,6 +9,7 @@ export async function registerUser(
     nome: string;
     apelido: string;
     nascimento: Date;
+    genero: string;
   }
 ) {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -20,6 +21,7 @@ export async function registerUser(
     fullName: extraData.nome,
     nickname: extraData.apelido,
     birthDate: extraData.nascimento.toISOString(),
+    gender: extraData.genero
   });
 
   return userCredential;
