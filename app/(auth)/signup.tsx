@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
         flex: 1,
         /*backgroundColor: '#9333ea',*/
         padding: 20,
-        paddingTop: 60,
+        //paddingTop: 60,
     },
     logo: {
         fontSize: 28,

@@ -2,15 +2,16 @@ import { login } from '@/app/services/auth.service';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function LoginScreen() {
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
     const handleLogin = async () => {
         setLoading(true);
         try {
@@ -64,10 +65,12 @@ export default function LoginScreen() {
                         <Text style={styles.socialText}>Continue com Apple</Text>
                     </TouchableOpacity>
 
-                    <Text style={styles.signupText}>
-                        Não tem uma conta?
-                        <Text style={styles.link}> Cadastre-se aqui</Text>
-                    </Text>
+                    <Pressable onPress={() => router.push('/(auth)/signup')}>
+                        <Text style={styles.signupText}>
+                            Não tem uma conta?
+                            <Text style={styles.link}> Cadastre-se aqui</Text>
+                        </Text>
+                    </Pressable>
                 </View>
             </View>
         </LinearGradient>

@@ -53,7 +53,7 @@ export default function AutoavaliacaoPage() {
       {/* Botão próximo */}
       <TouchableOpacity
         style={styles.button}
-        onPress={() => router.push('/proxima-pagina')}
+        onPress={() => router.push('/passo2')}
       >
         <Text style={styles.buttonText}>Próximo</Text>
       </TouchableOpacity>
