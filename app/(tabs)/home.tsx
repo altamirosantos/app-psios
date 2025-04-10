@@ -1,7 +1,8 @@
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useAuthGuard } from '../hooks/useAuthGuard';
 
 const data = [
   { id: '1', label: 'Home', icon: <Feather name="home" size={28} color="#4a00e0" /> },
@@ -19,6 +20,14 @@ const numColumns = 3;
 const size = Dimensions.get('window').width / numColumns - 30;
 
 export default function DashboardScreen() {
+  const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <LinearGradient
