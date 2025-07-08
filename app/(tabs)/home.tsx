@@ -1,8 +1,9 @@
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import React from 'react';
 import { ActivityIndicator, Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useAuthGuard } from '../hooks/useAuthGuard';
+import { useAuthGuard } from '../../hooks/useAuthGuard';
 
 const data = [
   { id: '1', label: 'Home', icon: <Feather name="home" size={28} color="#4a00e0" /> },
@@ -57,15 +58,26 @@ export default function DashboardScreen() {
         )}
       />
 
+      {/* Botão próximo */}
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push('/start-autoavaliacao')}
+      >
+        <Text style={styles.buttonText}>Começar minha autoavaliação</Text>
+      </TouchableOpacity>
+
       <Text style={styles.recent}>Atividade Recente</Text>
     </View>
   );
 }
 
+const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f2f5f9',
+    alignItems: 'center',
   },
   header: {
     paddingTop: 80,
@@ -86,6 +98,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   sectionTitle: {
+    textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
     marginHorizontal: 20,
@@ -120,5 +133,19 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginHorizontal: 20,
     marginBottom: 10,
+  },
+  button: {
+    backgroundColor: '#4F46E5',
+    paddingVertical: 16,
+    paddingHorizontal: 40,
+    borderRadius: 50,
+    marginTop: 40,
+    width: width - 80,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

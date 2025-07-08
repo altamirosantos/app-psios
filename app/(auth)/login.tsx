@@ -1,4 +1,4 @@
-import { login } from '@/app/services/auth.service';
+import { login } from '@/services/auth.service';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';

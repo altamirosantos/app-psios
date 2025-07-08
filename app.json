@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "app-psios",
+    "name": "br.com.psios.app-psios",
     "slug": "app-psios",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -36,6 +36,15 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "owner": "altamirosantos",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f1d31ce5-b1ce-40c6-8728-4386bbc5fd5b"
+      }
     }
   }
 }

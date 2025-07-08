@@ -1,4 +1,4 @@
-import { logout } from '@/app/services/auth.service';
+import { logout } from '@/services/auth.service';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 

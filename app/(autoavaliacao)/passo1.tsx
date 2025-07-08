@@ -1,3 +1,4 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import {
@@ -21,52 +22,57 @@ export default function AutoavaliacaoPage() {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
-      {/* Logo */}
-      <Image
-        source={require('@/assets/images/logo.png')} // Substitua por sua logo
-        style={styles.logo}
-        resizeMode="contain"
-      />
+    <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
+      <View style={styles.container}>
+        {/* Logo */}
+        <Image
+          source={require('@/assets/images/logo.png')} // Substitua por sua logo
+          style={styles.logo}
+          resizeMode="contain"
+        />
 
-      {/* Cartão de pergunta */}
-      <View style={styles.card}>
-        <Text style={styles.title}>Como você se sente hoje?</Text>
-        <Text style={styles.subtitle}>
-          Sua saúde emocional é prioridade! 💙{'\n'}
-          Compartilhe como se sente e avance rumo ao seu bem-estar!
-        </Text>
+        {/* Cartão de pergunta */}
+        <View style={styles.card}>
+          <Text style={styles.title}>💓 Como você se sente hoje?</Text>
+          <Text style={styles.subtitle}>
+            Sua saúde emocional é prioridade?{'\n'}
+            Compartilhe como se sente e avance rumo ao seu bem-estar!
+          </Text>
 
-        {/* Emojis */}
-        <View style={styles.emojis}>
-          {sentimentos.map((item) => (
-            <View style={styles.emojiItem} key={item.label}>
-              <Text style={[styles.emoji, { borderColor: item.color }]}>
-                {item.emoji}
-              </Text>
-              <Text style={styles.emojiLabel}>{item.label}</Text>
-            </View>
-          ))}
+          {/* Emojis */}
+          <View style={styles.emojis}>
+            {sentimentos.map((item) => (
+              <View style={styles.emojiItem} key={item.label}>
+                <Text style={[styles.emoji, { borderColor: item.color }]}>
+                  {item.emoji}
+                </Text>
+                <Text style={styles.emojiLabel}>{item.label}</Text>
+              </View>
+            ))}
+          </View>
         </View>
-      </View>
 
-      {/* Botão próximo */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push('/passo2')}
-      >
-        <Text style={styles.buttonText}>Próximo</Text>
-      </TouchableOpacity>
-    </View>
+        {/* Botão próximo */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push('/passo2')}
+        >
+          <Text style={styles.buttonText}>Próximo</Text>
+        </TouchableOpacity>
+      </View>
+    </LinearGradient>
   );
 }
 
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+  containerRoot: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    backgroundColor: '#D060FF',
+    /*backgroundColor: '#D060FF',*/
     alignItems: 'center',
     paddingTop: 80,
     paddingHorizontal: 20,

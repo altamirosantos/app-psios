@@ -6,7 +6,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 export default function WelcomeScreen() {
     const router = useRouter();
     return (
-        <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.container}>
+        <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
             <View style={styles.container}>
                 <Image
                     source={require('../../assets/images/logo.png')} // coloque sua logo aqui
@@ -14,20 +14,20 @@ export default function WelcomeScreen() {
                     resizeMode="contain"
                 />
 
-                <Text style={styles.title}>Bem-vindo(a)!</Text>
+                <Text style={styles.title}>🌻 AUTOAVALIAÇÃO</Text>
 
                 <Text style={styles.subtitle}>
                     Pronto(a) para tranformar sua vida?{'\n'}
-                    Mude a forma de pensar, sentir e agir{'\n'}
-                    com novas conexões e{'\n'}
+                    Mude a forma de pensar, sentir e agir 
+                    com novas conexões e 
                     autoconsciência.
                 </Text>
 
                 <View style={styles.card}>
                     <Text style={styles.cardText}>
-                        📝 A autoavaliação é um pequeno{'\n'}
-                        passo com grande impacto. É{'\n'}
-                        simples, e pode fazer diferença no{'\n'}
+                        📝 A autoavaliação é um pequeno 
+                        passo com grande impacto. É 
+                        simples, e pode fazer diferença no 
                         seu bem-estar.
                     </Text>
                     <Text style={styles.cardText}>
@@ -35,8 +35,8 @@ export default function WelcomeScreen() {
                     </Text>
                 </View>
 
-                <TouchableOpacity style={styles.button}  onPress={() => router.push('/autoavaliacao1')}>
-                    <Text style={styles.buttonText}>Começar minha avaliação</Text>
+                <TouchableOpacity style={styles.button}  onPress={() => router.push('/(autoavaliacao)/passo1')}>
+                    <Text style={styles.buttonText}>Começar minha autoavaliação</Text>
                 </TouchableOpacity>
             </View>
         </LinearGradient>
@@ -44,7 +44,10 @@ export default function WelcomeScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
+    containerRoot: {
+        flex: 1,
+    },
+     container: {
         flex: 1,
         /*backgroundColor: '#DA5CE3',*/
         alignItems: 'center',
@@ -58,7 +61,7 @@ const styles = StyleSheet.create({
         marginBottom: 24,
     },
     title: {
-        fontSize: 32,
+        fontSize: 28,
         fontWeight: 'bold',
         color: '#fff',
         marginBottom: 12,
