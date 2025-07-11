@@ -19,7 +19,7 @@ export default function LoginScreen() {
             console.log("Usuário logado:", user.email);
             // redirecionar ou guardar dados se quiser
             //navigation.navigate('(tabs)/home' as never);
-            router.replace('/(tabs)/home');
+            router.replace('/boasVindas');
         } catch (error: any) {
             console.log("Erro ao fazer login:", error.message);
             Alert.alert("Erro de login", error.message);

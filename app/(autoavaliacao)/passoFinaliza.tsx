@@ -1,7 +1,6 @@
 import { useForm } from '@/context/FormContext';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Dimensions,
   Image,
@@ -12,19 +11,14 @@ import {
   View
 } from 'react-native';
 
-const ocupacoes = [
-  'Tudo parece difícil ou injusto',
-  'Vejo altos e baixos, tentando encontrar equilíbrio',
-  'Apesar dos desafios, veja beleza e oportunidade',
-];
 
 const FeedbackScreen = () => {
-  const [selecionado, setSelecionado] = useState<string | null>(null);
-  const { updateForm } = useForm();
 
-  const handleNext = () => {
-    updateForm({ enxergarMundo: selecionado ?? '' });
-    router.push('/passo11');
+  const { data, updateForm } = useForm();
+
+  const enviar = async () => {
+    //await api.post('/formulario', data);
+    console.log('Formulário enviado com sucesso!', data);
   };
 
   return (
@@ -39,35 +33,33 @@ const FeedbackScreen = () => {
             resizeMode="contain"
           />
           <View style={styles.card}>
-            <Text style={styles.title}>🌍 Como você costuma enxergar o mundo ao seu redor?</Text>
-            <Text style={styles.subtitle}>Seu pensamento contem…</Text>
-            {ocupacoes.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={styles.opcao}
-                onPress={() => setSelecionado(item)}
-              >
-                <View style={styles.radioCirculo}>
-                  {selecionado === item && <View style={styles.radioSelecionado} />}
-                </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
-              </TouchableOpacity>
-            ))}
+
+            <View style={styles.containerImage}>
+              <Image source={require("@/assets/images/avatar-autoavaliacao.png")} style={styles.imagem} resizeMode="contain" />
+            </View>
+
+            <Text style={styles.title}>
+              ✨ ✨🤩 🥳 ✨ ✨
+            </Text>
+            <Text style={styles.title}>
+              🌱 "Cuidar de você importa (e muito)!
+            </Text>
+
+            <Text style={styles.subtitle}>
+              💜 Parabéns por se permitir esse momento! Compartilhar é um passo de mudança e autocuidado. Seu bem-estar começa aqui. Obrigado(a) por confiar — estamos aqui para cuidar de você cada vez melhor.
+            </Text>
           </View>
 
           {/* Botão próximo */}
           <TouchableOpacity
             style={[
               styles.button,
-              !selecionado && { backgroundColor: '#ccc' },
             ]}
-            disabled={!selecionado}
-            onPress={handleNext}
+            onPress={enviar}
           >
             <Text style={[
               styles.buttonText,
-              !selecionado && { color: '#aaa' },
-            ]}>Me conte mais...</Text>
+            ]}>Enviar</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -95,13 +87,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#E0CDFD',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
+    alignItems: 'center',
     width: '100%', // ocupa 100% da área do container pai
     maxWidth: 400,
   },
@@ -109,22 +102,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 14,
   },
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
     color: '#555',
     marginVertical: 8,
-  },
-  opcao: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  opcaoTexto: {
-    fontSize: 16,
-    color: '#333',
-    marginEnd: 20,
   },
   radioCirculo: {
     height: 20,
@@ -155,5 +139,62 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  containerImage: {
+    position: 'relative',
+    width: 344,
+    height: 344,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  imagem: {
+    width: 344,
+    height: 344,
+  },
+  opcoes: {
+    width: "100%",
+    marginBottom: 40,
+  },
+  opcao: {
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  opcaoSelecionada: {
+    borderColor: "#6200EE",
+    backgroundColor: "#E0D7F8",
+  },
+  opcaoTexto: {
+    fontSize: 16,
+  },
+  numero: {
+    position: 'absolute',
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#6B21A8', // roxo escuro
+  },
+  pos1: {
+    left: '12%',
+    bottom: 50,
+  },
+  pos2: {
+    left: '30%',
+    bottom: 40,
+  },
+  pos3: {
+    left: '47%',
+    bottom: 50,
+  },
+  pos4: {
+    left: '63%',
+    bottom: 40,
+  },
+  pos5: {
+    left: '80%',
+    bottom: 50,
   },
 });

@@ -1,3 +1,4 @@
+import { useForm } from '@/context/FormContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -22,10 +23,17 @@ const comportamentoOptions = [
 const FeedbackScreen = () => {
   const [oque, setOque] = useState('');
   const [quando, setQuando] = useState('');
-  const [value, setValue] = useState<string>("");
+  const [comoSeComportou, setComoSeComportou] = useState<string>("");
   const [alguemEnvolvido, setAlguemEnvolvido] = useState('');
   const [gatilho, setGatilho] = useState('');
   const [pensamento, setPensamento] = useState('');
+
+  const { updateForm } = useForm();
+
+  const handleNext = () => {
+    updateForm({ passo8ComoSeComportou: comoSeComportou, passo8AlguemEnvolvido: alguemEnvolvido, passo8Gatilho: gatilho, passo8Pensamento: pensamento });
+    router.push('/passo9');
+  };
 
   return (
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
@@ -66,10 +74,10 @@ const FeedbackScreen = () => {
                   <View key={index} style={styles.radioItem}>
                     <RadioButton
                       value={option}
-                      status={value === option ? 'checked' : 'unchecked'}
-                      onPress={() => setValue(option)}
+                      status={comoSeComportou === option ? 'checked' : 'unchecked'}
+                      onPress={() => setComoSeComportou(option)}
                     />
-                    <Text style={styles.label} onPress={() => setValue(option)}>
+                    <Text style={styles.label} onPress={() => setComoSeComportou(option)}>
                       {option}
                     </Text>
                   </View>
@@ -109,10 +117,17 @@ const FeedbackScreen = () => {
 
           {/* Botão próximo */}
           <TouchableOpacity
-            style={styles.button}
-            onPress={() => router.push('/passo9')}
+            style={[
+              styles.button,
+              (!oque || !quando || !comoSeComportou || !alguemEnvolvido || !gatilho || !pensamento) && { backgroundColor: '#ccc' },
+            ]}
+            disabled={!oque || !quando || !comoSeComportou || !alguemEnvolvido || !gatilho || !pensamento}
+            onPress={handleNext}
           >
-            <Text style={styles.buttonText}>Me conte mais...</Text>
+            <Text style={[
+              styles.buttonText,
+              (!oque || !quando || !comoSeComportou || !alguemEnvolvido || !gatilho || !pensamento) && { color: '#aaa' },
+            ]}>Me conte mais...</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -220,7 +235,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   button: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: '#FFA45E',
     paddingVertical: 16,
     paddingHorizontal: 40,
     borderRadius: 50,

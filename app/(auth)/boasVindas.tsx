@@ -1,7 +1,6 @@
-import { useForm } from '@/context/FormContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Dimensions,
   Image,
@@ -12,23 +11,8 @@ import {
   View
 } from 'react-native';
 
-const opcoes = [
-  { id: 1, label: "Espelho 1 – Confiante e Positiva", emoji: "🌟" },
-  { id: 2, label: "Espelho 2 – Em busca de si mesma(o)", emoji: "☁️" },
-  { id: 3, label: "Espelho 3 – Crítico e Exigente", emoji: "😔" },
-  { id: 4, label: "Espelho 4 – Fragilizada(o) emocionalmente", emoji: "🌧️" },
-  { id: 5, label: "Espelho 5 – Em construção com carinho", emoji: "✨" },
-];
 
 const FeedbackScreen = () => {
-  const [selecionado, setSelecionado] = useState<number | null>(null);
-
-  const { updateForm } = useForm();
-
-  const handleNext = () => {
-    updateForm({ espelho: selecionado ?? 1 });
-    router.push('/passoFinaliza');
-  };
 
   return (
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
@@ -42,34 +26,34 @@ const FeedbackScreen = () => {
             resizeMode="contain"
           />
           <View style={styles.card}>
-            <Text style={styles.title}>
-              🪞Qual espelho representa melhor como você se vê hoje?
-              Escolha a opção que mais representa o seu autoconceito no momento:
-            </Text>
 
             <View style={styles.containerImage}>
-              <Image source={require("@/assets/images/mirror.png")} style={styles.imagem} resizeMode="contain" />
-
-              {/* Números sobre a imagem */}
-              <Text style={[styles.numero, styles.pos1]}>1</Text>
-              <Text style={[styles.numero, styles.pos2]}>2</Text>
-              <Text style={[styles.numero, styles.pos3]}>3</Text>
-              <Text style={[styles.numero, styles.pos4]}>4</Text>
-              <Text style={[styles.numero, styles.pos5]}>5</Text>
+              <Image source={require("@/assets/images/avatar-autoavaliacao.png")} style={styles.imagem} resizeMode="contain" />
             </View>
 
-            <View style={styles.opcoes}>
-              {opcoes.map((opcao) => (
-                <TouchableOpacity
-                  key={opcao.id}
-                  style={[styles.opcao, selecionado === opcao.id && styles.opcaoSelecionada]}
-                  onPress={() => setSelecionado(opcao.id)}
-                >
-                  <Text style={styles.opcaoTexto}>
-                    {opcao.emoji} {opcao.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+            <View>
+              <Text style={styles.title}>
+                ✨ ✨🤩 🥳 ✨ ✨
+              </Text>
+              <Text style={styles.title}>
+                Olá! Que bom ter você por aqui! Eu sou a Ana 😊
+              </Text>
+
+              <Text style={styles.subtitle}>
+                Psios: Cuidar de Si com Conexão  💜
+              </Text>
+
+              <Text style={styles.subtitle}>
+                É mais que um aplicativo — é um espaço acolhedor no seu celular para cuidar da mente com leveza, ciência e conexão real.
+              </Text>
+
+              <Text style={styles.subtitle}>
+                Estou aqui com você nessa jornada de bem-estar emocional.
+              </Text>
+
+              <Text style={styles.subtitle}>
+                Vamos dar o primeiro passo juntos?
+              </Text>
             </View>
           </View>
 
@@ -77,15 +61,12 @@ const FeedbackScreen = () => {
           <TouchableOpacity
             style={[
               styles.button,
-              !selecionado && { backgroundColor: '#ccc' },
             ]}
-            disabled={!selecionado}
-            onPress={handleNext}
+            onPress={() => router.push('/start-autoavaliacao')}
           >
             <Text style={[
               styles.buttonText,
-              !selecionado && { color: '#aaa' },
-            ]}>Enviar</Text>
+            ]}>👉 Começar agora</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -113,7 +94,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#E0CDFD',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
@@ -125,15 +106,16 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 14,
   },
   subtitle: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: 'left',
     color: '#555',
-    marginVertical: 8,
+    marginVertical: 6,
   },
   radioCirculo: {
     height: 20,
@@ -172,7 +154,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
-    marginTop: 20
   },
   imagem: {
     width: 344,

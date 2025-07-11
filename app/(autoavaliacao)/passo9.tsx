@@ -1,3 +1,4 @@
+import { useForm } from '@/context/FormContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -48,13 +49,22 @@ const distorcoes = [
   },
 ];
 
+
+
 const FeedbackScreen = () => {
   const [selecionados, setSelecionados] = useState<string[]>([]);
+
+  const { updateForm } = useForm();
 
   const toggleItem = (titulo: string) => {
     setSelecionados(prev =>
       prev.includes(titulo) ? prev.filter(i => i !== titulo) : [...prev, titulo]
     );
+  };
+
+  const handleNext = () => {
+    updateForm({ distorcoesPensamento: selecionados });
+    router.push('/passo10');
   };
 
 
@@ -94,10 +104,17 @@ const FeedbackScreen = () => {
 
           {/* Botão próximo */}
           <TouchableOpacity
-            style={styles.button}
-            onPress={() => router.push('/passo10')}
+            style={[
+              styles.button,
+              selecionados.length === 0 && { backgroundColor: '#ccc' },
+            ]}
+            disabled={selecionados.length === 0}
+            onPress={handleNext}
           >
-            <Text style={styles.buttonText}>Me conte mais...</Text>
+            <Text style={[
+              styles.buttonText,
+              selecionados.length === 0 && { color: '#aaa' },
+            ]}>Me conte mais...</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -202,7 +219,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   button: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: '#FFA45E',
     paddingVertical: 16,
     paddingHorizontal: 40,
     borderRadius: 50,
