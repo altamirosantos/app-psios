@@ -11,6 +11,8 @@ import {
   View
 } from 'react-native';
 
+import { useForm } from '@/context/FormContext';
+
 const ocupacoes = [
   'Empregado (a)',
   'Autônomo (a)',
@@ -22,7 +24,16 @@ const ocupacoes = [
 
 const FeedbackScreen = () => {
   const [selecionado, setSelecionado] = useState<string | null>(null);
+  const { updateForm } = useForm();
 
+  const handleNext = () => {
+    /*if (!selecionado) {
+      Alert.alert('Atenção', 'Selecione como você se sente antes de continuar.');
+      return;
+    }*/
+    updateForm({ ocupacoes: selecionado ?? '' });
+    router.push('/passo4');
+  };
 
   return (
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
@@ -54,10 +65,17 @@ const FeedbackScreen = () => {
 
           {/* Botão próximo */}
           <TouchableOpacity
-            style={styles.button}
-            onPress={() => router.push('/passo4')}
+            style={[
+              styles.button,
+              !selecionado && { backgroundColor: '#ccc' }, // desativado
+            ]}
+            onPress={handleNext}
+            disabled={!selecionado}
           >
-            <Text style={styles.buttonText}>Me conte mais...</Text>
+            <Text style={[
+              styles.buttonText,
+              !selecionado && { color: '#aaa' },
+            ]}>Me conte mais...</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -76,6 +94,7 @@ const styles = StyleSheet.create({
   },
   containerRoot: {
     flex: 1,
+    paddingBottom: 50
   },
   container: {
     flex: 1,
@@ -91,6 +110,8 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
+    width: '100%', // ocupa 100% da área do container pai
+    maxWidth: 400,
   },
   title: {
     fontSize: 18,

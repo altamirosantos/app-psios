@@ -2,7 +2,7 @@ import { Feather, FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React from 'react';
-import { ActivityIndicator, Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAuthGuard } from '../../hooks/useAuthGuard';
 
 const data = [
@@ -18,7 +18,7 @@ const data = [
 ];
 
 const numColumns = 3;
-const size = Dimensions.get('window').width / numColumns - 30;
+const size = Dimensions.get('window').width / numColumns - 60;
 
 export default function DashboardScreen() {
   const { loading } = useAuthGuard();
@@ -43,30 +43,29 @@ export default function DashboardScreen() {
         </Text>
       </LinearGradient>
 
-      <Text style={styles.sectionTitle}>Acesso rápido</Text>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
 
-      <FlatList
-        data={data}
-        numColumns={numColumns}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.grid}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.card}>
-            {item.icon}
-            <Text style={styles.cardLabel}>{item.label}</Text>
-          </TouchableOpacity>
-        )}
-      />
+        <Text style={styles.sectionTitle}>Acesso rápido</Text>
 
-      {/* Botão próximo */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push('/start-autoavaliacao')}
-      >
-        <Text style={styles.buttonText}>Começar minha autoavaliação</Text>
-      </TouchableOpacity>
+        <View style={styles.grid}>
+          {data.map((item) => (
+            <TouchableOpacity key={item.id} style={styles.card}>
+              {item.icon}
+              <Text style={styles.cardLabel}>{item.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <Text style={styles.recent}>Atividade Recente</Text>
+        {/* Botão próximo */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push('/start-autoavaliacao')}
+        >
+          <Text style={styles.buttonText}>Começar minha autoavaliação</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.recent}>Atividade Recente</Text>
+      </ScrollView>
     </View>
   );
 }
@@ -105,15 +104,12 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 10,
   },
-  grid: {
-    paddingHorizontal: 15,
-  },
   card: {
     width: size,
     height: size,
     backgroundColor: '#fff',
     borderRadius: 20,
-    margin: 8,
+    marginVertical: 8,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 3,
@@ -135,7 +131,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: '#FFA45E',
     paddingVertical: 16,
     paddingHorizontal: 40,
     borderRadius: 50,
@@ -147,5 +143,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  scrollContainer: {
+    paddingBottom: 50,
+    paddingTop: 20,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    marginHorizontal: 20,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
 });

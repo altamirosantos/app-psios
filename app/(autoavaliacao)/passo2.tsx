@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Dimensions,
@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+
+import { useForm } from '@/context/FormContext';
 
 const options = {
   emotions: [
@@ -22,19 +24,21 @@ const options = {
 };
 
 const FeedbackScreen = () => {
+  const router = useRouter();
   const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);
-  /*const [selectedReactions, setSelectedReactions] = useState<string[]>([]);
-  const [selectedFactors, setSelectedFactors] = useState<string[]>([]);
-  const [sliderValue, setSliderValue] = useState(0);
-  const [trigger, setTrigger] = useState('');
-  const [thoughts, setThoughts] = useState('');*/
+  const { updateForm } = useForm();
 
-  const toggleOption = (option: string, setState: React.Dispatch<React.SetStateAction<string[]>>, state: string[]) => {
-    if (state.includes(option)) {
-      setState(state.filter(item => item !== option));
-    } else {
-      setState([...state, option]);
-    }
+  const toggleEmotion = (emotion: string) => {
+    setSelectedEmotions((prev) =>
+      prev.includes(emotion)
+        ? prev.filter((item) => item !== emotion)
+        : [...prev, emotion]
+    );
+  };
+
+  const handleNext = () => {
+    updateForm({ selectedEmotions: selectedEmotions });
+    router.push('/passo3');
   };
 
   return (
@@ -42,15 +46,16 @@ const FeedbackScreen = () => {
       <ScrollView>
         <View style={styles.container}>
 
-          {/* Logo */}
           <Image
-            source={require('@/assets/images/logo.png')} // Substitua por sua logo
+            source={require('@/assets/images/logo.png')}
             style={styles.logo}
             resizeMode="contain"
           />
+
           <View style={styles.card}>
             <Text style={styles.title}>Quais emoções você está sentindo agora?</Text>
             <Text style={styles.subtitle}>Selecione todas as emoções que se aplicam.</Text>
+
             <View style={styles.tagContainer}>
               {options.emotions.map((emotion) => (
                 <TouchableOpacity
@@ -59,7 +64,7 @@ const FeedbackScreen = () => {
                     styles.tag,
                     selectedEmotions.includes(emotion) && styles.tagSelected
                   ]}
-                  onPress={() => toggleOption(emotion, setSelectedEmotions, selectedEmotions)}
+                  onPress={() => toggleEmotion(emotion)}
                 >
                   <Text style={selectedEmotions.includes(emotion) ? styles.tagTextSelected : styles.tagText}>
                     {emotion}
@@ -71,10 +76,21 @@ const FeedbackScreen = () => {
 
           {/* Botão próximo */}
           <TouchableOpacity
-            style={styles.button}
-            onPress={() => router.push('/passo3')}
+            style={[
+              styles.button,
+              selectedEmotions.length === 0 && { backgroundColor: '#ccc' },
+            ]}
+            disabled={selectedEmotions.length === 0}
+            onPress={handleNext}
           >
-            <Text style={styles.buttonText}>Próximo</Text>
+            <Text
+              style={[
+                styles.buttonText,
+                selectedEmotions.length === 0 && { color: '#aaa' },
+              ]}
+            >
+              Próximo
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -83,6 +99,7 @@ const FeedbackScreen = () => {
 };
 
 export default FeedbackScreen;
+
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -93,10 +110,10 @@ const styles = StyleSheet.create({
   },
   containerRoot: {
     flex: 1,
+    paddingBottom: 50,
   },
   container: {
     flex: 1,
-    /*backgroundColor: '#d946ef',*/
     padding: 10,
     alignItems: 'center',
   },
@@ -108,6 +125,8 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
+    width: '100%',
+    maxWidth: 400,
   },
   title: {
     fontSize: 18,
@@ -123,7 +142,7 @@ const styles = StyleSheet.create({
   tagContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 4,
     marginTop: 10,
   },
   tag: {
@@ -142,40 +161,8 @@ const styles = StyleSheet.create({
   tagTextSelected: {
     color: '#fff',
   },
-  sliderValue: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginTop: 4,
-  },
-  input: {
-    backgroundColor: '#f3f4f6',
-    borderRadius: 8,
-    padding: 10,
-    marginTop: 10,
-    textAlignVertical: 'top',
-    minHeight: 60,
-  },
-  submitButton: {
-    backgroundColor: '#4f46e5',
-    borderRadius: 25,
-    padding: 14,
-    alignItems: 'center',
-    marginVertical: 16,
-  },
-  submitText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  footerNote: {
-    textAlign: 'center',
-    color: '#fff',
-    fontSize: 12,
-    marginBottom: 40,
-    paddingHorizontal: 20,
-  },
   button: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: '#5B3C83',
     paddingVertical: 16,
     paddingHorizontal: 40,
     borderRadius: 50,

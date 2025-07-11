@@ -3,14 +3,21 @@
     "version": ">= 3.0.0"
   },
   "build": {
-    "preview": {
+    "development": {
       "developmentClient": true,
       "distribution": "internal",
       "android": {
         "buildType": "apk"
       }
     },
-    "production": {
+     "test": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "release": {
       "android": {
         "buildType": "aab"
       }

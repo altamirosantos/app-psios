@@ -1,14 +1,16 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dimensions,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
+
+import { useForm } from '@/context/FormContext';
 
 const sentimentos = [
   { label: 'Muito Mal', color: '#ef4444', emoji: '😞' },
@@ -20,18 +22,28 @@ const sentimentos = [
 
 export default function AutoavaliacaoPage() {
   const router = useRouter();
+  const [sentimentoSelecionado, setSentimentoSelecionado] = useState<string | null>(null);
+  const { updateForm } = useForm();
+
+  const handleNext = () => {
+   /* if (!sentimentoSelecionado) {
+      Alert.alert('Atenção', 'Selecione como você se sente antes de continuar.');
+      return;
+    }*/
+
+    updateForm({ sentimentoSelecionado: sentimentoSelecionado??'' });
+    router.push('/passo2');
+  };
 
   return (
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
       <View style={styles.container}>
-        {/* Logo */}
         <Image
-          source={require('@/assets/images/logo.png')} // Substitua por sua logo
+          source={require('@/assets/images/logo.png')}
           style={styles.logo}
           resizeMode="contain"
         />
 
-        {/* Cartão de pergunta */}
         <View style={styles.card}>
           <Text style={styles.title}>💓 Como você se sente hoje?</Text>
           <Text style={styles.subtitle}>
@@ -39,25 +51,46 @@ export default function AutoavaliacaoPage() {
             Compartilhe como se sente e avance rumo ao seu bem-estar!
           </Text>
 
-          {/* Emojis */}
           <View style={styles.emojis}>
-            {sentimentos.map((item) => (
-              <View style={styles.emojiItem} key={item.label}>
-                <Text style={[styles.emoji, { borderColor: item.color }]}>
-                  {item.emoji}
-                </Text>
-                <Text style={styles.emojiLabel}>{item.label}</Text>
-              </View>
-            ))}
+            {sentimentos.map((item) => {
+              const selecionado = sentimentoSelecionado === item.label;
+              return (
+                <TouchableOpacity
+                  key={item.label}
+                  style={styles.emojiItem}
+                  onPress={() => setSentimentoSelecionado(item.label)}
+                >
+                  <Text
+                    style={[
+                      styles.emoji,
+                      {
+                        borderColor: item.color,
+                        backgroundColor: selecionado ? item.color + '33' : 'transparent',
+                        transform: [{ scale: selecionado ? 1.2 : 1 }],
+                      },
+                    ]}
+                  >
+                    {item.emoji}
+                  </Text>
+                  <Text style={styles.emojiLabel}>{item.label}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
-        {/* Botão próximo */}
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push('/passo2')}
+          style={[
+            styles.button,
+            !sentimentoSelecionado && { backgroundColor: '#ccc' }, // desativado
+          ]}
+          onPress={handleNext}
+          disabled={!sentimentoSelecionado}
         >
-          <Text style={styles.buttonText}>Próximo</Text>
+          <Text  style={[
+                styles.buttonText,
+                !sentimentoSelecionado && { color: '#aaa' },
+              ]}>Próximo</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>
@@ -69,10 +102,10 @@ const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
   containerRoot: {
     flex: 1,
+    paddingBottom: 50
   },
   container: {
     flex: 1,
-    /*backgroundColor: '#D060FF',*/
     alignItems: 'center',
     paddingTop: 80,
     paddingHorizontal: 20,
@@ -92,22 +125,25 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 10,
     elevation: 5,
+    marginBottom: 20,
+    marginTop: 20,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
   },
   subtitle: {
     fontSize: 14,
     color: '#555',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 80,
   },
   emojis: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 20,
   },
   emojiItem: {
     alignItems: 'center',
@@ -119,6 +155,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     padding: 6,
     textAlign: 'center',
+    overflow: 'hidden',
   },
   emojiLabel: {
     marginTop: 4,
@@ -126,7 +163,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    backgroundColor: '#4F46E5',
+    backgroundColor: '#FFA45E',
     paddingVertical: 16,
     paddingHorizontal: 40,
     borderRadius: 50,

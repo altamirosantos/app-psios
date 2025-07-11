@@ -5,38 +5,26 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Dimensions,
-  Image, Platform, ScrollView,
+  Image,
+  Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from 'react-native';
 
-const comoCostumaLidar = [
-  'Me expresso com facilidade (converso, escrevo, crio).',
-  'Levo um tempo, mas acabei organizando dentro de mim.',
-  'Guarde para mim e evite mostrar.',
-  'Nem sempre entendo o que estou sentindo.',
-];
-
-const pensarFuturo = [
-  'Sinto esperança e curiosidade',
-  'Fico ansioso(a) ou confuso(a) com o que pode acontecer',
-  'Ainda não consigo imaginar como será',
-  'Sinto insegurança e dúvidas',
-  'Tenho vontade de melhorar e fazer mudanças.',
-];
-
 const FeedbackScreen = () => {
-  const [selecionadoComoCostumaLidar, setSelecionadoComoCostumaLidar] = useState<string | null>(null);
-  const [selecionadoPensarFuturo, setSelecionadoPensarFuturo] = useState<string | null>(null);
-  const [sliderValuePreparado, setSliderValuePreparado] = useState(5);
+
+  const [sliderValue, setSliderValue] = useState(80);
 
   const { updateForm } = useForm();
+
   const handleNext = () => {
-    updateForm({ selecionadoComoCostumaLidar: selecionadoComoCostumaLidar ?? '', selecionadoPensarFuturo: selecionadoPensarFuturo ?? '', sliderValuePreparado: sliderValuePreparado });
-    router.push('/passo5');
+    updateForm({ passo7Card1: sliderValue });
+    router.push('/passo8');
   };
+
 
   return (
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
@@ -49,56 +37,25 @@ const FeedbackScreen = () => {
             style={styles.logo}
             resizeMode="contain"
           />
-          <View style={styles.card}>
-            <Text style={styles.title}>❤️ Como você costuma lidar com seus sentimentos?</Text>
-            {comoCostumaLidar.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={styles.opcao}
-                onPress={() => setSelecionadoComoCostumaLidar(item)}
-              >
-                <View style={styles.radioCirculo}>
-                  {selecionadoComoCostumaLidar === item && <View style={styles.radioSelecionado} />}
-                </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.title}>🌀 Quando você pensa no futuro, qual dessas frases mais combinam com o que sente ou imagina?</Text>
-            {pensarFuturo.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={styles.opcao}
-                onPress={() => setSelecionadoPensarFuturo(item)}
-              >
-                <View style={styles.radioCirculo}>
-                  {selecionadoPensarFuturo === item && <View style={styles.radioSelecionado} />}
-                </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
 
           <View style={styles.card}>
             <Text style={styles.title}>
-              🌟 O quanto você sente que está preparado(a) ou confiante em relação ao seu futuro neste momento?
+              🧩 De 0 a 100, quanto você acredita no pensamento que causou essas sensações e sentimentos?
             </Text>
 
             {/* Valor acima da barra */}
             <View style={styles.sliderValueContainer}>
-              <Text style={styles.sliderValueText}>{sliderValuePreparado}</Text>
+              <Text style={styles.sliderValueText}>{sliderValue}</Text>
             </View>
 
             {Platform.OS === 'web' ? (
               <input
                 type="range"
                 min={0}
-                max={10}
+                max={100}
                 step={1}
-                value={sliderValuePreparado}
-                onChange={(e) => setSliderValuePreparado(Number(e.target.value))}
+                value={sliderValue}
+                onChange={(e) => setSliderValue(Number(e.target.value))}
                 style={{
                   width: '100%',
                   marginTop: 10,
@@ -112,9 +69,9 @@ const FeedbackScreen = () => {
             ) : (
               <Slider
                 minimumValue={0}
-                maximumValue={10}
-                value={sliderValuePreparado}
-                onValueChange={setSliderValuePreparado}
+                maximumValue={100}
+                value={sliderValue}
+                onValueChange={setSliderValue}
                 step={1}
                 minimumTrackTintColor="#4CAF50"
                 maximumTrackTintColor="#ddd"
@@ -123,38 +80,28 @@ const FeedbackScreen = () => {
               />
             )}
 
+
             <View style={styles.sliderLabels}>
               <View style={styles.labelContainerLeft}>
                 <Text style={styles.labelValue}>0</Text>
-                <Text style={styles.labelText}>Nada confiante</Text>
+                <Text style={styles.labelText}>Quase nada</Text>
               </View>
 
-              <View style={styles.labelContainer}>
-                <Text style={styles.labelValue}>5</Text>
-                <Text style={styles.labelText}>Mais ou menos</Text>
-              </View>
+
 
               <View style={styles.labelContainerRight}>
-                <Text style={styles.labelValue}>10</Text>
-                <Text style={styles.labelText}>Muito confiante</Text>
+                <Text style={styles.labelValue}>100</Text>
+                <Text style={styles.labelText}>Totalmente</Text>
               </View>
             </View>
           </View>
 
           {/* Botão próximo */}
           <TouchableOpacity
-            style={[
-              styles.button,
-              (!selecionadoComoCostumaLidar || !selecionadoPensarFuturo) && { backgroundColor: '#ccc' }, // desativado
-            ]}
+            style={styles.button}
             onPress={handleNext}
-            disabled={(!selecionadoComoCostumaLidar || !selecionadoPensarFuturo)}
           >
-            <Text style={[
-              styles.buttonText,
-              (!selecionadoComoCostumaLidar || !selecionadoPensarFuturo) && { color: '#aaa' },
-            ]}
-            >Me conte mais...</Text>
+            <Text style={styles.buttonText}>Me conte mais...</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -211,7 +158,6 @@ const styles = StyleSheet.create({
   opcaoTexto: {
     fontSize: 16,
     color: '#333',
-    marginEnd: 20,
   },
   radioCirculo: {
     height: 20,
@@ -263,10 +209,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#4CAF50',
-  },
-  labelContainer: {
-    alignItems: 'center',
-    flex: 1,
   },
   labelContainerLeft: {
     alignItems: 'flex-start',

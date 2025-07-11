@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function WelcomeScreen() {
     const router = useRouter();
@@ -18,24 +18,24 @@ export default function WelcomeScreen() {
 
                 <Text style={styles.subtitle}>
                     Pronto(a) para tranformar sua vida?{'\n'}
-                    Mude a forma de pensar, sentir e agir 
-                    com novas conexões e 
+                    Mude a forma de pensar, sentir e agir
+                    com novas conexões e
                     autoconsciência.
                 </Text>
 
                 <View style={styles.card}>
                     <Text style={styles.cardText}>
-                        📝 A autoavaliação é um pequeno 
-                        passo com grande impacto. É 
-                        simples, e pode fazer diferença no 
+                        📝 A autoavaliação é um pequeno
+                        passo com grande impacto. É
+                        simples, e pode fazer diferença no
                         seu bem-estar.
                     </Text>
-                    <Text style={styles.cardText}>
+                    <Text style={[styles.cardText, { fontWeight: 'bold' }]}>
                         💙 Você merece esse cuidado!
                     </Text>
                 </View>
 
-                <TouchableOpacity style={styles.button}  onPress={() => router.push('/(autoavaliacao)/passo1')}>
+                <TouchableOpacity style={styles.button} onPress={() => router.push('/(autoavaliacao)/passo1')}>
                     <Text style={styles.buttonText}>Começar minha autoavaliação</Text>
                 </TouchableOpacity>
             </View>
@@ -43,11 +43,13 @@ export default function WelcomeScreen() {
     );
 }
 
+const { width } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
     containerRoot: {
         flex: 1,
     },
-     container: {
+    container: {
         flex: 1,
         /*backgroundColor: '#DA5CE3',*/
         alignItems: 'center',
@@ -64,34 +66,34 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         color: '#fff',
-        marginBottom: 12,
+        marginBottom: 30,
     },
     subtitle: {
         fontSize: 16,
         textAlign: 'center',
         color: '#fff',
-        marginBottom: 24,
+        marginBottom: 30,
         lineHeight: 24,
     },
     card: {
         backgroundColor: '#fff',
         borderRadius: 16,
         padding: 20,
-        marginBottom: 32,
+        marginBottom: 50,
         width: '100%',
     },
     cardText: {
         fontSize: 16,
         color: '#000',
         textAlign: 'center',
-        marginBottom: 12,
+        marginBottom: 30,
     },
     button: {
-        backgroundColor: '#4438F2',
+        backgroundColor: '#FFA45E',
         paddingVertical: 16,
         paddingHorizontal: 32,
         borderRadius: 50,
-        width: '100%',
+        width: width - 80,
         alignItems: 'center',
     },
     buttonText: {

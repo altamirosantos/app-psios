@@ -1,50 +1,75 @@
-import Slider from '@react-native-community/slider';
+import { useForm } from '@/context/FormContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
 
-const options = {
-  emotions: [
-    "Alegria", "Tristeza", "Raiva", "Medo", "Surpresa", "Nojo", "Confiança",
-    "Antecipação", "Amor", "Culpa", "Vergonha", "Ansiedade", "Esperança", "Compaixão",
-    "Orgulho", "Gratidão", "Sensação de desmaio", "Sensação de bolo na garganta", "Tontura",
-    "Suor frio", "Náuseas", "Sufocamento", "Palpitações", "Dor ou pressão no peito",
-    "Tremor", "Vazio", "Desesperança", "Me sentindo estranho(a)"
-  ],
-  reactions: [
-    "Fugi", "Evitei", "Paralisei", "Andei de um lado para o outro", "Recusei",
-    "Chorei", "Não fiz", "Fiquei calado", "Me isolei"
-  ],
-  factors: [
-    "Estresse no trabalho ou estudos", "Conflitos familiares ou relacionamentos",
-    "Preocupações financeiras", "Problemas de saúde física", "Solidão ou isolamento", "Falta de sono ou cansaço",
-    "Expectativas altas sobre si", "Luto", "Insegurança com o futuro", "Falta de tempo para si",
-    "Mudanças climáticas", "Nenhum desses", "Outro (específico)"
-  ]
-};
+const opCard1 = [
+  'Tudo bem, faz parte.',
+  'O que posso aprender com isso?',
+  'A culpa é minha…',
+  'Isso sempre acontece comigo.',
+];
+
+const opCard2 = [
+  'No que sente.',
+  'No que pensa.',
+  'No que os outros esperam.',
+  'No que faça mais sentido no momento.',
+];
+
+const opCard3 = [
+  'Ouvir com empatia, mas sem se sobrecarregar.',
+  'Tentar agradar e evitar conflitos.',
+  'Se proteger e manter certa distância.',
+  'Assumir a liderança ou tomar iniciativa.',
+];
+
+const opCard4 = [
+  'Me animo com o novo e me adapto fácil.',
+  'Analiso primeiro, mas topo se fizer sentido.',
+  'Sinto receio e prefiro ficar na zona de conforto.',
+  'Evite mudanças máximas.',
+];
+
+const opCard5 = [
+  'Penso demais, fico inseguro(a) e adio a decisão.',
+  'Sigo meu impulso ou intuição, sem pensar muito.',
+  'Faça listas, compare prós e contras.',
+  'Peço conselhos e opiniões antes de decidir.',
+  'Confie em mim e escolho o que mais faz sentido na hora.',
+];
+
+const opCard6 = [
+  'Criatividade.',
+  'Persistência.',
+  'Foco e organização.',
+  'Empatia.',
+  'Resiliência.',
+  'Capacidade de ouvir.',
+];
 
 const FeedbackScreen = () => {
-  const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);
-  const [selectedReactions, setSelectedReactions] = useState<string[]>([]);
-  const [selectedFactors, setSelectedFactors] = useState<string[]>([]);
-  const [sliderValue, setSliderValue] = useState(0);
-  const [trigger, setTrigger] = useState('');
-  const [thoughts, setThoughts] = useState('');
+  const [selecionadoOpCard1, setSelecionadoOpCard1] = useState<string | null>(null);
+  const [selecionadoOpCard2, setSelecionadoOpCard2] = useState<string | null>(null);
+  const [selecionadoOpCard3, setSelecionadoOpCard3] = useState<string | null>(null);
+  const [selecionadoOpCard4, setSelecionadoOpCard4] = useState<string | null>(null);
+  const [selecionadoOpCard5, setSelecionadoOpCard5] = useState<string | null>(null);
+  const [selecionadoOpCard6, setSelecionadoOpCard6] = useState<string | null>(null);
 
-  const toggleOption = (option: string, setState: React.Dispatch<React.SetStateAction<string[]>>, state: string[]) => {
-    if (state.includes(option)) {
-      setState(state.filter(item => item !== option));
-    } else {
-      setState([...state, option]);
-    }
+  const { updateForm } = useForm();
+
+  const handleNext = () => {
+    updateForm({ passo5Card1: selecionadoOpCard1 ?? '', passo5Card2: selecionadoOpCard2 ?? '', passo5Card3: selecionadoOpCard3 ?? '', passo5Card4: selecionadoOpCard4 ?? '', passo5Card5: selecionadoOpCard5 ?? '', passo5Card6: selecionadoOpCard6 ?? '' });
+    router.push('/passo6');
   };
 
   return (
@@ -59,117 +84,117 @@ const FeedbackScreen = () => {
             resizeMode="contain"
           />
           <View style={styles.card}>
-            <Text style={styles.title}>Quais emoções você está sentindo agora?</Text>
-            <Text style={styles.subtitle}>Selecione todas as emoções que se aplicam.</Text>
-            <View style={styles.tagContainer}>
-              {options.emotions.map((emotion) => (
-                <TouchableOpacity
-                  key={emotion}
-                  style={[
-                    styles.tag,
-                    selectedEmotions.includes(emotion) && styles.tagSelected
-                  ]}
-                  onPress={() => toggleOption(emotion, setSelectedEmotions, selectedEmotions)}
-                >
-                  <Text style={selectedEmotions.includes(emotion) ? styles.tagTextSelected : styles.tagText}>
-                    {emotion}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <Text style={styles.title}>🤔 Quando algo dá errado, o que vem primeiro na sua mente?</Text>
+            {opCard1.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={styles.opcao}
+                onPress={() => setSelecionadoOpCard1(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard1 === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={styles.opcaoTexto}>{item}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           <View style={styles.card}>
-            <Text style={styles.title}>Que reações você teve diante desses sentimentos?</Text>
-            <Text style={styles.subtitle}>Marque todas as opções que se aplicam.</Text>
-            <View style={styles.tagContainer}>
-              {options.reactions.map((reaction) => (
-                <TouchableOpacity
-                  key={reaction}
-                  style={[
-                    styles.tag,
-                    selectedReactions.includes(reaction) && styles.tagSelected
-                  ]}
-                  onPress={() => toggleOption(reaction, setSelectedReactions, selectedReactions)}
-                >
-                  <Text style={selectedReactions.includes(reaction) ? styles.tagTextSelected : styles.tagText}>
-                    {reaction}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <Text style={styles.title}>✨ Você costuma tomar decisões mais com base:</Text>
+            {opCard2.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={styles.opcao}
+                onPress={() => setSelecionadoOpCard2(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard2 === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={styles.opcaoTexto}>{item}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           <View style={styles.card}>
-            <Text style={styles.title}>Identificando distorções cognitivas</Text>
-            <Text style={styles.subtitle}>Em uma escala de 0 a 100, quanto você cogita ser verdadeiro o que sua mente diz?</Text>
-            <Slider
-              minimumValue={0}
-              maximumValue={100}
-              value={sliderValue}
-              onValueChange={setSliderValue}
-              style={{ marginTop: 10 }}
-            />
-            <Text style={styles.sliderValue}>{Math.round(sliderValue)}</Text>
+            <Text style={styles.title}>👩🏽‍🦱 Quando está com outras pessoas, você tende a:</Text>
+            {opCard3.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={styles.opcao}
+                onPress={() => setSelecionadoOpCard3(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard3 === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={styles.opcaoTexto}>{item}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           <View style={styles.card}>
-            <Text style={styles.title}>Fatores influenciadores</Text>
-            <Text style={styles.subtitle}>Quais desses fatores estão afetando seu estado emocional nesse momento? Marque as opções que se aplicam:</Text>
-            <View style={styles.tagContainer}>
-              {options.factors.map((factor) => (
-                <TouchableOpacity
-                  key={factor}
-                  style={[
-                    styles.tag,
-                    selectedFactors.includes(factor) && styles.tagSelected
-                  ]}
-                  onPress={() => toggleOption(factor, setSelectedFactors, selectedFactors)}
-                >
-                  <Text style={selectedFactors.includes(factor) ? styles.tagTextSelected : styles.tagText}>
-                    {factor}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+            <Text style={styles.title}>🧩 Como você costuma reagir a situações novas ou desconhecidas?</Text>
+            {opCard4.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={styles.opcao}
+                onPress={() => setSelecionadoOpCard4(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard4 === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={styles.opcaoTexto}>{item}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           <View style={styles.card}>
-            <Text style={styles.title}>Detalhes Adicionais</Text>
-            <Text style={styles.subtitle}>O que aconteceu? Descreva a situação, quando e onde ocorreu, o que fez e quem esteve envolvido.</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="O que aconteceu?"
-              value={trigger}
-              onChangeText={setTrigger}
-              multiline
-            />
-            <Text style={styles.subtitle}>Qual foi o gatilho? Identifique o estímulo que despertou sua emoção. Palavras, cheiros, músicas ou tom de voz podem despertar emoções intensas, decisões e gerar reações físicas ou impulsivas.</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Qual foi o gatilho?"
-              value={trigger}
-              onChangeText={setTrigger}
-              multiline
-            />
-            <Text style={styles.subtitle}>Que pensamento, imagem ou lembrança veio antes da emoção? O que mais te incomodou?</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="O que mais te incomodou?"
-              value={thoughts}
-              onChangeText={setThoughts}
-              multiline
-            />
+            <Text style={styles.title}>🟣 Quando você precisa tomar uma decisão importante, como costuma agir?</Text>
+            {opCard5.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={styles.opcao}
+                onPress={() => setSelecionadoOpCard5(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard5 === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={styles.opcaoTexto}>{item}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
-          <TouchableOpacity style={styles.submitButton}>
-            <Text style={styles.submitText}>Enviar Feedback</Text>
+          <View style={styles.card}>
+            <Text style={styles.title}>🌟 Quando você pensa nas suas qualidades e forças internas, o que mais se destaca em você?</Text>
+            {opCard6.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={styles.opcao}
+                onPress={() => setSelecionadoOpCard6(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard6 === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={styles.opcaoTexto}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+
+          {/* Botão próximo */}
+          <TouchableOpacity
+            style={[
+              styles.button,
+              (!selecionadoOpCard1 || !selecionadoOpCard2 || !selecionadoOpCard3 || !selecionadoOpCard4 || !selecionadoOpCard5 || !selecionadoOpCard6) && { backgroundColor: '#ccc' }, // desativado
+            ]}
+            onPress={handleNext}
+            disabled={(!selecionadoOpCard1 || !selecionadoOpCard2 || !selecionadoOpCard3 || !selecionadoOpCard4 || !selecionadoOpCard5 || !selecionadoOpCard6)}
+          >
+            <Text style={[
+              styles.buttonText,
+              (!selecionadoOpCard1 || !selecionadoOpCard2 || !selecionadoOpCard3 || !selecionadoOpCard4 || !selecionadoOpCard5 || !selecionadoOpCard6) && { color: '#aaa' },
+            ]}
+            >Me conte mais...</Text>
           </TouchableOpacity>
-
-          <Text style={styles.footerNote}>
-            Obrigado por compartilhar seus sentimentos. Suas respostas nos ajudam a melhorar nossos serviços e oferecer suporte personalizado.
-          </Text>
-
         </View>
       </ScrollView>
     </LinearGradient>
@@ -177,6 +202,7 @@ const FeedbackScreen = () => {
 };
 
 export default FeedbackScreen;
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   logo: {
@@ -186,6 +212,7 @@ const styles = StyleSheet.create({
   },
   containerRoot: {
     flex: 1,
+    paddingBottom: 50
   },
   container: {
     flex: 1,
@@ -201,6 +228,8 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
+    width: '100%', // ocupa 100% da área do container pai
+    maxWidth: 400,
   },
   title: {
     fontSize: 18,
@@ -213,27 +242,50 @@ const styles = StyleSheet.create({
     color: '#555',
     marginVertical: 8,
   },
-  tagContainer: {
+  opcao: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginTop: 10,
+    alignItems: 'center',
+    marginBottom: 12,
   },
-  tag: {
-    backgroundColor: '#f3f4f6',
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    margin: 4,
-  },
-  tagSelected: {
-    backgroundColor: '#6366f1',
-  },
-  tagText: {
+  opcaoTexto: {
+    fontSize: 16,
     color: '#333',
+    marginEnd: 20,
   },
-  tagTextSelected: {
+  radioCirculo: {
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#999',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  radioSelecionado: {
+    height: 10,
+    width: 10,
+    borderRadius: 5,
+    backgroundColor: '#9C27B0',
+  },
+  button: {
+    backgroundColor: '#4F46E5',
+    paddingVertical: 16,
+    paddingHorizontal: 40,
+    borderRadius: 50,
+    marginTop: 40,
+    width: width - 80,
+  },
+  buttonText: {
     color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  sliderLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
   },
   sliderValue: {
     textAlign: 'center',
@@ -241,30 +293,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 4,
   },
-  input: {
-    backgroundColor: '#f3f4f6',
-    borderRadius: 8,
-    padding: 10,
-    marginTop: 10,
-    textAlignVertical: 'top',
-    minHeight: 60,
-  },
-  submitButton: {
-    backgroundColor: '#4f46e5',
-    borderRadius: 25,
-    padding: 14,
+  sliderValueContainer: {
     alignItems: 'center',
-    marginVertical: 16,
+    marginTop: 16,
+    marginBottom: 2,
   },
-  submitText: {
-    color: '#fff',
+  sliderValueText: {
+    fontSize: 18,
     fontWeight: 'bold',
+    color: '#4CAF50',
   },
-  footerNote: {
-    textAlign: 'center',
-    color: '#fff',
+  labelContainer: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  labelValue: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  labelText: {
     fontSize: 12,
-    marginBottom: 40,
-    paddingHorizontal: 20,
+    textAlign: 'center',
+    color: '#333',
   },
 });
