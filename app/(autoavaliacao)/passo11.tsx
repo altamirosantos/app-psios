@@ -21,12 +21,12 @@ const opcoes = [
 ];
 
 const FeedbackScreen = () => {
-  const [selecionado, setSelecionado] = useState<number | null>(null);
+  const [selecionado, setSelecionado] = useState<string | null>(null);
 
   const { updateForm } = useForm();
 
   const handleNext = () => {
-    updateForm({ espelho: selecionado ?? 1 });
+    updateForm({ espelho: selecionado ?? '' });
     router.push('/passoFinaliza');
   };
 
@@ -62,8 +62,8 @@ const FeedbackScreen = () => {
               {opcoes.map((opcao) => (
                 <TouchableOpacity
                   key={opcao.id}
-                  style={[styles.opcao, selecionado === opcao.id && styles.opcaoSelecionada]}
-                  onPress={() => setSelecionado(opcao.id)}
+                  style={[styles.opcao, selecionado === opcao.label && styles.opcaoSelecionada]}
+                  onPress={() => setSelecionado(opcao.label)}
                 >
                   <Text style={styles.opcaoTexto}>
                     {opcao.emoji} {opcao.label}

@@ -18,13 +18,6 @@ const FeedbackScreen = () => {
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
       <ScrollView>
         <View style={styles.container}>
-
-          {/* Logo */}
-          <Image
-            source={require('@/assets/images/logo.png')} // Substitua por sua logo
-            style={styles.logo}
-            resizeMode="contain"
-          />
           <View style={styles.card}>
 
             <View style={styles.containerImage}>

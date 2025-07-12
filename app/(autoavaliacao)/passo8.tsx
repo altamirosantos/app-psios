@@ -31,7 +31,7 @@ const FeedbackScreen = () => {
   const { updateForm } = useForm();
 
   const handleNext = () => {
-    updateForm({ passo8ComoSeComportou: comoSeComportou, passo8AlguemEnvolvido: alguemEnvolvido, passo8Gatilho: gatilho, passo8Pensamento: pensamento });
+    updateForm({ passo8Oque: oque, passo8Quando: quando, passo8ComoSeComportou: comoSeComportou, passo8AlguemEnvolvido: alguemEnvolvido, passo8Gatilho: gatilho, passo8Pensamento: pensamento });
     router.push('/passo9');
   };
 
@@ -215,6 +215,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     textAlignVertical: 'top',
     minHeight: 60,
+    color: 'black',
   },
   submitButton: {
     backgroundColor: '#4f46e5',

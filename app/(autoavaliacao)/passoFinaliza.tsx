@@ -1,5 +1,6 @@
 import { useForm } from '@/context/FormContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import React from 'react';
 import {
   Dimensions,
@@ -16,10 +17,32 @@ const FeedbackScreen = () => {
 
   const { data, updateForm } = useForm();
 
+
   const enviar = async () => {
-    //await api.post('/formulario', data);
-    console.log('Formulário enviado com sucesso!', data);
+    try {
+      console.log('Formulário enviado com sucesso!', data);
+      const response = await fetch(
+        'https://n8n.softdados.com/webhook-test/4d114a91-60ed-4286-b2a4-f6795f562d18',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data), // `data` deve estar definido no seu escopo
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Erro ao enviar dados: ${response.status}`);
+      }
+
+      console.log('Formulário enviado com sucesso!', data);
+      router.push('/(tabs)/home');
+    } catch (error) {
+      console.error('Erro ao enviar formulário:', error);
+    }
   };
+
 
   return (
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>

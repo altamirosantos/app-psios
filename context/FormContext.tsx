@@ -24,7 +24,7 @@ type FormData = {
   passo8Pensamento?: string;
   distorcoesPensamento?: string[];
   enxergarMundo?: string;
-  espelho?: number;
+  espelho?: string;
 };
 
 type FormContextType = {

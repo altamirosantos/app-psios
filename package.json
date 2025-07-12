@@ -13,7 +13,7 @@
     "lint": "expo lint",
     "package-dev": "eas build --platform android --profile development",
     "package-prod": "eas build --platform android --profile release",
-    "package-test": "eas build --platform android --profile teste",
+    "package-test": "eas build --platform android --profile test",
     "submit-prod": "eas submit --platform android --profile release"
   },
   "jest": {
