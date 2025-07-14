@@ -18,13 +18,14 @@ type FormData = {
   passo7Card1?: number;
   passo8Oque?: string; 
   passo8Quando?: string;
-  passo8ComoSeComportou?: string;
+  passo8ComoSeComportou?: string[];
   passo8AlguemEnvolvido?: string;
   passo8Gatilho?: string;
   passo8Pensamento?: string;
   distorcoesPensamento?: string[];
   enxergarMundo?: string;
   espelho?: string;
+  email?: string;
 };
 
 type FormContextType = {

@@ -1,4 +1,5 @@
 import { useForm } from '@/context/FormContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React from 'react';
@@ -20,15 +21,25 @@ const FeedbackScreen = () => {
 
   const enviar = async () => {
     try {
-      console.log('Formulário enviado com sucesso!', data);
+      const session = await AsyncStorage.getItem('user');
+      console.log('session >>>>>>  ', session);
+      const user = JSON.parse(session ?? '{email: ""}');
+      updateForm({ email: user.email });
+      //data.email = email ?? '';
+      const dadosParaEnvio = {
+        ...data,
+        email: user.email ?? ''
+      };
+      //console.log('Formulário enviado com sucesso!', dadosParaEnvio);
+
       const response = await fetch(
-        'https://n8n.softdados.com/webhook-test/4d114a91-60ed-4286-b2a4-f6795f562d18',
+        'https://n8n.softdados.com/webhook/4d114a91-60ed-4286-b2a4-f6795f562d18',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(data), // `data` deve estar definido no seu escopo
+          body: JSON.stringify(dadosParaEnvio), // `data` deve estar definido no seu escopo
         }
       );
 
@@ -36,7 +47,7 @@ const FeedbackScreen = () => {
         throw new Error(`Erro ao enviar dados: ${response.status}`);
       }
 
-      console.log('Formulário enviado com sucesso!', data);
+      console.log('Formulário enviado com sucesso!', dadosParaEnvio);
       router.push('/(tabs)/home');
     } catch (error) {
       console.error('Erro ao enviar formulário:', error);

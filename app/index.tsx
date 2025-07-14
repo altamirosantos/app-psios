@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function Index() {
-  alert('renderizou');
+  //alert('renderizou')
   const router = useRouter();
 
   useEffect(() => {

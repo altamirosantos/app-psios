@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { RadioButton } from 'react-native-paper';
+import { Checkbox } from 'react-native-paper';
 
 
 const comportamentoOptions = [
@@ -23,12 +23,20 @@ const comportamentoOptions = [
 const FeedbackScreen = () => {
   const [oque, setOque] = useState('');
   const [quando, setQuando] = useState('');
-  const [comoSeComportou, setComoSeComportou] = useState<string>("");
+  const [comoSeComportou, setComoSeComportou] = useState<string[]>([]);
   const [alguemEnvolvido, setAlguemEnvolvido] = useState('');
   const [gatilho, setGatilho] = useState('');
   const [pensamento, setPensamento] = useState('');
 
   const { updateForm } = useForm();
+
+  const toggleComportamento = (option: string) => {
+    setComoSeComportou(prev =>
+      prev.includes(option)
+        ? prev.filter(item => item !== option)
+        : [...prev, option]
+    );
+  };
 
   const handleNext = () => {
     updateForm({ passo8Oque: oque, passo8Quando: quando, passo8ComoSeComportou: comoSeComportou, passo8AlguemEnvolvido: alguemEnvolvido, passo8Gatilho: gatilho, passo8Pensamento: pensamento });
@@ -49,19 +57,20 @@ const FeedbackScreen = () => {
 
           <View style={styles.card}>
             <Text style={styles.title}>😊 Seu bem-estar é importante! Vamos juntos entender?</Text>
-            <Text style={styles.subtitle}>Preencha abaixo de forma breve e sincera. Isso vai ajudar vocë a entender melhor o que está afetando seu estado emocional.</Text>
+            <Text style={styles.subtitle}>Com base no que você acredita no pensamento que causou essas sensações e sentimentos, preencha abaixo de forma breve e sincera. Isso vai ajudar vocë a entender melhor o que está afetando seu estado emocional.</Text>
             <Text style={styles.title}>📌 Situação</Text>
+            <Text style={styles.subtitle}>O que aconteceu?</Text>
             <TextInput
               style={styles.input}
-              placeholder="O que aconteceu?"
+              placeholder=""
               value={oque}
               onChangeText={setOque}
               multiline
             />
-
+            <Text style={styles.subtitle}>Quando e onde foi?</Text>
             <TextInput
               style={styles.input}
-              placeholder="Quando e onde foi?"
+              placeholder=""
               value={quando}
               onChangeText={setQuando}
               multiline
@@ -72,12 +81,11 @@ const FeedbackScreen = () => {
               <View style={styles.radioGrid}>
                 {comportamentoOptions.map((option, index) => (
                   <View key={index} style={styles.radioItem}>
-                    <RadioButton
-                      value={option}
-                      status={comoSeComportou === option ? 'checked' : 'unchecked'}
-                      onPress={() => setComoSeComportou(option)}
+                    <Checkbox
+                      status={comoSeComportou.includes(option) ? 'checked' : 'unchecked'}
+                      onPress={() => toggleComportamento(option)}
                     />
-                    <Text style={styles.label} onPress={() => setComoSeComportou(option)}>
+                    <Text style={styles.label} onPress={() => toggleComportamento(option)}>
                       {option}
                     </Text>
                   </View>
@@ -85,9 +93,10 @@ const FeedbackScreen = () => {
               </View>
             </View>
 
+            <Text style={styles.subtitle}>Alguém esteve envolvido? Quem?</Text>
             <TextInput
               style={styles.input}
-              placeholder="Alguém esteve envolvido? Quem?"
+              placeholder=""
               value={alguemEnvolvido}
               onChangeText={setAlguemEnvolvido}
               multiline
@@ -119,14 +128,14 @@ const FeedbackScreen = () => {
           <TouchableOpacity
             style={[
               styles.button,
-              (!oque || !quando || !comoSeComportou || !alguemEnvolvido || !gatilho || !pensamento) && { backgroundColor: '#ccc' },
+              (!oque || !quando || comoSeComportou.length === 0 || !alguemEnvolvido || !gatilho || !pensamento) && { backgroundColor: '#ccc' },
             ]}
-            disabled={!oque || !quando || !comoSeComportou || !alguemEnvolvido || !gatilho || !pensamento}
+            disabled={!oque || !quando || comoSeComportou.length === 0 || !alguemEnvolvido || !gatilho || !pensamento}
             onPress={handleNext}
           >
             <Text style={[
               styles.buttonText,
-              (!oque || !quando || !comoSeComportou || !alguemEnvolvido || !gatilho || !pensamento) && { color: '#aaa' },
+              (!oque || !quando || comoSeComportou.length === 0 || !alguemEnvolvido || !gatilho || !pensamento) && { color: '#aaa' },
             ]}>Me conte mais...</Text>
           </TouchableOpacity>
         </View>
@@ -173,10 +182,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 10,
+    marginTop: 20,
   },
   subtitle: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: 'left',
     color: '#555',
     marginVertical: 8,
   },

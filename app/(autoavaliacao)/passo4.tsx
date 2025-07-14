@@ -14,8 +14,8 @@ import {
 
 const comoCostumaLidar = [
   'Me expresso com facilidade (converso, escrevo, crio).',
-  'Levo um tempo, mas acabei organizando dentro de mim.',
-  'Guarde para mim e evite mostrar.',
+  'Levo um tempo, mas acabo organizando dentro de mim.',
+  'Guardo para mim e evito mostrar.',
   'Nem sempre entendo o que estou sentindo.',
 ];
 
