@@ -10,11 +10,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "scheme": "myapp",
+    "scheme": "app-psios",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+       "bundleIdentifier": "com.altamirosantos.apppsios"
     },
     "android": {
       "adaptiveIcon": {

@@ -26,6 +26,10 @@ type FormData = {
   enxergarMundo?: string;
   espelho?: string;
   email?: string;
+  nome?: string;
+  apelido?: string;
+  nascimento?: Date;
+  genero?: string;
 };
 
 type FormContextType = {

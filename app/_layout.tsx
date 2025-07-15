@@ -5,8 +5,10 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
+import { AuthProvider } from '@/context/AuthContext';
 import { FormProvider } from '@/context/FormContext'; // ← importe o provider
 import { useColorScheme } from '@/hooks/useColorScheme';
+import Toast from 'react-native-toast-message';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,10 +28,13 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <FormProvider>
-        <Slot />
-        <StatusBar style="auto" />
-      </FormProvider>
+      <AuthProvider> {/* ⬅️ Envolve tudo com o AuthProvider */}
+        <FormProvider>
+          <Slot />
+          <Toast />
+          <StatusBar style="auto" />
+        </FormProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

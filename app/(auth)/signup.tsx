@@ -1,29 +1,30 @@
-import { registerUser } from '@/services/signup.service';
+import { supabase } from '@/lib/supabase';
 import { Feather } from '@expo/vector-icons';
-import DateTimePicker from '@react-native-community/datetimepicker';
+//import DateTimePicker from '@react-native-community/datetimepicker';
+import BirthDatePicker from '@/components/BirthDatePicker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    Alert,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import Toast from 'react-native-toast-message';
 
 export default function SignUpScreen() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
 
-    const [name, setName] = useState('');
+    //const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
@@ -44,19 +45,61 @@ export default function SignUpScreen() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
+
     const handleSignUp = async () => {
         try {
+            if (!email || !password || !confirmPassword) {
+                Alert.alert('Erro', 'Preencha todos os campos de e-mail e senha.');
+                setLoading(false);
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                Alert.alert('Erro', 'As senhas não coincidem.');
+                setLoading(false);
+                return;
+            }
             setLoading(true);
-            await registerUser(email, password, {
+
+            // 1. Cria o usuário no Supabase Auth
+            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                email,
+                password,
+            });
+
+            if (signUpError) {
+                throw new Error(signUpError.message);
+            }
+
+            const userId = signUpData?.user?.id;
+
+            if (!userId) {
+                throw new Error('Erro ao obter ID do usuário após cadastro.');
+            }
+
+            // 2. Insere dados extras na tabela `profiles`
+            const { error: insertError } = await supabase.from('profiles').insert({
+                id: userId,
                 nome: fullName,
                 apelido: nickname,
                 nascimento: birthDate,
-                genero: value === 'outro' ? customGenero : value,
+                genero: (value === 'outro' ? customGenero : value) ?? "",
             });
+
+            if (insertError) {
+                throw new Error(insertError.message);
+            }
+
             Alert.alert('Sucesso', 'Conta criada com sucesso!');
             router.push('/login');
+
         } catch (error: any) {
-            Alert.alert('Erro', error.message);
+            //Alert.alert('Erro', error.message);
+            Toast.show({
+                type: 'error',
+                text1: 'Erro de Cadastro',
+                text2: error.message,
+            });
         } finally {
             setLoading(false);
         }
@@ -83,8 +126,8 @@ export default function SignUpScreen() {
                             placeholder="Nome completo"
                             placeholderTextColor="#555"
                             style={styles.input}
-                            value={name}
-                            onChangeText={setName}
+                            value={fullName}
+                            onChangeText={setFullName}
                         />
 
                         {/* Gênero */}
@@ -118,7 +161,7 @@ export default function SignUpScreen() {
                                     color: '#000',
                                 }}
                                 zIndex={10}
-                               
+
                             />
                         </View>
 
@@ -143,33 +186,17 @@ export default function SignUpScreen() {
                             onChangeText={setNickname}
                         />
 
-                        {/* Data de nascimento */}
-                        <TouchableOpacity
-                            onPress={() => setShowDatePicker(true)}
-                            style={styles.input}
-                        >
-                            <Text style={{ color: birthDate ? '#000' : '#555' }}>
-                                {birthDate ? birthDate.toLocaleDateString() : 'Data de nascimento'}
-                            </Text>
-                        </TouchableOpacity>
-                        {showDatePicker && (
-                            <DateTimePicker
-                                value={birthDate}
-                                mode="date"
-                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                                onChange={(event, selectedDate) => {
-                                    setShowDatePicker(false);
-                                    if (selectedDate) setBirthDate(selectedDate);
-                                }}
-                                maximumDate={new Date()}
-                            />
-                        )}
+                        <BirthDatePicker value={birthDate} onChange={setBirthDate} />
 
                         {/* Email */}
                         <TextInput
                             placeholder="Email"
                             placeholderTextColor="#555"
                             style={styles.input}
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
                         />
 
                         {/* Senha */}
@@ -179,6 +206,8 @@ export default function SignUpScreen() {
                                 placeholderTextColor="#555"
                                 secureTextEntry={!showPassword}
                                 style={styles.inputField}
+                                value={password}
+                                onChangeText={setPassword}
                             />
                             <TouchableOpacity
                                 onPress={() => setShowPassword(!showPassword)}
@@ -198,6 +227,8 @@ export default function SignUpScreen() {
                                 placeholderTextColor="#555"
                                 secureTextEntry={!showConfirmPassword}
                                 style={styles.inputField}
+                                value={confirmPassword}
+                                onChangeText={setConfirmPassword}
                             />
                             <TouchableOpacity
                                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}

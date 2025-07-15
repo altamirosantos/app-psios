@@ -1,7 +1,10 @@
 import { useForm } from '@/context/FormContext';
+import { db } from '@/lib/firebaseConfig'; // ajuste conforme seu projeto
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
+import { getAuth } from 'firebase/auth';
+import { doc, getDoc } from "firebase/firestore";
 import React from 'react';
 import {
   Dimensions,
@@ -18,6 +21,35 @@ const FeedbackScreen = () => {
 
   const { data, updateForm } = useForm();
 
+  const buscarNomeGenero = async () => {
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      console.error("Usuário não está autenticado.");
+      return null;
+    }
+
+    const userRef = doc(db, "users", currentUser.uid);
+    const docSnap = await getDoc(userRef);
+
+    if (docSnap.exists()) {
+      const userData = docSnap.data();
+      const nome = userData.fullName;
+      const apelido = userData.nickname;
+      const nascimento = userData.birthDate;
+      const genero = userData.gender;
+
+      console.log("Nome:", nome);
+      console.log("Gênero:", genero);
+
+      return { nome, genero, apelido, nascimento };
+    } else {
+      console.warn("Usuário não encontrado no Firestore.");
+      return null;
+    }
+  };
+
 
   const enviar = async () => {
     try {
@@ -26,10 +58,21 @@ const FeedbackScreen = () => {
       const user = JSON.parse(session ?? '{email: ""}');
       updateForm({ email: user.email });
       //data.email = email ?? '';
+
+      
       const dadosParaEnvio = {
         ...data,
         email: user.email ?? ''
       };
+
+      const nomeGenero = await buscarNomeGenero();
+
+      if (nomeGenero) {
+        dadosParaEnvio.nome = nomeGenero.nome;
+        dadosParaEnvio.genero = nomeGenero.genero;
+        dadosParaEnvio.apelido = nomeGenero.apelido;
+        dadosParaEnvio.nascimento = nomeGenero.nascimento;
+      }
       //console.log('Formulário enviado com sucesso!', dadosParaEnvio);
 
       const response = await fetch(

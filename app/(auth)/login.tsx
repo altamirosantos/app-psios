@@ -1,10 +1,13 @@
-import { login } from '@/services/auth.service';
+//import { login } from '@/services/auth.service';
+import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/lib/supabase';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 export default function LoginScreen() {
     const navigation = useNavigation();
@@ -12,17 +15,63 @@ export default function LoginScreen() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+
+    const { setUser } = useAuth();
+
     const handleLogin = async () => {
         setLoading(true);
         try {
-            const user = await login(email, password);
-            console.log("Usuário logado:", user.email);
-            // redirecionar ou guardar dados se quiser
-            //navigation.navigate('(tabs)/home' as never);
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            const user = data.user;
+            const userId = user.id;
+
+            // Buscar o perfil
+            const { data: profile, error: profileError } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', userId)
+                .single();
+
+            if (profileError || !profile) {
+                throw new Error('Erro ao carregar o perfil do usuário.');
+            }
+
+            // Salvar no contexto
+            setUser({
+                id: userId,
+                email: user.email ?? '',
+                nome: profile.nome,
+                apelido: profile.apelido,
+                nascimento: profile.nascimento,
+                genero: profile.genero,
+            });
+
             router.replace('/boasVindas');
+
         } catch (error: any) {
-            console.log("Erro ao fazer login:", error.message);
-            Alert.alert("Erro de login", error.message);
+            console.error("Erro ao fazer login:", error);
+
+            let errorMessage = 'Erro ao fazer login. Tente novamente.';
+
+            if (error?.message === 'Invalid login credentials') {
+                errorMessage = 'Email ou senha inválidos.';
+            } else if (error?.message) {
+                errorMessage = error.message;
+            }
+            //Alert.alert('Erro de login', error.message);
+            Toast.show({
+                type: 'error',
+                text1: 'Erro de login',
+                text2: errorMessage,
+            });
         } finally {
             setLoading(false);
         }
