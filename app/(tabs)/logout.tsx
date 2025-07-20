@@ -6,9 +6,12 @@ export default function Logout() {
   const router = useRouter();
 
   useEffect(() => {
-    // Executa logout assim que o usuário acessar a aba
-    logout();
-    router.replace('/(auth)/login'); // ou onde estiver sua tela de login
+    const handleLogout = async () => {
+      await logout(); // espera o logout ser concluído
+      router.replace('/(auth)/login'); // só redireciona depois
+    };
+
+    handleLogout();
   }, []);
 
   return null;

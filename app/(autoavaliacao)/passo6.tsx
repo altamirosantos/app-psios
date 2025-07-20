@@ -1,8 +1,8 @@
-import { useForm } from '@/context/FormContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
@@ -13,26 +13,49 @@ import {
 } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 
-const emotionalFactors = [
-  "Estresse no trabalho ou estudos.",
-  "Conflitos familiares ou relacionamentos.",
-  "Preocupações financeiras.",
-  "Problemas de saúde física.",
-  "Solidão ou isolamento",
-  "Falta de sono ou cansaço.",
-  "Expectativas altas sobre si.",
-  "Luto.",
-  "Insegurança com o futuro.",
-  "Falta de tempo para si",
-  "Mudanças climáticas",
-  "Nenhum desses",
-  "Outro (específico)"
-];
+import { useForm } from '@/context/FormContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
-const FeedbackScreen = () => {
+
+
+const Passo6 = () => {
+   const { updateForm } = useForm();
+
+  const textColor = useThemeColor('text');
+  const cardColor = useThemeColor('cardBackground');
+  const placeholder = useThemeColor('placeholder');
+  const inputBg = useThemeColor('inputBackground');
   const [selectedItemsPasso6, setSelectedItemsPasso6] = useState<string[]>([]);
 
-  const { updateForm } = useForm();
+ 
+
+  const emotionalFactors = [
+    "Estresse no trabalho ou estudos.",
+    "Conflitos familiares ou relacionamentos.",
+    "Preocupações financeiras.",
+    "Problemas de saúde física.",
+    "Solidão ou isolamento",
+    "Falta de sono ou cansaço.",
+    "Expectativas altas sobre si.",
+    "Luto.",
+    "Insegurança com o futuro.",
+    "Falta de tempo para si",
+    "Mudanças climáticas",
+    "Nenhum",
+    "Outro"
+  ];
+
+
+
+  const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   const toggleItem = (item: string) => {
     if (selectedItemsPasso6.includes(item)) {
@@ -58,20 +81,20 @@ const FeedbackScreen = () => {
             style={styles.logo}
             resizeMode="contain"
           />
-          <View style={styles.card}>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
             <View style={styles.header}>
-              <Text style={styles.title}>
+              <Text style={[styles.title, { color: textColor }]}>
                 🌀 Alguns desses fatores estão afetando seu estado emocional nesse momento?
               </Text>
             </View>
-            <Text style={styles.subtitle}>Marque as opções que se aplicam:</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>Marque as opções que se aplicam:</Text>
             {emotionalFactors.map((item, index) => (
-              <View key={index} style={styles.checkboxContainer}>
+              <View key={index} style={[styles.checkboxContainer, { backgroundColor: inputBg }]}>
                 <Checkbox
                   status={selectedItemsPasso6.includes(item) ? 'checked' : 'unchecked'}
                   onPress={() => toggleItem(item)}
                 />
-                <Text style={styles.checkboxLabel}>{item}</Text>
+                <Text style={[styles.checkboxLabel, { color: textColor }]}>{item}</Text>
               </View>
             ))}
           </View>
@@ -97,7 +120,7 @@ const FeedbackScreen = () => {
   );
 };
 
-export default FeedbackScreen;
+export default Passo6;
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -117,7 +140,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
@@ -135,7 +157,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#555',
     marginVertical: 8,
   },
   opcao: {

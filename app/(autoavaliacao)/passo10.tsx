@@ -1,8 +1,8 @@
-import { useForm } from '@/context/FormContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
@@ -12,15 +12,38 @@ import {
   View
 } from 'react-native';
 
-const ocupacoes = [
-  'Tudo parece difícil ou injusto',
-  'Vejo altos e baixos, tentando encontrar equilíbrio',
-  'Apesar dos desafios, veja beleza e oportunidade',
-];
+import { useForm } from '@/context/FormContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
-const FeedbackScreen = () => {
-  const [selecionado, setSelecionado] = useState<string | null>(null);
+
+
+const Passo10 = () => {
   const { updateForm } = useForm();
+
+   const textColor = useThemeColor('text');
+  const cardColor = useThemeColor('cardBackground');
+  const placeholder = useThemeColor('placeholder');
+  const inputBg = useThemeColor('inputBackground');
+  const [selecionado, setSelecionado] = useState<string | null>(null);
+  
+
+  const ocupacoes = [
+    'Tudo parece difícil ou injusto',
+    'Vejo altos e baixos, tentando encontrar equilíbrio',
+    'Apesar dos desafios, veja beleza e oportunidade',
+  ];
+
+ 
+
+  const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   const handleNext = () => {
     updateForm({ enxergarMundo: selecionado ?? '' });
@@ -38,19 +61,19 @@ const FeedbackScreen = () => {
             style={styles.logo}
             resizeMode="contain"
           />
-          <View style={styles.card}>
-            <Text style={styles.title}>🌍 Como você costuma enxergar o mundo ao seu redor?</Text>
-            <Text style={styles.subtitle}>Seu pensamento contem…</Text>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>🌍 Como você costuma enxergar o mundo ao seu redor?</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>Seu pensamento contem…</Text>
             {ocupacoes.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={styles.opcao}
+                style={[styles.opcao,{ backgroundColor: item === selecionado ? inputBg : 'transparent' }]}
                 onPress={() => setSelecionado(item)}
               >
                 <View style={styles.radioCirculo}>
                   {selecionado === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -75,7 +98,7 @@ const FeedbackScreen = () => {
   );
 };
 
-export default FeedbackScreen;
+export default Passo10;
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -95,7 +118,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
@@ -113,8 +135,8 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#555',
     marginVertical: 8,
+    marginBottom: 20,
   },
   opcao: {
     flexDirection: 'row',
@@ -123,7 +145,6 @@ const styles = StyleSheet.create({
   },
   opcaoTexto: {
     fontSize: 16,
-    color: '#333',
     marginEnd: 20,
   },
   radioCirculo: {

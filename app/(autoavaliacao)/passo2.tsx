@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
@@ -12,21 +13,43 @@ import {
 } from 'react-native';
 
 import { useForm } from '@/context/FormContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
-const options = {
-  emotions: [
-    "Alegria", "Tristeza", "Raiva", "Medo", "Surpresa", "Nojo", "Confiança",
-    "Antecipação", "Amor", "Culpa", "Vergonha", "Ansiedade", "Esperança", "Compaixão",
-    "Orgulho", "Gratidão", "Sensação de desmaio", "Sensação de bolo na garganta", "Tontura",
-    "Suor frio", "Náuseas", "Sufocamento", "Palpitações", "Dor ou pressão no peito",
-    "Tremor", "Vazio", "Desesperança", "Sobrecarregado", "Me sentindo estranho(a)"
-  ]
-};
 
-const FeedbackScreen = () => {
+
+const Passo2 = () => {
+  const { updateForm } = useForm();
+
+  const textColor = useThemeColor('text');
+  const cardColor = useThemeColor('cardBackground');
+  const placeholder = useThemeColor('placeholder');
+  const inputBg = useThemeColor('inputBackground');
   const router = useRouter();
   const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);
-  const { updateForm } = useForm();
+  
+
+  const options = {
+    emotions: [
+      "Alegria", "Tristeza", "Raiva", "Medo", "Surpresa", "Nojo", "Confiança",
+      "Antecipação", "Amor", "Culpa", "Vergonha", "Ansiedade", "Esperança", "Compaixão",
+      "Orgulho", "Gratidão", "Sensação de desmaio", "Sensação de bolo na garganta", "Tontura",
+      "Suor frio", "Náuseas", "Sufocamento", "Palpitações", "Dor ou pressão no peito",
+      "Tremor", "Vazio", "Desesperança", "Sobrecarregado", "Me sentindo estranho(a)", "Desânimo",
+      "Motivado (a)", "Otimista"
+    ]
+  };
+
+  
+
+  const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   const toggleEmotion = (emotion: string) => {
     setSelectedEmotions((prev) =>
@@ -52,21 +75,21 @@ const FeedbackScreen = () => {
             resizeMode="contain"
           />
 
-          <View style={styles.card}>
-            <Text style={styles.title}>Quais emoções você está sentindo agora?</Text>
-            <Text style={styles.subtitle}>Selecione todas as emoções que se aplicam.</Text>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>Quais sentimentos e sensações estão mais presentes em você neste momento?</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>Selecione todas as emoções que se aplicam.</Text>
 
             <View style={styles.tagContainer}>
               {options.emotions.map((emotion) => (
                 <TouchableOpacity
                   key={emotion}
                   style={[
-                    styles.tag,
+                    styles.tag, {backgroundColor: inputBg},
                     selectedEmotions.includes(emotion) && styles.tagSelected
                   ]}
                   onPress={() => toggleEmotion(emotion)}
                 >
-                  <Text style={selectedEmotions.includes(emotion) ? styles.tagTextSelected : styles.tagText}>
+                  <Text style={selectedEmotions.includes(emotion) ? styles.tagTextSelected : {color: textColor}}>
                     {emotion}
                   </Text>
                 </TouchableOpacity>
@@ -98,7 +121,7 @@ const FeedbackScreen = () => {
   );
 };
 
-export default FeedbackScreen;
+export default Passo2;
 
 const { width } = Dimensions.get('window');
 
@@ -118,7 +141,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,

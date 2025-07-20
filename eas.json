@@ -21,6 +21,12 @@
       "android": {
         "buildType": "app-bundle"
       }
+    },
+    "local": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
     }
   }
 }

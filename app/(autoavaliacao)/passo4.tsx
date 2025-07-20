@@ -1,4 +1,3 @@
-import { useForm } from '@/context/FormContext';
 import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
@@ -12,25 +11,45 @@ import {
   View
 } from 'react-native';
 
-const comoCostumaLidar = [
-  'Me expresso com facilidade (converso, escrevo, crio).',
-  'Levo um tempo, mas acabo organizando dentro de mim.',
-  'Guardo para mim e evito mostrar.',
-  'Nem sempre entendo o que estou sentindo.',
-];
+import { useForm } from '@/context/FormContext';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
-const pensarFuturo = [
-  'Sinto esperança e curiosidade',
-  'Fico ansioso(a) ou confuso(a) com o que pode acontecer',
-  'Ainda não consigo imaginar como será',
-  'Sinto insegurança e dúvidas',
-  'Tenho vontade de melhorar e fazer mudanças.',
-];
 
-const FeedbackScreen = () => {
+const Passo4 = () => {
+  const textColor = useThemeColor('text');
+  const cardColor = useThemeColor('cardBackground');
+  const placeholder = useThemeColor('placeholder');
+  const inputBg = useThemeColor('inputBackground');
+
   const [selecionadoComoCostumaLidar, setSelecionadoComoCostumaLidar] = useState<string | null>(null);
   const [selecionadoPensarFuturo, setSelecionadoPensarFuturo] = useState<string | null>(null);
   const [sliderValuePreparado, setSliderValuePreparado] = useState(5);
+
+  
+
+  const comoCostumaLidar = [
+    'Me expresso com facilidade (converso, escrevo, crio).',
+    'Levo um tempo, mas acabo organizando dentro de mim.',
+    'Guardo para mim e evito mostrar.',
+    'Nem sempre entendo o que estou sentindo.',
+  ];
+
+  const pensarFuturo = [
+    'Sinto esperança e curiosidade',
+    'Fico ansioso(a) ou confuso(a) com o que pode acontecer',
+    'Ainda não consigo imaginar como será',
+    'Sinto insegurança e dúvidas',
+    'Tenho vontade de melhorar e fazer mudanças.',
+  ];
+  
+  /*const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }*/
 
   const { updateForm } = useForm();
   const handleNext = () => {
@@ -49,40 +68,40 @@ const FeedbackScreen = () => {
             style={styles.logo}
             resizeMode="contain"
           />
-          <View style={styles.card}>
-            <Text style={styles.title}>❤️ Como você costuma lidar com seus sentimentos?</Text>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>❤️ Como você costuma lidar com seus sentimentos?</Text>
             {comoCostumaLidar.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={styles.opcao}
+                style={[styles.opcao, selecionadoComoCostumaLidar === item && { backgroundColor: inputBg }]}
                 onPress={() => setSelecionadoComoCostumaLidar(item)}
               >
                 <View style={styles.radioCirculo}>
                   {selecionadoComoCostumaLidar === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={styles.card}>
-            <Text style={styles.title}>🌀 Quando você pensa no futuro, qual dessas frases mais combinam com o que sente ou imagina?</Text>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>🌀 Quando você pensa no futuro, qual dessas frases mais combinam com o que sente ou imagina?</Text>
             {pensarFuturo.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={styles.opcao}
+                style={[styles.opcao, selecionadoPensarFuturo === item && { backgroundColor: inputBg }]}
                 onPress={() => setSelecionadoPensarFuturo(item)}
               >
                 <View style={styles.radioCirculo}>
                   {selecionadoPensarFuturo === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={styles.card}>
-            <Text style={styles.title}>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>
               🌟 O quanto você sente que está preparado(a) ou confiante em relação ao seu futuro neste momento?
             </Text>
 
@@ -125,18 +144,18 @@ const FeedbackScreen = () => {
 
             <View style={styles.sliderLabels}>
               <View style={styles.labelContainerLeft}>
-                <Text style={styles.labelValue}>0</Text>
-                <Text style={styles.labelText}>Nada confiante</Text>
+                <Text style={[styles.labelValue, { color: textColor }]}>0</Text>
+                <Text style={[styles.labelText, { color: textColor }]}>Nada confiante</Text>
               </View>
 
               <View style={styles.labelContainer}>
-                <Text style={styles.labelValue}>5</Text>
-                <Text style={styles.labelText}>Mais ou menos</Text>
+                <Text style={[styles.labelValue, { color: textColor }]}>5</Text>
+                <Text style={[styles.labelText, { color: textColor }]}>Mais ou menos</Text>
               </View>
 
               <View style={styles.labelContainerRight}>
-                <Text style={styles.labelValue}>10</Text>
-                <Text style={styles.labelText}>Muito confiante</Text>
+                <Text style={[styles.labelValue, { color: textColor }]}>10</Text>
+                <Text style={[styles.labelText, { color: textColor }]}>Muito confiante</Text>
               </View>
             </View>
           </View>
@@ -162,8 +181,8 @@ const FeedbackScreen = () => {
   );
 };
 
-export default FeedbackScreen;
-const { width } = Dimensions.get('window');
+export default Passo4;
+const { width } = Dimensions.get('window'); 
 
 const styles = StyleSheet.create({
   logo: {
@@ -182,7 +201,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
@@ -196,17 +214,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+
   },
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#555',
+
     marginVertical: 8,
   },
   opcao: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
+
   },
   opcaoTexto: {
     fontSize: 16,

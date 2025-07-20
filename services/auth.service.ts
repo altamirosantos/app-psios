@@ -1,29 +1,25 @@
-import { auth } from '@/lib/firebaseConfig';
+import { supabase } from '@/lib/supabase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
-// Se usar AsyncStorage, ative essa linha abaixo
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const login = async (email: string, password: string) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+export async function loginWithEmail(email: string, password: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-    // Se quiser salvar algum token ou info localmente:
-   await AsyncStorage.setItem('user', JSON.stringify(userCredential.user));
-
-    return userCredential.user;
-  } catch (error: any) {
+  if (error) {
+    console.error('Erro ao logar:', error.message);
     throw new Error(error.message);
   }
-};
+
+  return data;
+}
 
 export const logout = async () => {
   try {
-    await signOut(auth);
-
-    // Apagar dados locais se estiver usando AsyncStorage ou SecureStore
-    await AsyncStorage.removeItem('user');
-  } catch (error: any) {
-    console.error('Erro ao fazer logout:', error.message);
+    await supabase.auth.signOut();
+    await AsyncStorage.clear(); // ou AsyncStorage.removeItem('user') se preferir
+  } catch (e) {
+    console.error('Erro ao fazer logout:', e);
   }
 };

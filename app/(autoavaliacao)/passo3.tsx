@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
@@ -12,25 +13,42 @@ import {
 } from 'react-native';
 
 import { useForm } from '@/context/FormContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
-const ocupacoes = [
-  'Empregado (a)',
-  'Autônomo (a)',
-  'Dono de casa (a)',
-  'Desempregado (a)',
-  'Estudante (a)',
-  'Aposentado (a)',
-];
 
-const FeedbackScreen = () => {
+
+const Passo3 = () => {
+   const { updateForm } = useForm();
+
+  const textColor = useThemeColor('text');
+  const cardColor = useThemeColor('cardBackground');
+  const placeholder = useThemeColor('placeholder');
+  const inputBg = useThemeColor('inputBackground');
   const [selecionado, setSelecionado] = useState<string | null>(null);
-  const { updateForm } = useForm();
+ 
+
+  const ocupacoes = [
+    'Empregado (a)',
+    'Autônomo (a)',
+    'Dono de casa (a)',
+    'Desempregado (a)',
+    'Estudante (a)',
+    'Aposentado (a)',
+  ];
+
+
+
+  const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   const handleNext = () => {
-    /*if (!selecionado) {
-      Alert.alert('Atenção', 'Selecione como você se sente antes de continuar.');
-      return;
-    }*/
     updateForm({ ocupacoes: selecionado ?? '' });
     router.push('/passo4');
   };
@@ -46,19 +64,19 @@ const FeedbackScreen = () => {
             style={styles.logo}
             resizeMode="contain"
           />
-          <View style={styles.card}>
-            <Text style={styles.title}>💼 Qual é a sua ocupação atualmente?</Text>
-            <Text style={styles.subtitle}>Isso nos ajuda a entender melhor sua rotina e cuidar ainda mais de você.</Text>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>💼 Qual é a sua ocupação atualmente?</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>Isso nos ajuda a entender melhor sua rotina e cuidar ainda mais de você.</Text>
             {ocupacoes.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={styles.opcao}
+                style={[styles.opcao, selecionado === item && { backgroundColor: inputBg }]}
                 onPress={() => setSelecionado(item)}
               >
                 <View style={styles.radioCirculo}>
                   {selecionado === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -83,7 +101,7 @@ const FeedbackScreen = () => {
   );
 };
 
-export default FeedbackScreen;
+export default Passo3;
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -103,7 +121,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
@@ -121,7 +138,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#555',
     marginVertical: 8,
   },
   opcao: {

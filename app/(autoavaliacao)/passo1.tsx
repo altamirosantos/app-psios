@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   StyleSheet,
@@ -11,27 +12,43 @@ import {
 } from 'react-native';
 
 import { useForm } from '@/context/FormContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
-const sentimentos = [
-  { label: 'Muito Mal', color: '#ef4444', emoji: '😞' },
-  { label: 'Mal', color: '#facc15', emoji: '😕' },
-  { label: 'Neutro', color: '#22c55e', emoji: '😐' },
-  { label: 'Bem', color: '#3b82f6', emoji: '🙂' },
-  { label: 'Muito Bem', color: '#8b5cf6', emoji: '😄' },
-];
 
-export default function AutoavaliacaoPage() {
-  const router = useRouter();
-  const [sentimentoSelecionado, setSentimentoSelecionado] = useState<string | null>(null);
+
+export default function Passo1() {
   const { updateForm } = useForm();
 
-  const handleNext = () => {
-   /* if (!sentimentoSelecionado) {
-      Alert.alert('Atenção', 'Selecione como você se sente antes de continuar.');
-      return;
-    }*/
+   const textColor = useThemeColor('text');
+  const cardColor = useThemeColor('cardBackground');
+  const placeholder = useThemeColor('placeholder');
+  const inputBg = useThemeColor('inputBackground');
+  const router = useRouter();
+  const [sentimentoSelecionado, setSentimentoSelecionado] = useState<string | null>(null);
+  
 
-    updateForm({ sentimentoSelecionado: sentimentoSelecionado??'' });
+  const sentimentos = [
+    { label: 'Muito Mal', color: '#ef4444', emoji: '😞' },
+    { label: 'Mal', color: '#facc15', emoji: '😕' },
+    { label: 'Neutro', color: '#22c55e', emoji: '😐' },
+    { label: 'Bem', color: '#3b82f6', emoji: '🙂' },
+    { label: 'Muito Bem', color: '#8b5cf6', emoji: '😄' },
+  ];
+
+ 
+
+  const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  const handleNext = () => {
+    updateForm({ sentimentoSelecionado: sentimentoSelecionado ?? '' });
     router.push('/passo2');
   };
 
@@ -44,9 +61,9 @@ export default function AutoavaliacaoPage() {
           resizeMode="contain"
         />
 
-        <View style={styles.card}>
-          <Text style={styles.title}>💓 Como você se sente hoje?</Text>
-          <Text style={styles.subtitle}>
+        <View style={[styles.card, { backgroundColor: cardColor }]}>
+          <Text style={[styles.title, { color: textColor }]}>💓 Como você se sente hoje?</Text>
+          <Text style={[styles.subtitle, { color: textColor }]}>
             Sua saúde emocional é prioridade?{'\n'}
             Compartilhe como se sente e avance rumo ao seu bem-estar!
           </Text>
@@ -87,10 +104,10 @@ export default function AutoavaliacaoPage() {
           onPress={handleNext}
           disabled={!sentimentoSelecionado}
         >
-          <Text  style={[
-                styles.buttonText,
-                !sentimentoSelecionado && { color: '#aaa' },
-              ]}>Próximo</Text>
+          <Text style={[
+            styles.buttonText,
+            !sentimentoSelecionado && { color: '#aaa' },
+          ]}>Próximo</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>
@@ -116,7 +133,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   card: {
-    backgroundColor: 'white',
     borderRadius: 20,
     padding: 20,
     width: width - 40,
@@ -136,7 +152,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: '#555',
     textAlign: 'center',
     marginBottom: 80,
   },

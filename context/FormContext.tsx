@@ -17,9 +17,9 @@ type FormData = {
   selectedItemsPasso6?: string[];
   passo7Card1?: number;
   passo8Oque?: string; 
-  passo8Quando?: string;
+  passo8Sentimento?: string;
   passo8ComoSeComportou?: string[];
-  passo8AlguemEnvolvido?: string;
+  //passo8AlguemEnvolvido?: string;
   passo8Gatilho?: string;
   passo8Pensamento?: string;
   distorcoesPensamento?: string[];
@@ -33,7 +33,7 @@ type FormData = {
 };
 
 type FormContextType = {
-  data: FormData;
+  dadosForm: FormData;
   updateForm: (fields: Partial<FormData>) => void;
   resetForm: () => void;
 };
@@ -41,18 +41,18 @@ type FormContextType = {
 const FormContext = createContext<FormContextType | undefined>(undefined);
 
 export const FormProvider = ({ children }: { children: React.ReactNode }) => {
-  const [data, setData] = useState<FormData>({});
+  const [dadosForm, setDadosForm] = useState<FormData>({});
 
   const updateForm = (fields: Partial<FormData>) => {
-    setData((prev) => ({ ...prev, ...fields }));
+    setDadosForm((prev) => ({ ...prev, ...fields }));
   };
 
   const resetForm = () => {
-    setData({});
+    setDadosForm({});
   };
 
   return (
-    <FormContext.Provider value={{ data, updateForm, resetForm }}>
+    <FormContext.Provider value={{ dadosForm, updateForm, resetForm }}>
       {children}
     </FormContext.Provider>
   );

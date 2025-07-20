@@ -1,8 +1,8 @@
-import { useForm } from '@/context/FormContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
@@ -13,48 +13,67 @@ import {
 } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 
-
-const distorcoes = [
-  {
-    titulo: 'Leitura mental',
-    descricao: 'Acho que sei o que os outros estão pensando sobre mim.',
-  },
-  {
-    titulo: 'Catastrofização',
-    descricao: 'Sempre imagino o pior cenário possível.',
-  },
-  {
-    titulo: 'Tudo ou nada',
-    descricao: 'Se não for perfeito, é um fracasso.',
-  },
-  {
-    titulo: 'Generalização',
-    descricao: 'Sempre que algo dá errado, penso que tudo sempre será assim.',
-  },
-  {
-    titulo: 'Filtro negativo',
-    descricao: 'Só consigo ver o lado ruim da situação.',
-  },
-  {
-    titulo: 'Desqualificar o positivo',
-    descricao: 'Esqueço ou minimizo as coisas boas que acontecem.',
-  },
-  {
-    titulo: 'Rotação',
-    descricao: 'Eu não sou boa o suficiente.',
-  },
-  {
-    titulo: 'Personalização',
-    descricao: 'Sinto que tudo é culpa minha.',
-  },
-];
+import { useForm } from '@/context/FormContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 
+const Passo9 = () => {
+  const { updateForm } = useForm();
 
-const FeedbackScreen = () => {
+   const textColor = useThemeColor('text');
+  const cardColor = useThemeColor('cardBackground');
+  const placeholder = useThemeColor('placeholder');
+  const inputBg = useThemeColor('inputBackground');
   const [selecionados, setSelecionados] = useState<string[]>([]);
 
-  const { updateForm } = useForm();
+  
+
+  const distorcoes = [
+    {
+      titulo: 'Leitura mental',
+      descricao: 'Acho que sei o que os outros estão pensando sobre mim.',
+    },
+    {
+      titulo: 'Catastrofização',
+      descricao: 'Sempre imagino o pior cenário possível.',
+    },
+    {
+      titulo: 'Tudo ou nada',
+      descricao: 'Se não for perfeito, é um fracasso.',
+    },
+    {
+      titulo: 'Generalização',
+      descricao: 'Sempre que algo dá errado, penso que tudo sempre será assim.',
+    },
+    {
+      titulo: 'Filtro negativo',
+      descricao: 'Só consigo ver o lado ruim da situação.',
+    },
+    {
+      titulo: 'Desqualificar o positivo',
+      descricao: 'Esqueço ou minimizo as coisas boas que acontecem.',
+    },
+    {
+      titulo: 'Rotação',
+      descricao: 'Eu não sou boa o suficiente.',
+    },
+    {
+      titulo: 'Personalização',
+      descricao: 'Sinto que tudo é culpa minha.',
+    },
+  ];
+
+ 
+
+  const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   const toggleItem = (titulo: string) => {
     setSelecionados(prev =>
@@ -80,21 +99,21 @@ const FeedbackScreen = () => {
             resizeMode="contain"
           />
 
-          <View style={styles.card}>
-            <Text style={styles.title}>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>
               💗 <Text style={{ fontWeight: 'bold' }}>Seu pensamento contém alguma dessas distorções?</Text> Marque as opções que se aplicam:
             </Text>
 
             <View style={styles.lista}>
               {distorcoes.map((item, idx) => (
-                <View key={idx} style={styles.item}>
+                <View key={idx} style={[styles.item, { backgroundColor: inputBg }]}>
                   <Checkbox
                     status={selecionados.includes(item.titulo) ? 'checked' : 'unchecked'}
                     onPress={() => toggleItem(item.titulo)}
                   />
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.itemTitulo}>{item.titulo}</Text>
-                    <Text style={styles.itemDescricao}>{item.descricao}</Text>
+                    <Text style={[styles.itemTitulo, { color: textColor }]}>{item.titulo}</Text>
+                    <Text style={[styles.itemDescricao, { color: textColor }]}>{item.descricao}</Text>
                   </View>
                 </View>
               ))}
@@ -122,7 +141,7 @@ const FeedbackScreen = () => {
   );
 };
 
-export default FeedbackScreen;
+export default Passo9;
 
 const { width } = Dimensions.get('window');
 
@@ -143,7 +162,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
@@ -157,11 +175,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 20,
   },
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#555',
     marginVertical: 8,
   },
   tagContainer: {

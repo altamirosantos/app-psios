@@ -1,8 +1,8 @@
-import { useForm } from '@/context/FormContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
@@ -12,52 +12,20 @@ import {
   View
 } from 'react-native';
 
-const opCard1 = [
-  'Tudo bem, faz parte.',
-  'O que posso aprender com isso?',
-  'A culpa é minha…',
-  'Isso sempre acontece comigo.',
-];
+import { useForm } from '@/context/FormContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
-const opCard2 = [
-  'No que sente.',
-  'No que pensa.',
-  'No que os outros esperam.',
-  'No que faça mais sentido no momento.',
-];
 
-const opCard3 = [
-  'Ouvir com empatia, mas sem se sobrecarregar.',
-  'Tentar agradar e evitar conflitos.',
-  'Se proteger e manter certa distância.',
-  'Assumir a liderança ou tomar iniciativa.',
-];
 
-const opCard4 = [
-  'Me animo com o novo e me adapto fácil.',
-  'Analiso primeiro, mas topo se fizer sentido.',
-  'Sinto receio e prefiro ficar na zona de conforto.',
-  'Evite mudanças máximas.',
-];
+const Passo5 = () => {
+   const { updateForm } = useForm();
 
-const opCard5 = [
-  'Penso demais, fico inseguro(a) e adio a decisão.',
-  'Sigo meu impulso ou intuição, sem pensar muito.',
-  'Faça listas, compare prós e contras.',
-  'Peço conselhos e opiniões antes de decidir.',
-  'Confie em mim e escolho o que mais faz sentido na hora.',
-];
+  const textColor = useThemeColor('text');
+  const cardColor = useThemeColor('cardBackground');
+  const placeholder = useThemeColor('placeholder');
+  const inputBg = useThemeColor('inputBackground');
 
-const opCard6 = [
-  'Criatividade.',
-  'Persistência.',
-  'Foco e organização.',
-  'Empatia.',
-  'Resiliência.',
-  'Capacidade de ouvir.',
-];
-
-const FeedbackScreen = () => {
   const [selecionadoOpCard1, setSelecionadoOpCard1] = useState<string | null>(null);
   const [selecionadoOpCard2, setSelecionadoOpCard2] = useState<string | null>(null);
   const [selecionadoOpCard3, setSelecionadoOpCard3] = useState<string | null>(null);
@@ -65,7 +33,60 @@ const FeedbackScreen = () => {
   const [selecionadoOpCard5, setSelecionadoOpCard5] = useState<string | null>(null);
   const [selecionadoOpCard6, setSelecionadoOpCard6] = useState<string | null>(null);
 
-  const { updateForm } = useForm();
+  const opCard1 = [
+    'Tudo bem, faz parte.',
+    'O que posso aprender com isso?',
+    'A culpa é minha…',
+    'Isso sempre acontece comigo.',
+  ];
+
+  const opCard2 = [
+    'No que sente.',
+    'No que pensa.',
+    'No que os outros esperam.',
+    'No que faça mais sentido no momento.',
+  ];
+
+  const opCard3 = [
+    'Ouvir com empatia, mas sem se sobrecarregar.',
+    'Tentar agradar e evitar conflitos.',
+    'Se proteger e manter certa distância.',
+    'Assumir a liderança ou tomar iniciativa.',
+  ];
+
+  const opCard4 = [
+    'Me animo com o novo e me adapto fácil.',
+    'Analiso primeiro, mas topo se fizer sentido.',
+    'Sinto receio e prefiro ficar na zona de conforto.',
+    'Evito mudanças drásticas.',
+  ];
+
+  const opCard5 = [
+    'Penso demais, fico inseguro(a) e adio a decisão.',
+    'Sigo meu impulso ou intuição, sem pensar muito.',
+    'Faça listas, compare prós e contras.',
+    'Peço conselhos e opiniões antes de decidir.',
+    'Confie em mim e escolho o que mais faz sentido na hora.',
+  ];
+
+  const opCard6 = [
+    'Criatividade.',
+    'Persistência.',
+    'Foco e organização.',
+    'Empatia.',
+    'Resiliência.',
+    'Capacidade de ouvir.',
+  ];
+
+
+  const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   const handleNext = () => {
     updateForm({ passo5Card1: selecionadoOpCard1 ?? '', passo5Card2: selecionadoOpCard2 ?? '', passo5Card3: selecionadoOpCard3 ?? '', passo5Card4: selecionadoOpCard4 ?? '', passo5Card5: selecionadoOpCard5 ?? '', passo5Card6: selecionadoOpCard6 ?? '' });
@@ -83,98 +104,98 @@ const FeedbackScreen = () => {
             style={styles.logo}
             resizeMode="contain"
           />
-          <View style={styles.card}>
-            <Text style={styles.title}>🤔 Quando algo dá errado, o que vem primeiro na sua mente?</Text>
+          <View style={[styles.card, {backgroundColor: cardColor}]}>
+            <Text style={[styles.title, {color: textColor}]}>🤔 Quando algo dá errado, o que vem primeiro na sua mente?</Text>
             {opCard1.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={styles.opcao}
+                style={[styles.opcao, selecionadoOpCard1 === item && { backgroundColor: inputBg }]}
                 onPress={() => setSelecionadoOpCard1(item)}
               >
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard1 === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
+                <Text style={[styles.opcaoTexto, {color: textColor}]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={styles.card}>
-            <Text style={styles.title}>✨ Você costuma tomar decisões mais com base:</Text>
+          <View style={[styles.card, {backgroundColor: cardColor}]}>
+            <Text style={[styles.title, {color: textColor}]}>✨ Você costuma tomar decisões mais com base:</Text>
             {opCard2.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={styles.opcao}
+                style={[styles.opcao, selecionadoOpCard2 === item && { backgroundColor: inputBg }]}
                 onPress={() => setSelecionadoOpCard2(item)}
               >
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard2 === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
+                <Text style={[styles.opcaoTexto, {color: textColor}]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={styles.card}>
-            <Text style={styles.title}>👩🏽‍🦱 Quando está com outras pessoas, você tende a:</Text>
+          <View style={[styles.card, {backgroundColor: cardColor}]}>
+            <Text style={[styles.title, {color: textColor}]}>👩🏽‍🦱 Quando está com outras pessoas, você tende a:</Text>
             {opCard3.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={styles.opcao}
+                style={[styles.opcao, selecionadoOpCard3 === item && { backgroundColor: inputBg }]}
                 onPress={() => setSelecionadoOpCard3(item)}
               >
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard3 === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
+                <Text style={[styles.opcaoTexto, {color: textColor}]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={styles.card}>
-            <Text style={styles.title}>🧩 Como você costuma reagir a situações novas ou desconhecidas?</Text>
+          <View style={[styles.card, {backgroundColor: cardColor}]}>
+            <Text style={[styles.title, {color: textColor}]}>🧩 Como você costuma reagir a situações novas ou desconhecidas?</Text>
             {opCard4.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={styles.opcao}
+                style={[styles.opcao, selecionadoOpCard4 === item && { backgroundColor: inputBg }]}
                 onPress={() => setSelecionadoOpCard4(item)}
               >
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard4 === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
+                <Text style={[styles.opcaoTexto, {color: textColor}]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={styles.card}>
-            <Text style={styles.title}>🟣 Quando você precisa tomar uma decisão importante, como costuma agir?</Text>
+          <View style={[styles.card, {backgroundColor: cardColor}]}>
+            <Text style={[styles.title, {color: textColor}]}>🟣 Quando você precisa tomar uma decisão importante, como costuma agir?</Text>
             {opCard5.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={styles.opcao}
+                style={[styles.opcao, selecionadoOpCard5 === item && { backgroundColor: inputBg }]}
                 onPress={() => setSelecionadoOpCard5(item)}
               >
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard5 === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
+                <Text style={[styles.opcaoTexto, {color: textColor}]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={styles.card}>
-            <Text style={styles.title}>🌟 Quando você pensa nas suas qualidades e forças internas, o que mais se destaca em você?</Text>
+          <View style={[styles.card, {backgroundColor: cardColor}]}>
+            <Text style={[styles.title, {color: textColor}]}>🌟 Quando você pensa nas suas qualidades e forças internas, o que mais se destaca em você?</Text>
             {opCard6.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={styles.opcao}
+                style={[styles.opcao, selecionadoOpCard6 === item && { backgroundColor: inputBg }]}
                 onPress={() => setSelecionadoOpCard6(item)}
               >
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard6 === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={styles.opcaoTexto}>{item}</Text>
+                <Text style={[styles.opcaoTexto, {color: textColor}]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -201,7 +222,7 @@ const FeedbackScreen = () => {
   );
 };
 
-export default FeedbackScreen;
+export default Passo5;
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -221,7 +242,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
@@ -235,11 +255,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 20,
   },
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#555',
     marginVertical: 8,
   },
   opcao: {

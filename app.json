@@ -1,21 +1,27 @@
 {
   "expo": {
-    "name": "br.com.psios.app-psios",
+    "name": "com.altamirosantos.apppsios",
     "slug": "app-psios",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "jsEngine": "hermes",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "scheme": "app-psios",
+    "scheme": "com.altamirosantos.apppsios",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-       "bundleIdentifier": "com.altamirosantos.apppsios"
+      "bundleIdentifier": "com.altamirosantos.apppsios"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +36,14 @@
       "favicon": "./assets/icon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-web-browser",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.com.altamirosantos.apppsios"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

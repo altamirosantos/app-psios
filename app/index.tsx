@@ -1,7 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { supabase } from '@/lib/supabase';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+
 
 export default function Index() {
   //alert('renderizou')
@@ -10,20 +11,21 @@ export default function Index() {
   useEffect(() => {
     const verificarLogin = async () => {
       try {
-        console.log('Verificando login...');
-        const user = await AsyncStorage.getItem('user');
-        if (user) {
+        const { data, error } = await supabase.auth.getSession();
+
+        console.log('Sessão atual:', data);
+
+        if (data.session && data.session.user) {
           router.replace('/(tabs)/home');
         } else {
           router.replace('/(auth)/login');
         }
       } catch (error) {
-        console.error('Erro ao verificar login:', error);
-        // Opcional: redirecionar para uma tela de erro ou login seguro
+        console.error('Erro ao verificar sessão Supabase:', error);
         router.replace('/(auth)/login');
       }
     };
-  
+
     verificarLogin();
   }, []);
 

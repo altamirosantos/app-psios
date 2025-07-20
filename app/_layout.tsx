@@ -12,6 +12,8 @@ import Toast from 'react-native-toast-message';
 
 SplashScreen.preventAutoHideAsync();
 
+if (typeof global.structuredClone === "undefined") { global.structuredClone = (value) => JSON.parse(JSON.stringify(value)); }
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({

@@ -1,22 +1,44 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+// src/hooks/useAuthGuard.ts
+import { supabase } from '@/lib/supabase';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 
 export function useAuthGuard() {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const verificarLogin = async () => {
-      const user = await AsyncStorage.getItem('user');
-      if (!user) {
+    const checkSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error('Erro ao buscar sessão:', error.message);
         router.replace('/(auth)/login');
-      }else{
-        setLoading(false);
+        return;
       }
+
+      //console.log('Sessão atual(useAuthGuard): ', data);
+
+      if (!data.session || !data.session.user) {
+        console.log('Usuário não autenticado. Redirecionando para login...');
+        router.replace('/(auth)/login');
+      }
+
+      setLoading(false);
     };
 
-    verificarLogin();
+    checkSession();
+
+    // Atualiza caso o estado de auth mude (logout, etc.)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        router.replace('/(auth)/login');
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
+
   return { loading };
 }

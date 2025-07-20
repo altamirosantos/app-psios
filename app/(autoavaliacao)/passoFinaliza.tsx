@@ -1,12 +1,8 @@
-import { useForm } from '@/context/FormContext';
-import { db } from '@/lib/firebaseConfig'; // ajuste conforme seu projeto
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { getAuth } from 'firebase/auth';
-import { doc, getDoc } from "firebase/firestore";
 import React from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
@@ -16,13 +12,33 @@ import {
   View
 } from 'react-native';
 
+import { useForm } from '@/context/FormContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useThemeColor } from '@/hooks/useThemeColor';
+import { supabase } from '@/lib/supabase';
 
-const FeedbackScreen = () => {
 
-  const { data, updateForm } = useForm();
+const PassoFinal = () => {
+  const { dadosForm, updateForm } = useForm();
+
+  const textColor = useThemeColor('text');
+  const cardColor = useThemeColor('cardBackground');
+  const placeholder = useThemeColor('placeholder');
+  const inputBg = useThemeColor('inputBackground');
+
+  
+
+  const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   const buscarNomeGenero = async () => {
-    const auth = getAuth();
+    /*const auth = getAuth();
     const currentUser = auth.currentUser;
 
     if (!currentUser) {
@@ -47,32 +63,33 @@ const FeedbackScreen = () => {
     } else {
       console.warn("Usuário não encontrado no Firestore.");
       return null;
-    }
+    }*/
   };
 
 
   const enviar = async () => {
     try {
-      const session = await AsyncStorage.getItem('user');
-      console.log('session >>>>>>  ', session);
-      const user = JSON.parse(session ?? '{email: ""}');
-      updateForm({ email: user.email });
+      //const session = await AsyncStorage.getItem('user');
+      const { data, error } = await supabase.auth.getSession();
+      console.log('session >>>>>>  ', data.session);
+      const user = data.session?.user
+      updateForm({ email: user?.email ?? '' });
       //data.email = email ?? '';
 
-      
+
       const dadosParaEnvio = {
-        ...data,
-        email: user.email ?? ''
+        ...dadosForm,
+        email: user?.email ?? ''
       };
 
       const nomeGenero = await buscarNomeGenero();
 
-      if (nomeGenero) {
-        dadosParaEnvio.nome = nomeGenero.nome;
-        dadosParaEnvio.genero = nomeGenero.genero;
-        dadosParaEnvio.apelido = nomeGenero.apelido;
-        dadosParaEnvio.nascimento = nomeGenero.nascimento;
-      }
+      /* if (nomeGenero) {
+         dadosParaEnvio.nome = nomeGenero.nome;
+         dadosParaEnvio.genero = nomeGenero.genero;
+         dadosParaEnvio.apelido = nomeGenero.apelido;
+         dadosParaEnvio.nascimento = nomeGenero.nascimento;
+       }*/
       //console.log('Formulário enviado com sucesso!', dadosParaEnvio);
 
       const response = await fetch(
@@ -136,7 +153,7 @@ const FeedbackScreen = () => {
           >
             <Text style={[
               styles.buttonText,
-            ]}>Enviar</Text>
+            ]}>Enviar agora</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -144,7 +161,7 @@ const FeedbackScreen = () => {
   );
 };
 
-export default FeedbackScreen;
+export default PassoFinal;
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -164,7 +181,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#E0CDFD',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
@@ -184,7 +200,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#555',
     marginVertical: 8,
   },
   radioCirculo: {

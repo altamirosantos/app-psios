@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase';
 import { Feather } from '@expo/vector-icons';
 //import DateTimePicker from '@react-native-community/datetimepicker';
 import BirthDatePicker from '@/components/BirthDatePicker';
+import { useThemeColor } from '@/hooks/useThemeColor';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -18,6 +19,11 @@ import {
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Toast from 'react-native-toast-message';
+
+const textColor = useThemeColor('text');
+const cardColor = useThemeColor('cardBackground');
+const placeholder = useThemeColor('placeholder');
+const inputBg = useThemeColor('inputBackground');
 
 export default function SignUpScreen() {
     const [showPassword, setShowPassword] = useState(false);
@@ -94,7 +100,6 @@ export default function SignUpScreen() {
             router.push('/login');
 
         } catch (error: any) {
-            //Alert.alert('Erro', error.message);
             Toast.show({
                 type: 'error',
                 text1: 'Erro de Cadastro',
@@ -122,9 +127,10 @@ export default function SignUpScreen() {
                         </Text>
 
                         {/* Nome completo */}
+                        <Text style={{ fontWeight: '500', marginBottom: 4 }}>Nome Completo</Text>
                         <TextInput
                             placeholder="Nome completo"
-                            placeholderTextColor="#555"
+                            placeholderTextColor={placeholder}
                             style={styles.input}
                             value={fullName}
                             onChangeText={setFullName}
@@ -142,23 +148,23 @@ export default function SignUpScreen() {
                                 setValue={setValue}
                                 setItems={setItems}
                                 style={{
-                                    backgroundColor: '#f1f5f9',
+                                    backgroundColor: inputBg,
                                     borderWidth: 0,
                                     minHeight: 20,
                                 }}
                                 dropDownContainerStyle={{
-                                    backgroundColor: '#f1f5f9',
+                                    backgroundColor: inputBg,
                                     borderColor: '#ccc',
                                 }}
                                 textStyle={{
                                     fontSize: 16,
-                                    color: '#000',
+                                    color: textColor,
                                 }}
                                 placeholderStyle={{
-                                    color: '#555',
+                                    color: placeholder,
                                 }}
                                 labelStyle={{
-                                    color: '#000',
+                                    color: textColor,
                                 }}
                                 zIndex={10}
 
@@ -180,7 +186,7 @@ export default function SignUpScreen() {
                         </Text>
                         <TextInput
                             placeholder="Apelido"
-                            placeholderTextColor="#555"
+                            placeholderTextColor={placeholder}
                             style={styles.input}
                             value={nickname}
                             onChangeText={setNickname}
@@ -191,7 +197,7 @@ export default function SignUpScreen() {
                         {/* Email */}
                         <TextInput
                             placeholder="Email"
-                            placeholderTextColor="#555"
+                            placeholderTextColor={placeholder}
                             style={styles.input}
                             value={email}
                             onChangeText={setEmail}
@@ -203,7 +209,7 @@ export default function SignUpScreen() {
                         <View style={styles.inputWithIcon}>
                             <TextInput
                                 placeholder="Senha"
-                                placeholderTextColor="#555"
+                                placeholderTextColor={placeholder}
                                 secureTextEntry={!showPassword}
                                 style={styles.inputField}
                                 value={password}
@@ -224,7 +230,7 @@ export default function SignUpScreen() {
                         <View style={styles.inputWithIcon}>
                             <TextInput
                                 placeholder="Confirma Senha"
-                                placeholderTextColor="#555"
+                                placeholderTextColor={placeholder}
                                 secureTextEntry={!showConfirmPassword}
                                 style={styles.inputField}
                                 value={confirmPassword}
@@ -285,33 +291,37 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: '#111',
+        color: textColor,
         marginBottom: 6,
     },
     subtitle: {
         fontSize: 14,
-        color: '#666',
+        color: textColor,
         marginBottom: 16,
     },
     input: {
-        backgroundColor: '#f1f5f9',
+        backgroundColor: inputBg,
         padding: 12,
         borderRadius: 10,
         marginBottom: 12,
         fontSize: 16,
+        color: textColor,
     },
     inputWithIcon: {
-        backgroundColor: '#f1f5f9',
+        backgroundColor: inputBg,
         borderRadius: 10,
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 12,
         marginBottom: 12,
+        color: textColor,
     },
     inputField: {
         flex: 1,
         fontSize: 16,
         paddingVertical: 12,
+        color: textColor,
+        backgroundColor: inputBg,
     },
     button: {
         backgroundColor: '#4f46e5',

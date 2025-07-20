@@ -1,3 +1,4 @@
+import { useThemeColor } from '@/hooks/useThemeColor';
 import { Picker } from '@react-native-picker/picker';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -6,6 +7,11 @@ type Props = {
     value: Date;
     onChange: (date: Date) => void;
 };
+
+const textColor = useThemeColor('text');
+const cardColor = useThemeColor('cardBackground');
+const placeholder = useThemeColor('placeholder');
+const inputBg = useThemeColor('inputBackground');
 
 export default function BirthDatePicker({ value, onChange }: Props) {
     const [day, setDay] = useState(value.getDate());
@@ -52,5 +58,5 @@ const styles = StyleSheet.create({
     container: { marginBottom: 16 },
     label: { fontWeight: '500', marginBottom: 4 },
     row: { flexDirection: 'row', gap: 10 },
-    picker: { flex: 1, backgroundColor: '#f1f5f9', borderRadius: 10 },
+    picker: { flex: 1, backgroundColor: inputBg, borderRadius: 10, color: textColor },
 });

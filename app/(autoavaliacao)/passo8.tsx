@@ -1,8 +1,8 @@
-import { useForm } from '@/context/FormContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
@@ -12,23 +12,45 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+
+import { useForm } from '@/context/FormContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useThemeColor } from '@/hooks/useThemeColor';
 import { Checkbox } from 'react-native-paper';
 
 
-const comportamentoOptions = [
-  "Fugi", "Evitei", "Paralisei", "Recuei",
-  "Não fiz nada", "Me calei", "Andei de um lado para o outro", "Outros"
-];
 
-const FeedbackScreen = () => {
+
+const Passo8 = () => {
+  const { updateForm } = useForm();
+
+  const textColor = useThemeColor('text');
+  const cardColor = useThemeColor('cardBackground');
+  const placeholder = useThemeColor('placeholder');
+  const inputBg = useThemeColor('inputBackground');
+
   const [oque, setOque] = useState('');
-  const [quando, setQuando] = useState('');
+  const [sentimento, setSentimento] = useState('');
   const [comoSeComportou, setComoSeComportou] = useState<string[]>([]);
-  const [alguemEnvolvido, setAlguemEnvolvido] = useState('');
+  //const [alguemEnvolvido, setSentimento] = useState('');
   const [gatilho, setGatilho] = useState('');
   const [pensamento, setPensamento] = useState('');
 
-  const { updateForm } = useForm();
+
+  const comportamentoOptions = [
+    "Fugi", "Evitei", "Paralisei", "Recuei",
+    "Não fiz nada", "Me calei", "Andei de um lado para o outro", "Outros"
+  ];
+
+
+  const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   const toggleComportamento = (option: string) => {
     setComoSeComportou(prev =>
@@ -39,7 +61,7 @@ const FeedbackScreen = () => {
   };
 
   const handleNext = () => {
-    updateForm({ passo8Oque: oque, passo8Quando: quando, passo8ComoSeComportou: comoSeComportou, passo8AlguemEnvolvido: alguemEnvolvido, passo8Gatilho: gatilho, passo8Pensamento: pensamento });
+    updateForm({ passo8Oque: oque, passo8Sentimento: sentimento, passo8ComoSeComportou: comoSeComportou,  passo8Gatilho: gatilho, passo8Pensamento: pensamento });
     router.push('/passo9');
   };
 
@@ -55,37 +77,59 @@ const FeedbackScreen = () => {
             resizeMode="contain"
           />
 
-          <View style={styles.card}>
-            <Text style={styles.title}>😊 Seu bem-estar é importante! Vamos juntos entender?</Text>
-            <Text style={styles.subtitle}>Com base no que você acredita no pensamento que causou essas sensações e sentimentos, preencha abaixo de forma breve e sincera. Isso vai ajudar vocë a entender melhor o que está afetando seu estado emocional.</Text>
-            <Text style={styles.title}>📌 Situação</Text>
-            <Text style={styles.subtitle}>O que aconteceu?</Text>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>😊 Seu bem-estar é importante! Vamos juntos entender?</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>Para entender melhor o que afeta seu estado emocional, conte aqui, de forma breve e sincera, uma experiência vívida, que mostra como certos pensamentos e sentimentos impactaram você.</Text>
+            <Text style={[styles.title, { color: textColor }]}>📌 Situação</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>O que aconteceu?</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { color: textColor, backgroundColor: inputBg }]}
               placeholder=""
               value={oque}
               onChangeText={setOque}
               multiline
             />
-            <Text style={styles.subtitle}>Quando e onde foi?</Text>
+
+            <Text style={[styles.title, { color: textColor }]}>⚡ Gatilho</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>O que despertou sua emoção? (Pode ter sido uma palavra, cheiro, música, tom de voz ou situação inesperada)</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { color: textColor, backgroundColor: inputBg }]}
               placeholder=""
-              value={quando}
-              onChangeText={setQuando}
+              value={gatilho}
+              onChangeText={setGatilho}
+              multiline
+            />
+
+            <Text style={[styles.title, { color: textColor }]}>💭 Pensamento</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>O que mais mexeu com sua mente? Que imagem ou lembrança surgiu antes da emoção?</Text>
+            <TextInput
+              style={[styles.input, { color: textColor, backgroundColor: inputBg }]}
+              placeholder=""
+              value={pensamento}
+              onChangeText={setPensamento}
+              multiline
+            />
+
+            <Text style={[styles.title, { color: textColor }]}>❤️ Sentimento</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>O que você sentiu?</Text>
+            <TextInput
+              style={[styles.input, { color: textColor, backgroundColor: inputBg }]}
+              placeholder=""
+              value={sentimento}
+              onChangeText={setSentimento}
               multiline
             />
 
             <View style={styles.radioContainer}>
-              <Text style={styles.subtitle}>Como você se comportou nessa situação?</Text>
+              <Text style={[styles.subtitle, { color: textColor }]}>Como você se comportou nessa situação?</Text>
               <View style={styles.radioGrid}>
                 {comportamentoOptions.map((option, index) => (
-                  <View key={index} style={styles.radioItem}>
+                  <View key={index} style={[styles.radioItem, { backgroundColor: inputBg }]}>
                     <Checkbox
                       status={comoSeComportou.includes(option) ? 'checked' : 'unchecked'}
                       onPress={() => toggleComportamento(option)}
                     />
-                    <Text style={styles.label} onPress={() => toggleComportamento(option)}>
+                    <Text style={[styles.label, { color: textColor }]} onPress={() => toggleComportamento(option)}>
                       {option}
                     </Text>
                   </View>
@@ -93,49 +137,20 @@ const FeedbackScreen = () => {
               </View>
             </View>
 
-            <Text style={styles.subtitle}>Alguém esteve envolvido? Quem?</Text>
-            <TextInput
-              style={styles.input}
-              placeholder=""
-              value={alguemEnvolvido}
-              onChangeText={setAlguemEnvolvido}
-              multiline
-            />
-
-            <Text style={styles.title}>⚡ Gatilho</Text>
-            <Text style={styles.subtitle}>O que despertou sua emoção? (Pode ter sido uma palavra, cheiro, música, tom de voz ou situação inesperada)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder=""
-              value={gatilho}
-              onChangeText={setGatilho}
-              multiline
-            />
-
-            <Text style={styles.title}>💭 Pensamento</Text>
-            <Text style={styles.subtitle}>O que mais mexeu com sua mente? Que imagem ou lembrança surgiu antes da emoção?</Text>
-            <TextInput
-              style={styles.input}
-              placeholder=""
-              value={pensamento}
-              onChangeText={setPensamento}
-              multiline
-            />
-
           </View>
 
           {/* Botão próximo */}
           <TouchableOpacity
             style={[
               styles.button,
-              (!oque || !quando || comoSeComportou.length === 0 || !alguemEnvolvido || !gatilho || !pensamento) && { backgroundColor: '#ccc' },
+              (!oque || comoSeComportou.length === 0 || !sentimento || !gatilho || !pensamento) && { backgroundColor: '#ccc' },
             ]}
-            disabled={!oque || !quando || comoSeComportou.length === 0 || !alguemEnvolvido || !gatilho || !pensamento}
+            disabled={!oque || comoSeComportou.length === 0 || !sentimento || !gatilho || !pensamento}
             onPress={handleNext}
           >
             <Text style={[
               styles.buttonText,
-              (!oque || !quando || comoSeComportou.length === 0 || !alguemEnvolvido || !gatilho || !pensamento) && { color: '#aaa' },
+              (!oque || comoSeComportou.length === 0 || !sentimento || !gatilho || !pensamento) && { color: '#aaa' },
             ]}>Me conte mais...</Text>
           </TouchableOpacity>
         </View>
@@ -144,7 +159,7 @@ const FeedbackScreen = () => {
   );
 };
 
-export default FeedbackScreen;
+export default Passo8;
 
 const { width } = Dimensions.get('window');
 
@@ -168,7 +183,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
@@ -188,7 +202,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     textAlign: 'left',
-    color: '#555',
     marginVertical: 8,
   },
   tagContainer: {

@@ -1,8 +1,8 @@
-import { useForm } from '@/context/FormContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
@@ -12,18 +12,41 @@ import {
   View
 } from 'react-native';
 
-const opcoes = [
-  { id: 1, label: "Espelho 1 – Confiante e Positiva", emoji: "🌟" },
-  { id: 2, label: "Espelho 2 – Em busca de si mesma(o)", emoji: "☁️" },
-  { id: 3, label: "Espelho 3 – Crítico e Exigente", emoji: "😔" },
-  { id: 4, label: "Espelho 4 – Fragilizada(o) emocionalmente", emoji: "🌧️" },
-  { id: 5, label: "Espelho 5 – Em construção com carinho", emoji: "✨" },
-];
+import { useForm } from '@/context/FormContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
-const FeedbackScreen = () => {
+
+
+const Passo11 = () => {
+   const { updateForm } = useForm();
+
+  const textColor = useThemeColor('text');
+  const cardColor = useThemeColor('cardBackground');
+  const placeholder = useThemeColor('placeholder');
+  const inputBg = useThemeColor('inputBackground');
   const [selecionado, setSelecionado] = useState<string | null>(null);
 
-  const { updateForm } = useForm();
+ 
+
+  const opcoes = [
+    { id: 1, label: "Espelho 1 – Confiante e Positiva", emoji: "🌟" },
+    { id: 2, label: "Espelho 2 – Em busca de si mesma(o)", emoji: "☁️" },
+    { id: 3, label: "Espelho 3 – Crítico e Exigente", emoji: "😔" },
+    { id: 4, label: "Espelho 4 – Fragilizada(o) emocionalmente", emoji: "🌧️" },
+    { id: 5, label: "Espelho 5 – Em construção com carinho", emoji: "✨" },
+  ];
+
+  
+
+  const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   const handleNext = () => {
     updateForm({ espelho: selecionado ?? '' });
@@ -41,8 +64,8 @@ const FeedbackScreen = () => {
             style={styles.logo}
             resizeMode="contain"
           />
-          <View style={styles.card}>
-            <Text style={styles.title}>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>
               🪞Qual espelho representa melhor como você se vê hoje?
               Escolha a opção que mais representa o seu autoconceito no momento:
             </Text>
@@ -93,7 +116,7 @@ const FeedbackScreen = () => {
   );
 };
 
-export default FeedbackScreen;
+export default Passo11;
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -113,7 +136,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
@@ -132,7 +154,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#555',
     marginVertical: 8,
   },
   radioCirculo: {

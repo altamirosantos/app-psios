@@ -1,9 +1,9 @@
-import { useForm } from '@/context/FormContext';
 import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   Platform,
@@ -14,11 +14,32 @@ import {
   View
 } from 'react-native';
 
-const FeedbackScreen = () => {
+import { useForm } from '@/context/FormContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { useThemeColor } from '@/hooks/useThemeColor';
+
+
+
+const Passo7 = () => {
+  const { updateForm } = useForm();
+
+  const textColor = useThemeColor('text');
+  const cardColor = useThemeColor('cardBackground');
+  const placeholder = useThemeColor('placeholder');
+  const inputBg = useThemeColor('inputBackground');
 
   const [sliderValue, setSliderValue] = useState(80);
 
-  const { updateForm } = useForm();
+  
+
+  const { loading } = useAuthGuard();
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   const handleNext = () => {
     updateForm({ passo7Card1: sliderValue });
@@ -38,9 +59,9 @@ const FeedbackScreen = () => {
             resizeMode="contain"
           />
 
-          <View style={styles.card}>
-            <Text style={styles.title}>
-              🧩 De 0 a 100, quanto você acredita no pensamento que causou essas sensações e sentimentos?
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>
+              🧩 Pensando na sua resposta anterior, de 0 a 100, o quanto você sente que alguns desses fatores mexem ou não com o seu estado emocional neste momento?
             </Text>
 
             {/* Valor acima da barra */}
@@ -83,15 +104,15 @@ const FeedbackScreen = () => {
 
             <View style={styles.sliderLabels}>
               <View style={styles.labelContainerLeft}>
-                <Text style={styles.labelValue}>0</Text>
-                <Text style={styles.labelText}>Quase nada</Text>
+                <Text style={[styles.labelValue, { color: textColor }]}>0</Text>
+                <Text style={[styles.labelText, { color: textColor }]}>Quase nada</Text>
               </View>
 
 
 
               <View style={styles.labelContainerRight}>
-                <Text style={styles.labelValue}>100</Text>
-                <Text style={styles.labelText}>Totalmente</Text>
+                <Text style={[styles.labelValue, { color: textColor }]}>100</Text>
+                <Text style={[styles.labelText, { color: textColor }]}>Totalmente</Text>
               </View>
             </View>
           </View>
@@ -109,7 +130,7 @@ const FeedbackScreen = () => {
   );
 };
 
-export default FeedbackScreen;
+export default Passo7;
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -129,7 +150,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
@@ -147,7 +167,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-    color: '#555',
     marginVertical: 8,
   },
   opcao: {
