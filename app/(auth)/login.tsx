@@ -1,13 +1,16 @@
 import { useAuth } from '@/context/AuthContext';
+import { useColorScheme } from '@/hooks/useColorScheme.web';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { supabase } from '@/lib/supabase';
+import { signInWithGoogle } from '@/services/googleSignIn';
 import { Feather } from '@expo/vector-icons';
+import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 //import { makeRedirectUri } from 'expo-auth-session';
 //import * as Google from 'expo-auth-session/providers/google';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 const textColor = useThemeColor('text');
@@ -17,7 +20,7 @@ const inputBg = useThemeColor('inputBackground');
 
 export default function LoginScreen() {
 
-
+    const scheme = useColorScheme();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -26,7 +29,33 @@ export default function LoginScreen() {
     const router = useRouter();
     const { setUser } = useAuth();
 
-    
+
+    const handleGoogleLogin = async () => {
+        try {
+            const { user } = await signInWithGoogle();
+
+            if (!user?.id || !user?.email) throw new Error('Usuário inválido retornado do Google');
+
+            await loginAndRedirect(user.id, user.email);
+
+            Toast.show({
+                type: 'success',
+                text1: 'Bem-vindo',
+                text2: user?.email ?? 'Login bem-sucedido',
+            });
+            // redirecionar ou salvar token aqui
+        } catch (err: any) {
+            const fullError = JSON.stringify(err, null, 2);
+            Alert.alert('Erro detalhado', fullError);
+            console.log(err);
+            Alert.alert(JSON.stringify(err));
+            Toast.show({
+                type: 'error',
+                text1: 'Erro de login',
+                text2: err?.message || String(err),
+            });
+        }
+    };
 
 
     // Função login com email/senha (sem alteração)
@@ -49,24 +78,26 @@ export default function LoginScreen() {
             const user = data.user;
             const userId = user.id;
 
-            const { data: profile, error: profileError } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', userId)
-                .single();
+            await loginAndRedirect(userId, user.email ?? '');
 
-            if (profileError || !profile) throw new Error('Erro ao carregar o perfil do usuário.');
-
-            setUser({
-                id: userId,
-                email: user.email ?? '',
-                nome: profile.nome,
-                apelido: profile.apelido,
-                nascimento: profile.nascimento,
-                genero: profile.genero,
-            });
-
-            router.replace('/boasVindas');
+            /* const { data: profile, error: profileError } = await supabase
+                 .from('profiles')
+                 .select('*')
+                 .eq('id', userId)
+                 .single();
+ 
+             if (profileError || !profile) throw new Error('Erro ao carregar o perfil do usuário.');
+ 
+             setUser({
+                 id: userId,
+                 email: user.email ?? '',
+                 nome: profile.nome,
+                 apelido: profile.apelido,
+                 nascimento: profile.nascimento,
+                 genero: profile.genero,
+             });
+ 
+             router.replace('/boasVindas');*/
         } catch (error: any) {
             let errorMessage = 'Erro ao fazer login. Tente novamente.';
             if (error?.message === 'Invalid login credentials') errorMessage = 'Email ou senha inválidos.';
@@ -80,6 +111,29 @@ export default function LoginScreen() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const loginAndRedirect = async (userId: string, email: string) => {
+        const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single();
+
+        if (profileError || !profile) {
+            throw new Error('Erro ao carregar o perfil do usuário.');
+        }
+
+        setUser({
+            id: userId,
+            email,
+            nome: profile.nome,
+            apelido: profile.apelido,
+            nascimento: profile.nascimento,
+            genero: profile.genero,
+        });
+
+        router.replace('/boasVindas');
     };
 
     return (
@@ -118,12 +172,16 @@ export default function LoginScreen() {
 
                     <Text style={[styles.orText, { color: placeholder }]}>Ou Login com</Text>
 
-
-
-                    <TouchableOpacity style={styles.socialButton} disabled>
-                        <Text style={styles.socialIcon}></Text>
-                        <Text style={styles.socialText}>Continue com Apple</Text>
-                    </TouchableOpacity>
+                    <GoogleSigninButton
+                        style={{ width: 250, height: 60 }}
+                        size={GoogleSigninButton.Size.Wide}
+                        color={
+                            scheme === 'dark'
+                                ? GoogleSigninButton.Color.Dark
+                                : GoogleSigninButton.Color.Light
+                        }
+                        onPress={handleGoogleLogin}
+                    />
 
                     <Pressable onPress={() => router.push('/(auth)/signup')}>
                         <Text style={[styles.signupText, { color: textColor }]}>

@@ -12,6 +12,7 @@ import {
   View
 } from 'react-native';
 
+import { useAuth } from '@/context/AuthContext';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -19,6 +20,7 @@ import { supabase } from '@/lib/supabase';
 
 
 const PassoFinal = () => {
+  const { user } = useAuth();
   const { dadosForm, updateForm } = useForm();
 
   const textColor = useThemeColor('text');
@@ -26,7 +28,7 @@ const PassoFinal = () => {
   const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
 
-  
+
 
   const { loading } = useAuthGuard();
   if (loading) {
@@ -37,60 +39,27 @@ const PassoFinal = () => {
     );
   }
 
-  const buscarNomeGenero = async () => {
-    /*const auth = getAuth();
-    const currentUser = auth.currentUser;
-
-    if (!currentUser) {
-      console.error("Usuário não está autenticado.");
-      return null;
-    }
-
-    const userRef = doc(db, "users", currentUser.uid);
-    const docSnap = await getDoc(userRef);
-
-    if (docSnap.exists()) {
-      const userData = docSnap.data();
-      const nome = userData.fullName;
-      const apelido = userData.nickname;
-      const nascimento = userData.birthDate;
-      const genero = userData.gender;
-
-      console.log("Nome:", nome);
-      console.log("Gênero:", genero);
-
-      return { nome, genero, apelido, nascimento };
-    } else {
-      console.warn("Usuário não encontrado no Firestore.");
-      return null;
-    }*/
-  };
-
 
   const enviar = async () => {
     try {
       //const session = await AsyncStorage.getItem('user');
       const { data, error } = await supabase.auth.getSession();
       console.log('session >>>>>>  ', data.session);
-      const user = data.session?.user
+      //const user = data.session?.user
       updateForm({ email: user?.email ?? '' });
       //data.email = email ?? '';
 
 
       const dadosParaEnvio = {
         ...dadosForm,
-        email: user?.email ?? ''
+        idUsuario: user?.id ?? '',
+        email: user?.email ?? '',
+        nome: user?.nome ?? '',
+        apelido: user?.apelido ?? '',
+        nascimento: user?.nascimento ?? '',
+        genero: user?.genero ?? '',
       };
 
-      const nomeGenero = await buscarNomeGenero();
-
-      /* if (nomeGenero) {
-         dadosParaEnvio.nome = nomeGenero.nome;
-         dadosParaEnvio.genero = nomeGenero.genero;
-         dadosParaEnvio.apelido = nomeGenero.apelido;
-         dadosParaEnvio.nascimento = nomeGenero.nascimento;
-       }*/
-      //console.log('Formulário enviado com sucesso!', dadosParaEnvio);
 
       const response = await fetch(
         'https://n8n.softdados.com/webhook/4d114a91-60ed-4286-b2a4-f6795f562d18',
