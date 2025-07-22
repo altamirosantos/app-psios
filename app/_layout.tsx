@@ -7,7 +7,8 @@ import { useEffect } from 'react';
 
 import { AuthProvider } from '@/context/AuthContext';
 import { FormProvider } from '@/context/FormContext'; // ← importe o provider
-import { useColorScheme } from '@/hooks/useColorScheme';
+//import { useColorScheme } from '@/hooks/useColorScheme';
+import { useColorScheme } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 SplashScreen.preventAutoHideAsync();

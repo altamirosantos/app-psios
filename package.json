@@ -59,7 +59,8 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "^0.20.0",
     "react-native-webview": "13.13.5",
-    "structured-clone": "^0.2.2"
+    "structured-clone": "^0.2.2",
+    "expo-build-properties": "~0.14.8"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -77,7 +78,9 @@
     "doctor": {
       "reactNativeDirectoryCheck": {
         "listUnknownPackages": false,
-        "exclude": ["expo-random"]
+        "exclude": [
+          "expo-random"
+        ]
       }
     }
   }

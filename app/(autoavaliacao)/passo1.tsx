@@ -20,13 +20,13 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 export default function Passo1() {
   const { updateForm } = useForm();
 
-   const textColor = useThemeColor('text');
+  const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
   const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
   const router = useRouter();
   const [sentimentoSelecionado, setSentimentoSelecionado] = useState<string | null>(null);
-  
+
 
   const sentimentos = [
     { label: 'Muito Mal', color: '#ef4444', emoji: '😞' },
@@ -36,7 +36,7 @@ export default function Passo1() {
     { label: 'Muito Bem', color: '#8b5cf6', emoji: '😄' },
   ];
 
- 
+
 
   const { loading } = useAuthGuard();
   if (loading) {

@@ -41,7 +41,23 @@
       [
         "@react-native-google-signin/google-signin",
         {
-          "iosUrlScheme": "com.googleusercontent.apps.com.altamirosantos.apppsios"
+          "iosUrlScheme": "com.googleusercontent.apps.com.altamirosantos.apppsios",
+          "android": {
+            "appAuthRedirectScheme": "com.googleusercontent.apps.885012723816-sacca04qrrcuokn4knjj4v9ut93ujii0"
+          }
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 24,
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34
+          },
+          "ios": {
+            "deploymentTarget": "15.1"
+          }
         }
       ]
     ],
