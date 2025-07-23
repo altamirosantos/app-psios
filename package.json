@@ -14,7 +14,7 @@
     "package-dev": "eas build --platform android --profile development",
     "package-prod": "eas build --platform android --profile release",
     "package-test": "eas build --platform android --profile test",
-    "package-local": "eas build --platform android --profile local --local",
+    "package-local": "NODE_ENV=development eas build --platform android --profile local --local",
     "submit-prod": "eas submit --platform android --profile release"
   },
   "jest": {
