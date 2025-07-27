@@ -8,7 +8,7 @@ import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 
@@ -44,10 +44,10 @@ export default function LoginScreen() {
             });
             // redirecionar ou salvar token aqui
         } catch (err: any) {
-            const fullError = JSON.stringify(err, null, 2);
-            Alert.alert('Erro detalhado', fullError);
-            console.log(err);
-            Alert.alert(JSON.stringify(err));
+            //const fullError = JSON.stringify(err, null, 2);
+            //Alert.alert('Erro detalhado', fullError);
+            //console.log(err);
+            //Alert.alert(JSON.stringify(err));
             Toast.show({
                 type: 'error',
                 text1: 'Erro de login',
@@ -107,14 +107,32 @@ export default function LoginScreen() {
     };
 
     const loginAndRedirect = async (userId: string, email: string) => {
-        const { data: profile, error: profileError } = await supabase
+        let { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', userId)
             .single();
 
+        // Se não existe perfil, cria um
         if (profileError || !profile) {
-            throw new Error('Erro ao carregar o perfil do usuário.');
+            const { data: newProfile, error: insertError } = await supabase
+                .from('profiles')
+                .insert([{
+                    id: userId,
+                    email: email,
+                    nome: '',       // Pode preencher com nome do Google se disponível
+                    apelido: '',
+                    nascimento: null,
+                    genero: ''
+                }])
+                .select()
+                .single();
+
+            if (insertError) {
+                throw new Error('Erro ao criar perfil do usuário.');
+            }
+
+            profile = newProfile;
         }
 
         setUser({
@@ -128,6 +146,7 @@ export default function LoginScreen() {
 
         router.replace('/boasVindas');
     };
+
 
     return (
         <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.container}>
@@ -150,7 +169,7 @@ export default function LoginScreen() {
                             placeholder="Senha"
                             placeholderTextColor={placeholder}
                             secureTextEntry={!showPassword}
-                            style={[styles.inputPassword, {backgroundColor:inputBg, color: textColor}]}
+                            style={[styles.inputPassword, { backgroundColor: inputBg, color: textColor }]}
                             value={password}
                             onChangeText={setPassword}
                         />

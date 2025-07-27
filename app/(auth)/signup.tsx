@@ -7,7 +7,6 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
     ActivityIndicator,
-    Alert,
     Image,
     ScrollView,
     StyleSheet,
@@ -53,13 +52,23 @@ export default function SignUpScreen() {
     const handleSignUp = async () => {
         try {
             if (!email || !password || !confirmPassword) {
-                Alert.alert('Erro', 'Preencha todos os campos de e-mail e senha.');
+                // Alert.alert('Erro', 'Preencha todos os campos de e-mail e senha.');
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erro de Cadastro',
+                    text2: 'Preencha todos os campos de e-mail e senha.',
+                });
                 setLoading(false);
                 return;
             }
 
             if (password !== confirmPassword) {
-                Alert.alert('Erro', 'As senhas não coincidem.');
+                //Alert.alert('Erro', 'As senhas não coincidem.');
+                Toast.show({
+                    type: 'error',
+                    text1: 'Erro de Cadastro',
+                    text2: 'As senhas não coincidem.',
+                });
                 setLoading(false);
                 return;
             }
@@ -255,7 +264,7 @@ export default function SignUpScreen() {
                         </TouchableOpacity>
 
                         <TouchableOpacity onPress={() => router.replace('/(auth)/login')}>
-                            <Text style={[styles.footerText,{color: textColor}]}>
+                            <Text style={[styles.footerText, { color: textColor }]}>
                                 Já possui uma conta? <Text style={styles.link}>Acesse aqui</Text>
                             </Text>
                         </TouchableOpacity>
@@ -348,20 +357,20 @@ const styles = StyleSheet.create({
         width: '100%',
         maxWidth: 400,
     },
-     eyeIcon: {
+    eyeIcon: {
         position: 'absolute',
         right: 12,
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
     },
-     passwordContainer: {
+    passwordContainer: {
         width: '100%',
         position: 'relative',
         marginBottom: 12,
         justifyContent: 'center',
     },
-     inputPassword: {
+    inputPassword: {
         width: '100%',
         paddingVertical: 12,
         paddingHorizontal: 12,
