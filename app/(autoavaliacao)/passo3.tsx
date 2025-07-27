@@ -12,6 +12,7 @@ import {
   View
 } from 'react-native';
 
+import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -19,14 +20,14 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 
 
 const Passo3 = () => {
-   const { updateForm } = useForm();
+  const { updateForm } = useForm();
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
   const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
   const [selecionado, setSelecionado] = useState<string | null>(null);
- 
+
 
   const ocupacoes = [
     'Empregado (a)',
@@ -81,20 +82,11 @@ const Passo3 = () => {
             ))}
           </View>
 
-          {/* Botão próximo */}
-          <TouchableOpacity
-            style={[
-              styles.button,
-              !selecionado && { backgroundColor: '#ccc' }, // desativado
-            ]}
+          <CustomButton
+            title="Me conte mais..."
             onPress={handleNext}
             disabled={!selecionado}
-          >
-            <Text style={[
-              styles.buttonText,
-              !selecionado && { color: '#aaa' },
-            ]}>Me conte mais...</Text>
-          </TouchableOpacity>
+          />
         </View>
       </ScrollView>
     </LinearGradient>

@@ -11,6 +11,7 @@ import {
   View
 } from 'react-native';
 
+import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -96,19 +97,11 @@ export default function Passo1() {
           </View>
         </View>
 
-        <TouchableOpacity
-          style={[
-            styles.button,
-            !sentimentoSelecionado && { backgroundColor: '#ccc' }, // desativado
-          ]}
+        <CustomButton
+          title="Me conte mais..."
           onPress={handleNext}
           disabled={!sentimentoSelecionado}
-        >
-          <Text style={[
-            styles.buttonText,
-            !sentimentoSelecionado && { color: '#aaa' },
-          ]}>Próximo</Text>
-        </TouchableOpacity>
+        />
       </View>
     </LinearGradient>
   );

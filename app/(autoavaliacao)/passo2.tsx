@@ -12,6 +12,7 @@ import {
   View
 } from 'react-native';
 
+import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -27,7 +28,7 @@ const Passo2 = () => {
   const inputBg = useThemeColor('inputBackground');
   const router = useRouter();
   const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);
-  
+
 
   const options = {
     emotions: [
@@ -40,7 +41,7 @@ const Passo2 = () => {
     ]
   };
 
-  
+
 
   const { loading } = useAuthGuard();
   if (loading) {
@@ -84,12 +85,12 @@ const Passo2 = () => {
                 <TouchableOpacity
                   key={emotion}
                   style={[
-                    styles.tag, {backgroundColor: inputBg},
+                    styles.tag, { backgroundColor: inputBg },
                     selectedEmotions.includes(emotion) && styles.tagSelected
                   ]}
                   onPress={() => toggleEmotion(emotion)}
                 >
-                  <Text style={selectedEmotions.includes(emotion) ? styles.tagTextSelected : {color: textColor}}>
+                  <Text style={selectedEmotions.includes(emotion) ? styles.tagTextSelected : { color: textColor }}>
                     {emotion}
                   </Text>
                 </TouchableOpacity>
@@ -97,24 +98,11 @@ const Passo2 = () => {
             </View>
           </View>
 
-          {/* Botão próximo */}
-          <TouchableOpacity
-            style={[
-              styles.button,
-              selectedEmotions.length === 0 && { backgroundColor: '#ccc' },
-            ]}
-            disabled={selectedEmotions.length === 0}
+          <CustomButton
+            title="Me conte mais..."
             onPress={handleNext}
-          >
-            <Text
-              style={[
-                styles.buttonText,
-                selectedEmotions.length === 0 && { color: '#aaa' },
-              ]}
-            >
-              Próximo
-            </Text>
-          </TouchableOpacity>
+            disabled={selectedEmotions.length === 0}
+          />
         </View>
       </ScrollView>
     </LinearGradient>

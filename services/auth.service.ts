@@ -1,5 +1,34 @@
 import { supabase } from '@/lib/supabase';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+//import AsyncStorage from '@react-native-async-storage/async-storage';
+
+GoogleSignin.configure({
+  webClientId: '885012723816-sacca04qrrcuokn4knjj4v9ut93ujii0.apps.googleusercontent.com', // do tipo Web
+  offlineAccess: true,
+});
+
+export async function signInWithGoogle() {
+  try {
+    await GoogleSignin.hasPlayServices();
+    const userInfo = await GoogleSignin.signIn();
+
+    const { idToken } = await GoogleSignin.getTokens();
+    if (!idToken) throw new Error('ID Token ausente');
+
+    // Login com Supabase usando o ID Token do Google
+    const { data, error } = await supabase.auth.signInWithIdToken({
+      provider: 'google',
+      token: idToken,
+    });
+
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error('Erro login Google:', err);
+    throw err;
+  }
+}
+
 
 export async function loginWithEmail(email: string, password: string) {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -15,10 +44,25 @@ export async function loginWithEmail(email: string, password: string) {
   return data;
 }
 
+export async function signInWithFacebook() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'facebook',
+    options: {
+      redirectTo: 'com.altamirosantos.apppsios://auth/callback', // para mobile
+    },
+  });
+
+  if (error) {
+    console.error('Erro ao logar com Facebook:', error.message);
+  } else {
+    console.log('Login com Facebook iniciado:', data);
+  }
+}
+
 export const logout = async () => {
   try {
     await supabase.auth.signOut();
-    await AsyncStorage.clear(); // ou AsyncStorage.removeItem('user') se preferir
+    //await AsyncStorage.clear(); // ou AsyncStorage.removeItem('user') se preferir
   } catch (e) {
     console.error('Erro ao fazer logout:', e);
   }

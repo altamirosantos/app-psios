@@ -8,11 +8,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 
+import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -21,13 +21,13 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 const Passo9 = () => {
   const { updateForm } = useForm();
 
-   const textColor = useThemeColor('text');
+  const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
   const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
   const [selecionados, setSelecionados] = useState<string[]>([]);
 
-  
+
 
   const distorcoes = [
     {
@@ -64,7 +64,7 @@ const Passo9 = () => {
     },
   ];
 
- 
+
 
   const { loading } = useAuthGuard();
   if (loading) {
@@ -121,20 +121,11 @@ const Passo9 = () => {
 
           </View>
 
-          {/* Botão próximo */}
-          <TouchableOpacity
-            style={[
-              styles.button,
-              selecionados.length === 0 && { backgroundColor: '#ccc' },
-            ]}
-            disabled={selecionados.length === 0}
+          <CustomButton
+            title="Me conte mais..."
             onPress={handleNext}
-          >
-            <Text style={[
-              styles.buttonText,
-              selecionados.length === 0 && { color: '#aaa' },
-            ]}>Me conte mais...</Text>
-          </TouchableOpacity>
+            disabled={selecionados.length === 0}
+          />
         </View>
       </ScrollView>
     </LinearGradient>

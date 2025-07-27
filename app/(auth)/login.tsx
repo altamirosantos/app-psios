@@ -2,23 +2,22 @@ import { useAuth } from '@/context/AuthContext';
 import { useColorScheme } from '@/hooks/useColorScheme.web';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { supabase } from '@/lib/supabase';
-import { signInWithGoogle } from '@/services/googleSignIn';
-import { Feather } from '@expo/vector-icons';
+import { loginWithEmail, signInWithFacebook, signInWithGoogle } from '@/services/auth.service';
+import { Feather, FontAwesome } from '@expo/vector-icons';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
-//import { makeRedirectUri } from 'expo-auth-session';
-//import * as Google from 'expo-auth-session/providers/google';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
-const textColor = useThemeColor('text');
-const cardColor = useThemeColor('cardBackground');
-const placeholder = useThemeColor('placeholder');
-const inputBg = useThemeColor('inputBackground');
+
 
 export default function LoginScreen() {
+    const textColor = useThemeColor('text');
+    const cardColor = useThemeColor('cardBackground');
+    const placeholder = useThemeColor('placeholder');
+    const inputBg = useThemeColor('inputBackground');
 
     const scheme = useColorScheme();
     const [email, setEmail] = useState('');
@@ -57,21 +56,33 @@ export default function LoginScreen() {
         }
     };
 
+    async function handleLoginFacebook() {
+        try {
+            setLoading(true);
+            await signInWithFacebook();
+            router.replace('/home');
+        } catch (error: any) {
+            //Alert.alert('Erro', error.message || 'Falha no login com Facebook');
+            Toast.show({
+                type: 'error',
+                text1: 'Erro de login',
+                text2: error.message || 'Falha no login com Facebook',
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
+
 
     // Função login com email/senha (sem alteração)
     const handleLogin = async () => {
         setLoading(true);
         console.log(email)
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({
+            const data = await loginWithEmail(
                 email,
                 password,
-            });
-
-            if (error) {
-                console.log(error)
-                throw new Error(error.message);
-            }
+            );
 
             console.log('Passou')
 
@@ -80,24 +91,6 @@ export default function LoginScreen() {
 
             await loginAndRedirect(userId, user.email ?? '');
 
-            /* const { data: profile, error: profileError } = await supabase
-                 .from('profiles')
-                 .select('*')
-                 .eq('id', userId)
-                 .single();
- 
-             if (profileError || !profile) throw new Error('Erro ao carregar o perfil do usuário.');
- 
-             setUser({
-                 id: userId,
-                 email: user.email ?? '',
-                 nome: profile.nome,
-                 apelido: profile.apelido,
-                 nascimento: profile.nascimento,
-                 genero: profile.genero,
-             });
- 
-             router.replace('/boasVindas');*/
         } catch (error: any) {
             let errorMessage = 'Erro ao fazer login. Tente novamente.';
             if (error?.message === 'Invalid login credentials') errorMessage = 'Email ou senha inválidos.';
@@ -142,7 +135,7 @@ export default function LoginScreen() {
                 <Image source={require('../../assets/images/logo.png')} style={styles.logoImage} resizeMode="contain" />
                 <View style={[styles.card, { backgroundColor: cardColor }]}>
                     <Text style={[styles.title, { color: textColor }]}>Iniciar</Text>
-                    <Text style={[styles.subtitle, { color: placeholder }]}>Preencha os dados abaixo</Text>
+                    <Text style={[styles.subtitle, { color: textColor }]}>Preencha os dados abaixo</Text>
 
                     <TextInput
                         placeholder="E-mail"
@@ -157,23 +150,25 @@ export default function LoginScreen() {
                             placeholder="Senha"
                             placeholderTextColor={placeholder}
                             secureTextEntry={!showPassword}
-                            style={[styles.inputPassword, { backgroundColor: inputBg, color: textColor }]}
+                            style={[styles.inputPassword, {backgroundColor:inputBg, color: textColor}]}
                             value={password}
                             onChangeText={setPassword}
                         />
-                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                            <Feather name={showPassword ? 'eye-off' : 'eye'} size={20} color="#999" />
+                        <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
+                            <Feather name={showPassword ? 'eye' : 'eye-off'} size={20} color="#999" />
                         </TouchableOpacity>
                     </View>
 
+
                     <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
-                        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.loginText}>Login</Text>}
+                        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.loginText}>Login com E-mail</Text>}
                     </TouchableOpacity>
 
-                    <Text style={[styles.orText, { color: placeholder }]}>Ou Login com</Text>
+
+                    <Text style={[styles.orText, { color: placeholder }]}>Ou</Text>
 
                     <GoogleSigninButton
-                        style={{ width: 250, height: 60 }}
+                        style={{ width: '100%', height: 60, marginBottom: 20, borderRadius: 10 }}
                         size={GoogleSigninButton.Size.Wide}
                         color={
                             scheme === 'dark'
@@ -182,6 +177,17 @@ export default function LoginScreen() {
                         }
                         onPress={handleGoogleLogin}
                     />
+
+                    <TouchableOpacity
+                        style={[styles.loginButton, { backgroundColor: '#3b5998' }]}
+                        onPress={handleLoginFacebook}
+                    >
+                        <View style={styles.facebookButtonContent}>
+                            <FontAwesome name="facebook" size={20} color="#fff" style={styles.facebookIcon} />
+                            <Text style={styles.buttonText}>Login com Facebook</Text>
+                        </View>
+                    </TouchableOpacity>
+
 
                     <Pressable onPress={() => router.push('/(auth)/signup')}>
                         <Text style={[styles.signupText, { color: textColor }]}>
@@ -203,13 +209,12 @@ const styles = StyleSheet.create({
     card: {
         width: '100%',
         borderRadius: 16,
-        padding: 24,
+        padding: 20,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowRadius: 6,
         elevation: 4,
-        backgroundColor: cardColor
     },
     logoImage: {
         width: 120,
@@ -221,12 +226,10 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 4,
-        color: textColor
     },
     subtitle: {
         fontSize: 14,
         marginBottom: 16,
-        color: textColor
     },
     input: {
         width: '100%',
@@ -234,24 +237,15 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 12,
         fontSize: 16,
-        backgroundColor: inputBg,
-        color: textColor
-    },
-    passwordContainer: {
-        width: '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderRadius: 10,
-        marginBottom: 16,
-        paddingRight: 12,
     },
     inputPassword: {
-        flex: 1,
-        padding: 12,
+        width: '100%',
+        paddingVertical: 12,
+        paddingHorizontal: 12,
+        borderRadius: 10,
         fontSize: 16,
-        backgroundColor: inputBg,
-        color: textColor
     },
+
     loginButton: {
         backgroundColor: '#4F46E5',
         width: '100%',
@@ -291,4 +285,39 @@ const styles = StyleSheet.create({
     link: {
         fontWeight: '600',
     },
+    button: { backgroundColor: '#6200EE', padding: 15, borderRadius: 5, marginVertical: 5 },
+    buttonText: { color: '#fff', textAlign: 'center', fontWeight: 'bold' },
+    buttonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    passwordContainer: {
+        width: '100%',
+        position: 'relative',
+        marginBottom: 12,
+        justifyContent: 'center',
+    },
+
+    eyeIcon: {
+        position: 'absolute',
+        right: 12,
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    facebookButtonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        position: 'relative',
+    },
+
+    facebookIcon: {
+        position: 'absolute',
+        left: 15, // Mantém o ícone fixo no canto esquerdo
+    },
+
+
 });

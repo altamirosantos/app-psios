@@ -11,6 +11,7 @@ import {
   View
 } from 'react-native';
 
+import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
@@ -25,7 +26,7 @@ const Passo4 = () => {
   const [selecionadoPensarFuturo, setSelecionadoPensarFuturo] = useState<string | null>(null);
   const [sliderValuePreparado, setSliderValuePreparado] = useState(5);
 
-  
+
 
   const comoCostumaLidar = [
     'Me expresso com facilidade (converso, escrevo, crio).',
@@ -41,7 +42,7 @@ const Passo4 = () => {
     'Sinto insegurança e dúvidas',
     'Tenho vontade de melhorar e fazer mudanças.',
   ];
-  
+
   /*const { loading } = useAuthGuard();
   if (loading) {
     return (
@@ -160,21 +161,11 @@ const Passo4 = () => {
             </View>
           </View>
 
-          {/* Botão próximo */}
-          <TouchableOpacity
-            style={[
-              styles.button,
-              (!selecionadoComoCostumaLidar || !selecionadoPensarFuturo) && { backgroundColor: '#ccc' }, // desativado
-            ]}
+          <CustomButton
+            title="Me conte mais..."
             onPress={handleNext}
             disabled={(!selecionadoComoCostumaLidar || !selecionadoPensarFuturo)}
-          >
-            <Text style={[
-              styles.buttonText,
-              (!selecionadoComoCostumaLidar || !selecionadoPensarFuturo) && { color: '#aaa' },
-            ]}
-            >Me conte mais...</Text>
-          </TouchableOpacity>
+          />
         </View>
       </ScrollView>
     </LinearGradient>
@@ -182,7 +173,7 @@ const Passo4 = () => {
 };
 
 export default Passo4;
-const { width } = Dimensions.get('window'); 
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   logo: {

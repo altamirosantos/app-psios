@@ -12,6 +12,7 @@ import {
   View
 } from 'react-native';
 
+import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -21,12 +22,12 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 const Passo10 = () => {
   const { updateForm } = useForm();
 
-   const textColor = useThemeColor('text');
+  const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
   const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
   const [selecionado, setSelecionado] = useState<string | null>(null);
-  
+
 
   const ocupacoes = [
     'Tudo parece difícil ou injusto',
@@ -34,7 +35,7 @@ const Passo10 = () => {
     'Apesar dos desafios, veja beleza e oportunidade',
   ];
 
- 
+
 
   const { loading } = useAuthGuard();
   if (loading) {
@@ -67,7 +68,7 @@ const Passo10 = () => {
             {ocupacoes.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={[styles.opcao,{ backgroundColor: item === selecionado ? inputBg : 'transparent' }]}
+                style={[styles.opcao, { backgroundColor: item === selecionado ? inputBg : 'transparent' }]}
                 onPress={() => setSelecionado(item)}
               >
                 <View style={styles.radioCirculo}>
@@ -78,20 +79,11 @@ const Passo10 = () => {
             ))}
           </View>
 
-          {/* Botão próximo */}
-          <TouchableOpacity
-            style={[
-              styles.button,
-              !selecionado && { backgroundColor: '#ccc' },
-            ]}
-            disabled={!selecionado}
+          <CustomButton
+            title="Me conte mais..."
             onPress={handleNext}
-          >
-            <Text style={[
-              styles.buttonText,
-              !selecionado && { color: '#aaa' },
-            ]}>Me conte mais...</Text>
-          </TouchableOpacity>
+            disabled={!selecionado}
+          />
         </View>
       </ScrollView>
     </LinearGradient>

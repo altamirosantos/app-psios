@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "com.altamirosantos.apppsios",
+    "name": "Psios",
     "slug": "app-psios",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -28,7 +28,8 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.altamirosantos.apppsios"
+      "package": "com.altamirosantos.apppsios",
+      "edgeToEdgeEnabled": true
     },
     "web": {
       "bundler": "metro",

@@ -12,6 +12,7 @@ import {
   View
 } from 'react-native';
 
+import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -19,7 +20,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 
 
 const Passo11 = () => {
-   const { updateForm } = useForm();
+  const { updateForm } = useForm();
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
@@ -27,7 +28,7 @@ const Passo11 = () => {
   const inputBg = useThemeColor('inputBackground');
   const [selecionado, setSelecionado] = useState<string | null>(null);
 
- 
+
 
   const opcoes = [
     { id: 1, label: "Espelho 1 – Confiante e Positiva", emoji: "🌟" },
@@ -37,7 +38,7 @@ const Passo11 = () => {
     { id: 5, label: "Espelho 5 – Em construção com carinho", emoji: "✨" },
   ];
 
-  
+
 
   const { loading } = useAuthGuard();
   if (loading) {
@@ -96,20 +97,12 @@ const Passo11 = () => {
             </View>
           </View>
 
-          {/* Botão próximo */}
-          <TouchableOpacity
-            style={[
-              styles.button,
-              !selecionado && { backgroundColor: '#ccc' },
-            ]}
-            disabled={!selecionado}
+          <CustomButton
+            title="Enviar"
             onPress={handleNext}
-          >
-            <Text style={[
-              styles.buttonText,
-              !selecionado && { color: '#aaa' },
-            ]}>Enviar</Text>
-          </TouchableOpacity>
+            disabled={!selecionado}
+          />
+
         </View>
       </ScrollView>
     </LinearGradient>

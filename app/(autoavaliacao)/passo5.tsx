@@ -12,6 +12,7 @@ import {
   View
 } from 'react-native';
 
+import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -19,7 +20,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 
 
 const Passo5 = () => {
-   const { updateForm } = useForm();
+  const { updateForm } = useForm();
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
@@ -104,8 +105,8 @@ const Passo5 = () => {
             style={styles.logo}
             resizeMode="contain"
           />
-          <View style={[styles.card, {backgroundColor: cardColor}]}>
-            <Text style={[styles.title, {color: textColor}]}>🤔 Quando algo dá errado, o que vem primeiro na sua mente?</Text>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>🤔 Quando algo dá errado, o que vem primeiro na sua mente?</Text>
             {opCard1.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -115,13 +116,13 @@ const Passo5 = () => {
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard1 === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={[styles.opcaoTexto, {color: textColor}]}>{item}</Text>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={[styles.card, {backgroundColor: cardColor}]}>
-            <Text style={[styles.title, {color: textColor}]}>✨ Você costuma tomar decisões mais com base:</Text>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>✨ Você costuma tomar decisões mais com base:</Text>
             {opCard2.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -131,13 +132,13 @@ const Passo5 = () => {
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard2 === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={[styles.opcaoTexto, {color: textColor}]}>{item}</Text>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={[styles.card, {backgroundColor: cardColor}]}>
-            <Text style={[styles.title, {color: textColor}]}>👩🏽‍🦱 Quando está com outras pessoas, você tende a:</Text>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>👩🏽‍🦱 Quando está com outras pessoas, você tende a:</Text>
             {opCard3.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -147,13 +148,13 @@ const Passo5 = () => {
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard3 === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={[styles.opcaoTexto, {color: textColor}]}>{item}</Text>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={[styles.card, {backgroundColor: cardColor}]}>
-            <Text style={[styles.title, {color: textColor}]}>🧩 Como você costuma reagir a situações novas ou desconhecidas?</Text>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>🧩 Como você costuma reagir a situações novas ou desconhecidas?</Text>
             {opCard4.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -163,13 +164,13 @@ const Passo5 = () => {
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard4 === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={[styles.opcaoTexto, {color: textColor}]}>{item}</Text>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={[styles.card, {backgroundColor: cardColor}]}>
-            <Text style={[styles.title, {color: textColor}]}>🟣 Quando você precisa tomar uma decisão importante, como costuma agir?</Text>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>🟣 Quando você precisa tomar uma decisão importante, como costuma agir?</Text>
             {opCard5.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -179,13 +180,13 @@ const Passo5 = () => {
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard5 === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={[styles.opcaoTexto, {color: textColor}]}>{item}</Text>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <View style={[styles.card, {backgroundColor: cardColor}]}>
-            <Text style={[styles.title, {color: textColor}]}>🌟 Quando você pensa nas suas qualidades e forças internas, o que mais se destaca em você?</Text>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>🌟 Quando você pensa nas suas qualidades e forças internas, o que mais se destaca em você?</Text>
             {opCard6.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -195,27 +196,16 @@ const Passo5 = () => {
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard6 === item && <View style={styles.radioSelecionado} />}
                 </View>
-                <Text style={[styles.opcaoTexto, {color: textColor}]}>{item}</Text>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-
-          {/* Botão próximo */}
-          <TouchableOpacity
-            style={[
-              styles.button,
-              (!selecionadoOpCard1 || !selecionadoOpCard2 || !selecionadoOpCard3 || !selecionadoOpCard4 || !selecionadoOpCard5 || !selecionadoOpCard6) && { backgroundColor: '#ccc' }, // desativado
-            ]}
+          <CustomButton
+            title="Me conte mais..."
             onPress={handleNext}
             disabled={(!selecionadoOpCard1 || !selecionadoOpCard2 || !selecionadoOpCard3 || !selecionadoOpCard4 || !selecionadoOpCard5 || !selecionadoOpCard6)}
-          >
-            <Text style={[
-              styles.buttonText,
-              (!selecionadoOpCard1 || !selecionadoOpCard2 || !selecionadoOpCard3 || !selecionadoOpCard4 || !selecionadoOpCard5 || !selecionadoOpCard6) && { color: '#aaa' },
-            ]}
-            >Me conte mais...</Text>
-          </TouchableOpacity>
+          />
         </View>
       </ScrollView>
     </LinearGradient>

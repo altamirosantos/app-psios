@@ -1,8 +1,7 @@
-import { supabase } from '@/lib/supabase';
-import { Feather } from '@expo/vector-icons';
-//import DateTimePicker from '@react-native-community/datetimepicker';
 import BirthDatePicker from '@/components/BirthDatePicker';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { supabase } from '@/lib/supabase';
+import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -20,17 +19,16 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 import Toast from 'react-native-toast-message';
 
-const textColor = useThemeColor('text');
-const cardColor = useThemeColor('cardBackground');
-const placeholder = useThemeColor('placeholder');
-const inputBg = useThemeColor('inputBackground');
+
 
 export default function SignUpScreen() {
+    const textColor = useThemeColor('text');
+    const cardColor = useThemeColor('cardBackground');
+    const placeholder = useThemeColor('placeholder');
+    const inputBg = useThemeColor('inputBackground');
+
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [showDatePicker, setShowDatePicker] = useState(false);
-
-    //const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [fullName, setFullName] = useState('');
@@ -79,6 +77,8 @@ export default function SignUpScreen() {
 
             const userId = signUpData?.user?.id;
 
+            console.log('### signUpData  ', signUpData);
+
             if (!userId) {
                 throw new Error('Erro ao obter ID do usuário após cadastro.');
             }
@@ -89,6 +89,7 @@ export default function SignUpScreen() {
                 nome: fullName,
                 apelido: nickname,
                 nascimento: birthDate,
+                email: email,
                 genero: (value === 'outro' ? customGenero : value) ?? "",
             });
 
@@ -96,8 +97,13 @@ export default function SignUpScreen() {
                 throw new Error(insertError.message);
             }
 
-            Alert.alert('Sucesso', 'Conta criada com sucesso!');
-            router.push('/login');
+            //Alert.alert('Sucesso', 'Conta criada com sucesso!');
+            Toast.show({
+                type: 'success',
+                text1: 'Cadastro OK',
+                text2: 'Cadastro criado com sucesso',
+            });
+            router.replace('/(auth)/login');
 
         } catch (error: any) {
             Toast.show({
@@ -111,8 +117,8 @@ export default function SignUpScreen() {
     };
 
     return (
-        <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.container}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+        <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
+            <ScrollView>
                 <View style={styles.container}>
                     <Image
                         source={require('../../assets/images/logo.png')}
@@ -120,9 +126,9 @@ export default function SignUpScreen() {
                         resizeMode="contain"
                     />
 
-                    <View style={styles.formContainer}>
-                        <Text style={styles.title}>Criar Minha Conta</Text>
-                        <Text style={styles.subtitle}>
+                    <View style={[styles.card, { backgroundColor: cardColor }]}>
+                        <Text style={[styles.title, { color: textColor }]}>Criar Minha Conta</Text>
+                        <Text style={[styles.subtitle, , { color: textColor }]}>
                             Para criar sua conta insira os dados abaixo.
                         </Text>
 
@@ -131,14 +137,14 @@ export default function SignUpScreen() {
                         <TextInput
                             placeholder="Nome completo"
                             placeholderTextColor={placeholder}
-                            style={styles.input}
+                            style={[styles.input, { backgroundColor: inputBg }]}
                             value={fullName}
                             onChangeText={setFullName}
                         />
 
                         {/* Gênero */}
                         <Text style={{ fontWeight: '500', marginBottom: 4 }}>Gênero</Text>
-                        <View style={[styles.input, { zIndex: 10 }]}>
+                        <View style={[styles.input, { zIndex: 10, backgroundColor: inputBg }]}>
                             <DropDownPicker
                                 open={open}
                                 value={value}
@@ -176,7 +182,7 @@ export default function SignUpScreen() {
                                 placeholder="Informe seu gênero"
                                 value={customGenero}
                                 onChangeText={setCustomGenero}
-                                style={styles.input}
+                                style={[styles.input, { backgroundColor: inputBg, color: textColor }]}
                             />
                         )}
 
@@ -187,7 +193,7 @@ export default function SignUpScreen() {
                         <TextInput
                             placeholder="Apelido"
                             placeholderTextColor={placeholder}
-                            style={styles.input}
+                            style={[styles.input, { backgroundColor: inputBg, color: textColor }]}
                             value={nickname}
                             onChangeText={setNickname}
                         />
@@ -198,7 +204,7 @@ export default function SignUpScreen() {
                         <TextInput
                             placeholder="Email"
                             placeholderTextColor={placeholder}
-                            style={styles.input}
+                            style={[styles.input, { backgroundColor: inputBg, color: textColor }]}
                             value={email}
                             onChangeText={setEmail}
                             keyboardType="email-address"
@@ -206,44 +212,32 @@ export default function SignUpScreen() {
                         />
 
                         {/* Senha */}
-                        <View style={styles.inputWithIcon}>
+                        <View style={styles.passwordContainer}>
                             <TextInput
                                 placeholder="Senha"
                                 placeholderTextColor={placeholder}
                                 secureTextEntry={!showPassword}
-                                style={styles.inputField}
+                                style={[styles.inputPassword, { backgroundColor: inputBg, color: textColor }]}
                                 value={password}
                                 onChangeText={setPassword}
                             />
-                            <TouchableOpacity
-                                onPress={() => setShowPassword(!showPassword)}
-                            >
-                                <Feather
-                                    name={showPassword ? 'eye-off' : 'eye'}
-                                    size={20}
-                                    color="#999"
-                                />
+                            <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
+                                <Feather name={showPassword ? 'eye' : 'eye-off'} size={20} color="#999" />
                             </TouchableOpacity>
                         </View>
 
                         {/* Confirmar Senha */}
-                        <View style={styles.inputWithIcon}>
+                        <View style={styles.passwordContainer}>
                             <TextInput
                                 placeholder="Confirma Senha"
                                 placeholderTextColor={placeholder}
                                 secureTextEntry={!showConfirmPassword}
-                                style={styles.inputField}
+                                style={[styles.inputPassword, { backgroundColor: inputBg, color: textColor }]}
                                 value={confirmPassword}
                                 onChangeText={setConfirmPassword}
                             />
-                            <TouchableOpacity
-                                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                            >
-                                <Feather
-                                    name={showConfirmPassword ? 'eye-off' : 'eye'}
-                                    size={20}
-                                    color="#999"
-                                />
+                            <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                <Feather name={showConfirmPassword ? 'eye' : 'eye-off'} size={20} color="#999" />
                             </TouchableOpacity>
                         </View>
 
@@ -260,8 +254,8 @@ export default function SignUpScreen() {
                             )}
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => router.push('/login')}>
-                            <Text style={styles.footerText}>
+                        <TouchableOpacity onPress={() => router.replace('/(auth)/login')}>
+                            <Text style={[styles.footerText,{color: textColor}]}>
                                 Já possui uma conta? <Text style={styles.link}>Acesse aqui</Text>
                             </Text>
                         </TouchableOpacity>
@@ -273,9 +267,15 @@ export default function SignUpScreen() {
 }
 
 const styles = StyleSheet.create({
+    containerRoot: {
+        flex: 1,
+        paddingBottom: 50
+    },
     container: {
         flex: 1,
-        padding: 20,
+        alignItems: 'center',
+        paddingTop: 80,
+        paddingHorizontal: 20,
     },
     logoImage: {
         width: 120,
@@ -286,42 +286,35 @@ const styles = StyleSheet.create({
     formContainer: {
         backgroundColor: '#fff',
         borderRadius: 16,
-        padding: 20,
     },
     title: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: textColor,
         marginBottom: 6,
+        textAlign: 'center'
     },
     subtitle: {
         fontSize: 14,
-        color: textColor,
         marginBottom: 16,
+        textAlign: 'center'
     },
     input: {
-        backgroundColor: inputBg,
         padding: 12,
         borderRadius: 10,
         marginBottom: 12,
         fontSize: 16,
-        color: textColor,
     },
     inputWithIcon: {
-        backgroundColor: inputBg,
         borderRadius: 10,
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 12,
-        marginBottom: 12,
-        color: textColor,
+        marginBottom: 12
     },
     inputField: {
         flex: 1,
         fontSize: 16,
         paddingVertical: 12,
-        color: textColor,
-        backgroundColor: inputBg,
     },
     button: {
         backgroundColor: '#4f46e5',
@@ -344,5 +337,35 @@ const styles = StyleSheet.create({
     link: {
         color: '#6366f1',
         fontWeight: '600',
+    },
+    card: {
+        borderRadius: 12,
+        padding: 16,
+        marginVertical: 8,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        width: '100%',
+        maxWidth: 400,
+    },
+     eyeIcon: {
+        position: 'absolute',
+        right: 12,
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+     passwordContainer: {
+        width: '100%',
+        position: 'relative',
+        marginBottom: 12,
+        justifyContent: 'center',
+    },
+     inputPassword: {
+        width: '100%',
+        paddingVertical: 12,
+        paddingHorizontal: 12,
+        borderRadius: 10,
+        fontSize: 16,
     },
 });

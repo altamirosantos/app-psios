@@ -10,10 +10,10 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native';
 
+import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -30,7 +30,7 @@ const Passo7 = () => {
 
   const [sliderValue, setSliderValue] = useState(80);
 
-  
+
 
   const { loading } = useAuthGuard();
   if (loading) {
@@ -117,13 +117,11 @@ const Passo7 = () => {
             </View>
           </View>
 
-          {/* Botão próximo */}
-          <TouchableOpacity
-            style={styles.button}
+          <CustomButton
+            title="Me conte mais..."
             onPress={handleNext}
-          >
-            <Text style={styles.buttonText}>Me conte mais...</Text>
-          </TouchableOpacity>
+            disabled={false}
+          />
         </View>
       </ScrollView>
     </LinearGradient>

@@ -9,10 +9,10 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View
 } from 'react-native';
 
+import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
@@ -61,7 +61,7 @@ const Passo8 = () => {
   };
 
   const handleNext = () => {
-    updateForm({ passo8Oque: oque, passo8Sentimento: sentimento, passo8ComoSeComportou: comoSeComportou,  passo8Gatilho: gatilho, passo8Pensamento: pensamento });
+    updateForm({ passo8Oque: oque, passo8Sentimento: sentimento, passo8ComoSeComportou: comoSeComportou, passo8Gatilho: gatilho, passo8Pensamento: pensamento });
     router.push('/passo9');
   };
 
@@ -139,20 +139,11 @@ const Passo8 = () => {
 
           </View>
 
-          {/* Botão próximo */}
-          <TouchableOpacity
-            style={[
-              styles.button,
-              (!oque || comoSeComportou.length === 0 || !sentimento || !gatilho || !pensamento) && { backgroundColor: '#ccc' },
-            ]}
-            disabled={!oque || comoSeComportou.length === 0 || !sentimento || !gatilho || !pensamento}
+          <CustomButton
+            title="Me conte mais..."
             onPress={handleNext}
-          >
-            <Text style={[
-              styles.buttonText,
-              (!oque || comoSeComportou.length === 0 || !sentimento || !gatilho || !pensamento) && { color: '#aaa' },
-            ]}>Me conte mais...</Text>
-          </TouchableOpacity>
+            disabled={(!oque || comoSeComportou.length === 0 || !sentimento || !gatilho || !pensamento)}
+          />
         </View>
       </ScrollView>
     </LinearGradient>

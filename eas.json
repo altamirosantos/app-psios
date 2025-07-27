@@ -3,29 +3,35 @@
     "version": ">= 3.0.0"
   },
   "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk"
-      }
-    },
-     "test": {
+    "preview": {
       "developmentClient": false,
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "ios": {
+        "simulator": false
       }
     },
-    "release": {
+    "production": {
+      "developmentClient": false,
+      "distribution": "store",
       "android": {
         "buildType": "app-bundle"
+      },
+      "ios": {
+        "simulator": false
       }
-    },
-    "local": {
-      "distribution": "internal",
+    }
+  },
+  "submit": {
+    "production": {
       "android": {
-        "buildType": "apk"
+        "serviceAccountKeyPath": "./google-play-key.json"
+      },
+      "ios": {
+        "ascAppId": "1234567890",
+        "appleId": "altamirosantos@gmail.com"
       }
     }
   }

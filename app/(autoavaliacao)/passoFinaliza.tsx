@@ -8,10 +8,10 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native';
 
+import { CustomButton } from '@/components/CustomButton';
 import { useAuth } from '@/context/AuthContext';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
@@ -61,21 +61,21 @@ const PassoFinal = () => {
       };
 
 
-     /* const { data: insertData, error: insertError } = await supabase
-        .from('autoavaliacao')
-        .insert([
-          {
-            user_id: user?.id,
-            dados_entrada: JSON.stringify(dadosParaEnvio),
-          },
-        ]);
-
-      if (insertError) {
-        console.error('Erro ao salvar autoavaliação:', insertError);
-        throw new Error(`Erro ao enviar dados: ${insertError}`);
-      } else {
-        console.log('Autoavaliação salva com sucesso:', insertData);
-      }*/
+      /* const { data: insertData, error: insertError } = await supabase
+         .from('autoavaliacao')
+         .insert([
+           {
+             user_id: user?.id,
+             dados_entrada: JSON.stringify(dadosParaEnvio),
+           },
+         ]);
+ 
+       if (insertError) {
+         console.error('Erro ao salvar autoavaliação:', insertError);
+         throw new Error(`Erro ao enviar dados: ${insertError}`);
+       } else {
+         console.log('Autoavaliação salva com sucesso:', insertData);
+       }*/
 
       const response = await fetch(
         'https://n8n.softdados.com/webhook/4d114a91-60ed-4286-b2a4-f6795f562d18',
@@ -129,17 +129,12 @@ const PassoFinal = () => {
             </Text>
           </View>
 
-          {/* Botão próximo */}
-          <TouchableOpacity
-            style={[
-              styles.button,
-            ]}
+          <CustomButton
+            title="Enviar"
             onPress={enviar}
-          >
-            <Text style={[
-              styles.buttonText,
-            ]}>Enviar agora</Text>
-          </TouchableOpacity>
+            disabled={false}
+          />
+
         </View>
       </ScrollView>
     </LinearGradient>
