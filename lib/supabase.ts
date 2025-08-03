@@ -21,3 +21,32 @@ export const supabase = isWeb
             detectSessionInUrl: false,
         },
     });
+
+export async function getPlanoAtivo(userId: string) {
+    const { data, error } = await supabase
+        .from('plano_usuario')
+        .select('plano_id')
+        .eq('user_id', userId)
+        .eq('status', 'ativo')
+        .single();
+
+    if (error || !data) {
+        return null; // Nenhum plano ativo
+    }
+
+    return data.plano_id; // Ex: 'gratis', 'basico', 'premium'
+}
+
+export async function getPlanosDisponiveis() {
+    const { data, error } = await supabase
+        .from('planos')
+        .select('*')
+        .order('valor', { ascending: true });
+
+    if (error) {
+        console.error('Erro ao buscar planos:', error);
+        return [];
+    }
+
+    return data;
+}

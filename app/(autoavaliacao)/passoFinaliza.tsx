@@ -46,14 +46,14 @@ const PassoFinal = () => {
       const { data, error } = await supabase.auth.getSession();
       console.log('session >>>>>>  ', data.session);
       //const user = data.session?.user
-      updateForm({ email: user?.email ?? '' });
+      updateForm({ email: data.session?.user?.email ?? '' });
       //data.email = email ?? '';
 
 
       const dadosParaEnvio = {
         ...dadosForm,
-        idUsuario: user?.id ?? '',
-        email: user?.email ?? '',
+        idUsuario: data.session?.user?.id ?? '',
+        email: data.session?.user?.email ?? '',
         nome: user?.nome ?? '',
         apelido: user?.apelido ?? '',
         nascimento: user?.nascimento ?? '',

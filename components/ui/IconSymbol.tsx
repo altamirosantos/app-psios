@@ -1,33 +1,26 @@
-// This file is a fallback for using MaterialIcons on Android and web.
-
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolWeight } from 'expo-symbols';
 import React from 'react';
 import { OpaqueColorValue, StyleProp, ViewStyle } from 'react-native';
 
-// Add your SFSymbol to MaterialIcons mappings here.
+import { Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
+// Adicione aqui outras fontes que quiser usar
+
+// Defina os ícones disponíveis com suas respectivas bibliotecas
 const MAPPING = {
-  // See MaterialIcons here: https://icons.expo.fyi
-  // See SF Symbols in the SF Symbols app on Mac.
-  'house.fill': 'home',
-  'paperplane.fill': 'send',
-  'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
-  'rectangle.portrait.and.arrow.right.fill': 'logout',
-} as Partial<
-  Record<
-    import('expo-symbols').SymbolViewProps['name'],
-    React.ComponentProps<typeof MaterialIcons>['name']
-  >
->;
+  'house.fill': { name: 'home', library: MaterialIcons },
+  'paperplane.fill': { name: 'send', library: MaterialIcons },
+  'chevron.left.forwardslash.chevron.right': { name: 'code', library: MaterialIcons },
+  'chevron.right': { name: 'chevron-right', library: MaterialIcons },
+  'rectangle.portrait.and.arrow.right.fill': { name: 'logout', library: MaterialIcons },
+
+  // Exemplo usando Entypo:
+  'credit': { name: 'credit', library: Entypo },
+
+  // Exemplo usando Feather:
+  'settings': { name: 'settings', library: Feather },
+} as const;
 
 export type IconSymbolName = keyof typeof MAPPING;
 
-/**
- * An icon component that uses native SFSymbols on iOS, and MaterialIcons on Android and web. This ensures a consistent look across platforms, and optimal resource usage.
- *
- * Icon `name`s are based on SFSymbols and require manual mapping to MaterialIcons.
- */
 export function IconSymbol({
   name,
   size = 24,
@@ -38,7 +31,21 @@ export function IconSymbol({
   size?: number;
   color: string | OpaqueColorValue;
   style?: StyleProp<ViewStyle>;
-  weight?: SymbolWeight;
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+  const icon = MAPPING[name];
+
+  if (!icon) {
+    console.warn(`Ícone "${name}" não encontrado no mapeamento.`);
+    return null;
+  }
+
+  const IconComponent = icon.library;
+  return (
+    <IconComponent
+      name={icon.name as any}
+      size={size}
+      color={color}
+      style={style}
+    />
+  );
 }

@@ -81,6 +81,9 @@ export default function SignUpScreen() {
             });
 
             if (signUpError) {
+                if (signUpError.message.includes("User already registered")) {
+                    throw new Error("Este e-mail já está cadastrado. Tente fazer login ou usar outro método.");
+                }
                 throw new Error(signUpError.message);
             }
 

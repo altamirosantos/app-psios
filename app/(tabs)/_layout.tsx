@@ -39,7 +39,20 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
-       <Tabs.Screen
+      <Tabs.Screen
+        name="assinatura"
+        options={{
+          title: 'Assinaturas',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol
+              size={28}
+              name="credit" // ícone sugestivo para planos/assinaturas
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="logout"
         options={{
           title: 'Sair',
