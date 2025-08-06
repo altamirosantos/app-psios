@@ -42,10 +42,9 @@ const Passo9 = () => {
   ];
 
   const opCard2 = [
-    'No que sente.',
-    'No que pensa.',
-    'No que os outros esperam.',
-    'No que faça mais sentido no momento.',
+    'Tudo parece difícil ou injusto',
+    'Vejo altos e baixos, tentando encontrar equilíbrio',
+    'Apesar dos desafios, veja beleza e oportunidade',
   ];
 
   const opCard3 = [
@@ -91,7 +90,7 @@ const Passo9 = () => {
 
   const handleNext = () => {
     updateForm({ passo5Card1: selecionadoOpCard1 ?? '', passo5Card2: selecionadoOpCard2 ?? '', passo5Card3: selecionadoOpCard3 ?? '', passo5Card4: selecionadoOpCard4 ?? '', passo5Card5: selecionadoOpCard5 ?? '', passo5Card6: selecionadoOpCard6 ?? '' });
-    router.push('/passo6');
+    router.push('/passo11');
   };
 
   return (
@@ -106,7 +105,7 @@ const Passo9 = () => {
             resizeMode="contain"
           />
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🤔 Quando algo dá errado, o que vem primeiro na sua mente?</Text>
+            <Text style={[styles.title, { color: textColor }]}>🤔 Em situações difíceis ou frustrantes, o que vem primeiro na sua mente?</Text>
             {opCard1.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -122,11 +121,12 @@ const Passo9 = () => {
           </View>
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>✨ Você costuma tomar decisões mais com base:</Text>
+            <Text style={[styles.title, { color: textColor }]}>🌍 Como você costuma enxergar o mundo ao seu redor?</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>Seu pensamento contem…</Text>
             {opCard2.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={[styles.opcao, selecionadoOpCard2 === item && { backgroundColor: inputBg }]}
+                style={[styles.opcao, { backgroundColor: item === selecionadoOpCard2 ? inputBg : 'transparent' }]}
                 onPress={() => setSelecionadoOpCard2(item)}
               >
                 <View style={styles.radioCirculo}>
@@ -138,7 +138,7 @@ const Passo9 = () => {
           </View>
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>👩🏽‍🦱 Quando está com outras pessoas, você tende a:</Text>
+            <Text style={[styles.title, { color: textColor }]}>👩🏽‍🦱 Em momentos com outras pessoas, você costuma:</Text>
             {opCard3.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -154,7 +154,7 @@ const Passo9 = () => {
           </View>
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🧩 Como você costuma reagir a situações novas ou desconhecidas?</Text>
+            <Text style={[styles.title, { color: textColor }]}>🧩 Como você se sente quando algo novo ou inesperado acontece?</Text>
             {opCard4.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -170,7 +170,7 @@ const Passo9 = () => {
           </View>
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🟣 Quando você precisa tomar uma decisão importante, como costuma agir?</Text>
+            <Text style={[styles.title, { color: textColor }]}>🟣 Como você costuma reagir diante de decisões importantes?</Text>
             {opCard5.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -186,7 +186,7 @@ const Passo9 = () => {
           </View>
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🌟 Quando você pensa nas suas qualidades e forças internas, o que mais se destaca em você?</Text>
+            <Text style={[styles.title, { color: textColor }]}>🌟 Qual é a força ou qualidade que mais se destaca em você?</Text>
             {opCard6.map((item) => (
               <TouchableOpacity
                 key={item}

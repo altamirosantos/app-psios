@@ -7,6 +7,7 @@ type FormData = {
   ocupacoes?: string;
   selecionadoComoCostumaLidar?: string;
   selecionadoPensarFuturo?: string;
+  selecionadoConcentracao?: string;
   sliderValuePreparado?: number;
   passo5Card1?: string;
   passo5Card2?: string;

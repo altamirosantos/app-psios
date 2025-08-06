@@ -83,7 +83,7 @@ const Passo7 = () => {
 
   const handleNext = () => {
     updateForm({ distorcoesPensamento: selecionados });
-    router.push('/passo10');
+    router.push('/passo8');
   };
 
 

@@ -24,6 +24,7 @@ const Passo8 = () => {
 
   const [selecionadoComoCostumaLidar, setSelecionadoComoCostumaLidar] = useState<string | null>(null);
   const [selecionadoPensarFuturo, setSelecionadoPensarFuturo] = useState<string | null>(null);
+  const [selecionadoConcentracao, setSelecionadoConcentracao] = useState<string | null>(null);
   const [sliderValuePreparado, setSliderValuePreparado] = useState(5);
 
 
@@ -43,6 +44,14 @@ const Passo8 = () => {
     'Tenho vontade de melhorar e fazer mudanças.',
   ];
 
+  const concentracao = [
+    "Me distraio com facilidade e sinto dificuldade para manter o foco.",
+    "Consigo me concentrar em algumas atividades, mas me perco com facilidade.",
+    "Tenho conseguido manter o foco de forma razoável na maior parte do tempo.",
+    "Estou focado(a) e com boa concentração na maioria das atividades.",
+    "Estou com foco intenso e concentração plena no que preciso fazer."
+  ]
+
   /*const { loading } = useAuthGuard();
   if (loading) {
     return (
@@ -55,7 +64,7 @@ const Passo8 = () => {
   const { updateForm } = useForm();
   const handleNext = () => {
     updateForm({ selecionadoComoCostumaLidar: selecionadoComoCostumaLidar ?? '', selecionadoPensarFuturo: selecionadoPensarFuturo ?? '', sliderValuePreparado: sliderValuePreparado });
-    router.push('/passo5');
+    router.push('/passo9');
   };
 
   return (
@@ -86,7 +95,7 @@ const Passo8 = () => {
           </View>
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🌀 Quando você pensa no futuro, qual dessas frases mais combinam com o que sente ou imagina?</Text>
+            <Text style={[styles.title, { color: textColor }]}>🌀 Ao imaginar seu futuro, qual dessas frases traduz melhor o que você sente?</Text>
             {pensarFuturo.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -95,6 +104,22 @@ const Passo8 = () => {
               >
                 <View style={styles.radioCirculo}>
                   {selecionadoPensarFuturo === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>🧠 Como você descreveria sua capacidade de concentração e foco nos últimos dias?</Text>
+            {concentracao.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={[styles.opcao, selecionadoConcentracao === item && { backgroundColor: inputBg }]}
+                onPress={() => setSelecionadoConcentracao(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoConcentracao === item && <View style={styles.radioSelecionado} />}
                 </View>
                 <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>

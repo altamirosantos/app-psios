@@ -48,8 +48,9 @@ export default function DashboardScreen() {
   };
 
   const goToSubscription = () => {
-    closeModal();
+    
     router.push('/(tabs)/assinatura');
+    closeModal();
   };
 
   if (loading) {
