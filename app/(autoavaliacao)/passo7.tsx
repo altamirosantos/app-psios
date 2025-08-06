@@ -1,4 +1,3 @@
-import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -6,18 +5,17 @@ import {
   ActivityIndicator,
   Dimensions,
   Image,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
   View
 } from 'react-native';
+import { Checkbox } from 'react-native-paper';
 
 import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
-
 
 
 const Passo7 = () => {
@@ -27,8 +25,44 @@ const Passo7 = () => {
   const cardColor = useThemeColor('cardBackground');
   const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
+  const [selecionados, setSelecionados] = useState<string[]>([]);
 
-  const [sliderValue, setSliderValue] = useState(80);
+
+
+  const distorcoes = [
+    {
+      titulo: 'Leitura mental',
+      descricao: 'Acho que sei o que os outros estão pensando sobre mim.',
+    },
+    {
+      titulo: 'Catastrofização',
+      descricao: 'Sempre imagino o pior cenário possível.',
+    },
+    {
+      titulo: 'Tudo ou nada',
+      descricao: 'Se não for perfeito, é um fracasso.',
+    },
+    {
+      titulo: 'Generalização',
+      descricao: 'Sempre que algo dá errado, penso que tudo sempre será assim.',
+    },
+    {
+      titulo: 'Filtro negativo',
+      descricao: 'Só consigo ver o lado ruim da situação.',
+    },
+    {
+      titulo: 'Desqualificar o positivo',
+      descricao: 'Esqueço ou minimizo as coisas boas que acontecem.',
+    },
+    {
+      titulo: 'Rotação',
+      descricao: 'Eu não sou boa o suficiente.',
+    },
+    {
+      titulo: 'Personalização',
+      descricao: 'Sinto que tudo é culpa minha.',
+    },
+  ];
 
 
 
@@ -41,9 +75,15 @@ const Passo7 = () => {
     );
   }
 
+  const toggleItem = (titulo: string) => {
+    setSelecionados(prev =>
+      prev.includes(titulo) ? prev.filter(i => i !== titulo) : [...prev, titulo]
+    );
+  };
+
   const handleNext = () => {
-    updateForm({ passo7Card1: sliderValue });
-    router.push('/passo8');
+    updateForm({ distorcoesPensamento: selecionados });
+    router.push('/passo10');
   };
 
 
@@ -61,66 +101,30 @@ const Passo7 = () => {
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
             <Text style={[styles.title, { color: textColor }]}>
-              🧩 Pensando na sua resposta anterior, de 0 a 100, o quanto você sente que alguns desses fatores mexem ou não com o seu estado emocional neste momento?
+              💗 <Text style={{ fontWeight: 'bold' }}>Seu pensamento contém alguma dessas distorções?</Text> Marque as opções que se aplicam:
             </Text>
 
-            {/* Valor acima da barra */}
-            <View style={styles.sliderValueContainer}>
-              <Text style={styles.sliderValueText}>{sliderValue}</Text>
+            <View style={styles.lista}>
+              {distorcoes.map((item, idx) => (
+                <View key={idx} style={[styles.item, { backgroundColor: inputBg }]}>
+                  <Checkbox
+                    status={selecionados.includes(item.titulo) ? 'checked' : 'unchecked'}
+                    onPress={() => toggleItem(item.titulo)}
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.itemTitulo, { color: textColor }]}>{item.titulo}</Text>
+                    <Text style={[styles.itemDescricao, { color: textColor }]}>{item.descricao}</Text>
+                  </View>
+                </View>
+              ))}
             </View>
 
-            {Platform.OS === 'web' ? (
-              <input
-                type="range"
-                min={0}
-                max={100}
-                step={1}
-                value={sliderValue}
-                onChange={(e) => setSliderValue(Number(e.target.value))}
-                style={{
-                  width: '100%',
-                  marginTop: 10,
-                  appearance: 'none',
-                  height: 6,
-                  backgroundColor: '#ddd',
-                  borderRadius: 3,
-                  outline: 'none',
-                }}
-              />
-            ) : (
-              <Slider
-                minimumValue={0}
-                maximumValue={100}
-                value={sliderValue}
-                onValueChange={setSliderValue}
-                step={1}
-                minimumTrackTintColor="#4CAF50"
-                maximumTrackTintColor="#ddd"
-                thumbTintColor="#4CAF50"
-                style={{ marginTop: 10 }}
-              />
-            )}
-
-
-            <View style={styles.sliderLabels}>
-              <View style={styles.labelContainerLeft}>
-                <Text style={[styles.labelValue, { color: textColor }]}>0</Text>
-                <Text style={[styles.labelText, { color: textColor }]}>Quase nada</Text>
-              </View>
-
-
-
-              <View style={styles.labelContainerRight}>
-                <Text style={[styles.labelValue, { color: textColor }]}>100</Text>
-                <Text style={[styles.labelText, { color: textColor }]}>Totalmente</Text>
-              </View>
-            </View>
           </View>
 
           <CustomButton
             title="Me conte mais..."
             onPress={handleNext}
-            disabled={false}
+            disabled={selecionados.length === 0}
           />
         </View>
       </ScrollView>
@@ -129,6 +133,7 @@ const Passo7 = () => {
 };
 
 export default Passo7;
+
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -161,36 +166,66 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 20,
   },
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
     marginVertical: 8,
   },
-  opcao: {
+  tagContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 10,
   },
-  opcaoTexto: {
-    fontSize: 16,
+  tag: {
+    backgroundColor: '#f3f4f6',
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    margin: 4,
+  },
+  tagSelected: {
+    backgroundColor: '#6366f1',
+  },
+  tagText: {
     color: '#333',
   },
-  radioCirculo: {
-    height: 20,
-    width: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#999',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
+  tagTextSelected: {
+    color: '#fff',
   },
-  radioSelecionado: {
-    height: 10,
-    width: 10,
-    borderRadius: 5,
-    backgroundColor: '#9C27B0',
+  sliderValue: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginTop: 4,
+  },
+  input: {
+    backgroundColor: '#f3f4f6',
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 10,
+    textAlignVertical: 'top',
+    minHeight: 60,
+  },
+  submitButton: {
+    backgroundColor: '#4f46e5',
+    borderRadius: 25,
+    padding: 14,
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  submitText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  footerNote: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 12,
+    marginBottom: 40,
+    paddingHorizontal: 20,
   },
   button: {
     backgroundColor: '#FFA45E',
@@ -206,43 +241,35 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  sliderLabels: {
+  radioGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginTop: 8,
   },
-  sliderValue: {
-    textAlign: 'center',
+  radioItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '48%',
+    marginBottom: 8,
+  },
+  label: {
+    fontSize: 14,
+    color: '#333',
+    flexShrink: 1,
+  }, lista: {
+    gap: 10,
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  itemTitulo: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 14,
     marginTop: 4,
   },
-  sliderValueContainer: {
-    alignItems: 'center',
-    marginTop: 16,
-    marginBottom: 2,
-  },
-  sliderValueText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-  },
-  labelContainerLeft: {
-    alignItems: 'flex-start',
-    flex: 1,
-  },
-  labelContainerRight: {
-    alignItems: 'flex-end',
-    flex: 1,
-  },
-  labelValue: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  labelText: {
-    fontSize: 12,
-    textAlign: 'center',
-    color: '#333',
+  itemDescricao: {
+    fontSize: 13,
+    color: '#555',
   },
 });

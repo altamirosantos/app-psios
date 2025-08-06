@@ -1,68 +1,61 @@
+import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
   Dimensions,
-  Image,
-  ScrollView,
+  Image, Platform, ScrollView,
   StyleSheet,
   Text,
-  TextInput,
+  TouchableOpacity,
   View
 } from 'react-native';
 
 import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
-import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { Checkbox } from 'react-native-paper';
-
-
 
 
 const Passo8 = () => {
-  const { updateForm } = useForm();
-
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
   const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
 
-  const [oque, setOque] = useState('');
-  const [sentimento, setSentimento] = useState('');
-  const [comoSeComportou, setComoSeComportou] = useState<string[]>([]);
-  //const [alguemEnvolvido, setSentimento] = useState('');
-  const [gatilho, setGatilho] = useState('');
-  const [pensamento, setPensamento] = useState('');
+  const [selecionadoComoCostumaLidar, setSelecionadoComoCostumaLidar] = useState<string | null>(null);
+  const [selecionadoPensarFuturo, setSelecionadoPensarFuturo] = useState<string | null>(null);
+  const [sliderValuePreparado, setSliderValuePreparado] = useState(5);
 
 
-  const comportamentoOptions = [
-    "Fugi", "Evitei", "Paralisei", "Recuei",
-    "Não fiz nada", "Me calei", "Andei de um lado para o outro", "Outros"
+
+  const comoCostumaLidar = [
+    'Me expresso com facilidade (converso, escrevo, crio).',
+    'Levo um tempo, mas acabo organizando dentro de mim.',
+    'Guardo para mim e evito mostrar.',
+    'Nem sempre entendo o que estou sentindo.',
   ];
 
+  const pensarFuturo = [
+    'Sinto esperança e curiosidade',
+    'Fico ansioso(a) ou confuso(a) com o que pode acontecer',
+    'Ainda não consigo imaginar como será',
+    'Sinto insegurança e dúvidas',
+    'Tenho vontade de melhorar e fazer mudanças.',
+  ];
 
-  const { loading } = useAuthGuard();
+  /*const { loading } = useAuthGuard();
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
       </View>
     );
-  }
+  }*/
 
-  const toggleComportamento = (option: string) => {
-    setComoSeComportou(prev =>
-      prev.includes(option)
-        ? prev.filter(item => item !== option)
-        : [...prev, option]
-    );
-  };
-
+  const { updateForm } = useForm();
   const handleNext = () => {
-    updateForm({ passo8Oque: oque, passo8Sentimento: sentimento, passo8ComoSeComportou: comoSeComportou, passo8Gatilho: gatilho, passo8Pensamento: pensamento });
-    router.push('/passo9');
+    updateForm({ selecionadoComoCostumaLidar: selecionadoComoCostumaLidar ?? '', selecionadoPensarFuturo: selecionadoPensarFuturo ?? '', sliderValuePreparado: sliderValuePreparado });
+    router.push('/passo5');
   };
 
   return (
@@ -76,73 +69,102 @@ const Passo8 = () => {
             style={styles.logo}
             resizeMode="contain"
           />
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>❤️ Como você costuma lidar com seus sentimentos?</Text>
+            {comoCostumaLidar.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={[styles.opcao, selecionadoComoCostumaLidar === item && { backgroundColor: inputBg }]}
+                onPress={() => setSelecionadoComoCostumaLidar(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoComoCostumaLidar === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>😊 Seu bem-estar é importante! Vamos juntos entender?</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>Para entender melhor o que afeta seu estado emocional, conte aqui, de forma breve e sincera, uma experiência vívida, que mostra como certos pensamentos e sentimentos impactaram você.</Text>
-            <Text style={[styles.title, { color: textColor }]}>📌 Situação</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>O que aconteceu?</Text>
-            <TextInput
-              style={[styles.input, { color: textColor, backgroundColor: inputBg }]}
-              placeholder=""
-              value={oque}
-              onChangeText={setOque}
-              multiline
-            />
+            <Text style={[styles.title, { color: textColor }]}>🌀 Quando você pensa no futuro, qual dessas frases mais combinam com o que sente ou imagina?</Text>
+            {pensarFuturo.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={[styles.opcao, selecionadoPensarFuturo === item && { backgroundColor: inputBg }]}
+                onPress={() => setSelecionadoPensarFuturo(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoPensarFuturo === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
-            <Text style={[styles.title, { color: textColor }]}>⚡ Gatilho</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>O que despertou sua emoção? (Pode ter sido uma palavra, cheiro, música, tom de voz ou situação inesperada)</Text>
-            <TextInput
-              style={[styles.input, { color: textColor, backgroundColor: inputBg }]}
-              placeholder=""
-              value={gatilho}
-              onChangeText={setGatilho}
-              multiline
-            />
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>
+              🌟 O quanto você sente que está preparado(a) ou confiante em relação ao seu futuro neste momento?
+            </Text>
 
-            <Text style={[styles.title, { color: textColor }]}>💭 Pensamento</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>O que mais mexeu com sua mente? Que imagem ou lembrança surgiu antes da emoção?</Text>
-            <TextInput
-              style={[styles.input, { color: textColor, backgroundColor: inputBg }]}
-              placeholder=""
-              value={pensamento}
-              onChangeText={setPensamento}
-              multiline
-            />
-
-            <Text style={[styles.title, { color: textColor }]}>❤️ Sentimento</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>O que você sentiu?</Text>
-            <TextInput
-              style={[styles.input, { color: textColor, backgroundColor: inputBg }]}
-              placeholder=""
-              value={sentimento}
-              onChangeText={setSentimento}
-              multiline
-            />
-
-            <View style={styles.radioContainer}>
-              <Text style={[styles.subtitle, { color: textColor }]}>Como você se comportou nessa situação?</Text>
-              <View style={styles.radioGrid}>
-                {comportamentoOptions.map((option, index) => (
-                  <View key={index} style={[styles.radioItem, { backgroundColor: inputBg }]}>
-                    <Checkbox
-                      status={comoSeComportou.includes(option) ? 'checked' : 'unchecked'}
-                      onPress={() => toggleComportamento(option)}
-                    />
-                    <Text style={[styles.label, { color: textColor }]} onPress={() => toggleComportamento(option)}>
-                      {option}
-                    </Text>
-                  </View>
-                ))}
-              </View>
+            {/* Valor acima da barra */}
+            <View style={styles.sliderValueContainer}>
+              <Text style={styles.sliderValueText}>{sliderValuePreparado}</Text>
             </View>
 
+            {Platform.OS === 'web' ? (
+              <input
+                type="range"
+                min={0}
+                max={10}
+                step={1}
+                value={sliderValuePreparado}
+                onChange={(e) => setSliderValuePreparado(Number(e.target.value))}
+                style={{
+                  width: '100%',
+                  marginTop: 10,
+                  appearance: 'none',
+                  height: 6,
+                  backgroundColor: '#ddd',
+                  borderRadius: 3,
+                  outline: 'none',
+                }}
+              />
+            ) : (
+              <Slider
+                minimumValue={0}
+                maximumValue={10}
+                value={sliderValuePreparado}
+                onValueChange={setSliderValuePreparado}
+                step={1}
+                minimumTrackTintColor="#4CAF50"
+                maximumTrackTintColor="#ddd"
+                thumbTintColor="#4CAF50"
+                style={{ marginTop: 10 }}
+              />
+            )}
+
+            <View style={styles.sliderLabels}>
+              <View style={styles.labelContainerLeft}>
+                <Text style={[styles.labelValue, { color: textColor }]}>0</Text>
+                <Text style={[styles.labelText, { color: textColor }]}>Nada confiante</Text>
+              </View>
+
+              <View style={styles.labelContainer}>
+                <Text style={[styles.labelValue, { color: textColor }]}>5</Text>
+                <Text style={[styles.labelText, { color: textColor }]}>Mais ou menos</Text>
+              </View>
+
+              <View style={styles.labelContainerRight}>
+                <Text style={[styles.labelValue, { color: textColor }]}>10</Text>
+                <Text style={[styles.labelText, { color: textColor }]}>Muito confiante</Text>
+              </View>
+            </View>
           </View>
 
           <CustomButton
             title="Me conte mais..."
             onPress={handleNext}
-            disabled={(!oque || comoSeComportou.length === 0 || !sentimento || !gatilho || !pensamento)}
+            disabled={(!selecionadoComoCostumaLidar || !selecionadoPensarFuturo)}
           />
         </View>
       </ScrollView>
@@ -151,7 +173,6 @@ const Passo8 = () => {
 };
 
 export default Passo8;
-
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -159,9 +180,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     marginBottom: 30,
-  },
-  radioContainer: {
-    marginBottom: 16,
   },
   containerRoot: {
     flex: 1,
@@ -187,68 +205,40 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10,
-    marginTop: 20,
+
   },
   subtitle: {
     fontSize: 14,
-    textAlign: 'left',
+    textAlign: 'center',
+
     marginVertical: 8,
   },
-  tagContainer: {
+  opcao: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginTop: 10,
-  },
-  tag: {
-    backgroundColor: '#f3f4f6',
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    margin: 4,
-  },
-  tagSelected: {
-    backgroundColor: '#6366f1',
-  },
-  tagText: {
-    color: '#333',
-  },
-  tagTextSelected: {
-    color: '#fff',
-  },
-  sliderValue: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginTop: 4,
-  },
-  input: {
-    backgroundColor: '#f3f4f6',
-    borderRadius: 8,
-    padding: 10,
-    marginTop: 10,
-    textAlignVertical: 'top',
-    minHeight: 60,
-    color: 'black',
-  },
-  submitButton: {
-    backgroundColor: '#4f46e5',
-    borderRadius: 25,
-    padding: 14,
     alignItems: 'center',
-    marginVertical: 16,
+    marginBottom: 12,
+
   },
-  submitText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  opcaoTexto: {
+    fontSize: 16,
+    color: '#333',
+    marginEnd: 20,
   },
-  footerNote: {
-    textAlign: 'center',
-    color: '#fff',
-    fontSize: 12,
-    marginBottom: 40,
-    paddingHorizontal: 20,
+  radioCirculo: {
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#999',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  radioSelecionado: {
+    height: 10,
+    width: 10,
+    borderRadius: 5,
+    backgroundColor: '#9C27B0',
   },
   button: {
     backgroundColor: '#FFA45E',
@@ -264,20 +254,47 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  radioGrid: {
+  sliderLabels: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
+    marginTop: 8,
   },
-  radioItem: {
-    flexDirection: 'row',
+  sliderValue: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginTop: 4,
+  },
+  sliderValueContainer: {
     alignItems: 'center',
-    width: '48%',
-    marginBottom: 8,
+    marginTop: 16,
+    marginBottom: 2,
   },
-  label: {
+  sliderValueText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+  },
+  labelContainer: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  labelContainerLeft: {
+    alignItems: 'flex-start',
+    flex: 1,
+  },
+  labelContainerRight: {
+    alignItems: 'flex-end',
+    flex: 1,
+  },
+  labelValue: {
     fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  labelText: {
+    fontSize: 12,
+    textAlign: 'center',
     color: '#333',
-    flexShrink: 1,
-  }
+  },
 });

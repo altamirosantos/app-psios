@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
@@ -16,6 +17,8 @@ import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { Checkbox } from 'react-native-paper';
+
 
 
 
@@ -27,56 +30,69 @@ const Passo5 = () => {
   const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
 
+  //const [oque, setOque] = useState('');
+  //const [sentimento, setSentimento] = useState('');
+  const [comoSeComportou, setComoSeComportou] = useState<string[]>([]);
+  //const [gatilho, setGatilho] = useState('');
+  //const [pensamento, setPensamento] = useState('');
+
   const [selecionadoOpCard1, setSelecionadoOpCard1] = useState<string | null>(null);
   const [selecionadoOpCard2, setSelecionadoOpCard2] = useState<string | null>(null);
   const [selecionadoOpCard3, setSelecionadoOpCard3] = useState<string | null>(null);
   const [selecionadoOpCard4, setSelecionadoOpCard4] = useState<string | null>(null);
-  const [selecionadoOpCard5, setSelecionadoOpCard5] = useState<string | null>(null);
-  const [selecionadoOpCard6, setSelecionadoOpCard6] = useState<string | null>(null);
+
+  const [outroTextoCard1, setOutroTextoCard1] = useState("");
+  const [outroTextoCard2, setOutroTextoCard2] = useState("");
+  const [outroTextoCard3, setOutroTextoCard3] = useState("");
+  const [outroTextoCard4, setOutroTextoCard4] = useState("");
+  const [outroComportamento, setOutroComportamento] = useState("");
+
 
   const opCard1 = [
-    'Tudo bem, faz parte.',
-    'O que posso aprender com isso?',
-    'A culpa é minha…',
-    'Isso sempre acontece comigo.',
+    'Sozinho(a) no quarto',
+    'Conversando com alguém',
+    'Recebendo uma mensagem',
+    'Chegando ou saindo de casa',
+    'No trabalho / estudando',
+    'Em uma situação difícil'
   ];
 
   const opCard2 = [
-    'No que sente.',
-    'No que pensa.',
-    'No que os outros esperam.',
-    'No que faça mais sentido no momento.',
+    'Uma crítica ou julgamento',
+    'Um silêncio ou afastamento',
+    'Uma lembrança desconfortável',
+    'Uma cobrança ou pressão',
+    'Um conflito ou discussão',
+    'Um medo interno'
   ];
 
   const opCard3 = [
-    'Ouvir com empatia, mas sem se sobrecarregar.',
-    'Tentar agradar e evitar conflitos.',
-    'Se proteger e manter certa distância.',
-    'Assumir a liderança ou tomar iniciativa.',
+    '“Eu não sou bom o suficiente”',
+    '“Tudo vai dar errado”',
+    '“Eu atrapalho as pessoas”',
+    '“Ninguém se importa comigo”',
+    '“Não vou conseguir lidar com isso”',
+    '“Sempre estrago tudo”'
   ];
 
   const opCard4 = [
-    'Me animo com o novo e me adapto fácil.',
-    'Analiso primeiro, mas topo se fizer sentido.',
-    'Sinto receio e prefiro ficar na zona de conforto.',
-    'Evito mudanças drásticas.',
+    'Senti abertura no peito ou nó na garganta',
+    'Fiquei com o corpo tenso ou acelerado',
+    'Senti cansaço arrependido ou vontade de dormir',
+    'Tive vontade de sair correndo ou sumir',
+    'Nenhuma ocorrência física percebida'
   ];
 
-  const opCard5 = [
-    'Penso demais, fico inseguro(a) e adio a decisão.',
-    'Sigo meu impulso ou intuição, sem pensar muito.',
-    'Faça listas, compare prós e contras.',
-    'Peço conselhos e opiniões antes de decidir.',
-    'Confie em mim e escolho o que mais faz sentido na hora.',
-  ];
 
-  const opCard6 = [
-    'Criatividade.',
-    'Persistência.',
-    'Foco e organização.',
-    'Empatia.',
-    'Resiliência.',
-    'Capacidade de ouvir.',
+  const comportamentoOptions = [
+    "Me afastei de tudo e de todos",
+    "Fiquei paralisado(a), sem saber o que fazer",
+    "Falei ou agi de forma impulsiva",
+    "Chorei ou tive vontade de chorar",
+    "Busquei alguma distração (TV, celular, comida etc.)",
+    "Procurei alguém para conversar",
+    "Respirei fundo e tentei me entusiasmado",
+    "Outros"
   ];
 
 
@@ -89,8 +105,56 @@ const Passo5 = () => {
     );
   }
 
+  const toggleComportamento = (option: string) => {
+    setComoSeComportou(prev =>
+      prev.includes(option)
+        ? prev.filter(item => item !== option)
+        : [...prev, option]
+    );
+  };
+
   const handleNext = () => {
-    updateForm({ passo5Card1: selecionadoOpCard1 ?? '', passo5Card2: selecionadoOpCard2 ?? '', passo5Card3: selecionadoOpCard3 ?? '', passo5Card4: selecionadoOpCard4 ?? '', passo5Card5: selecionadoOpCard5 ?? '', passo5Card6: selecionadoOpCard6 ?? '' });
+    setSelecionadoOpCard1(
+      selecionadoOpCard1 === "Outros" && outroTextoCard1.trim()
+        ? outroTextoCard1.trim()
+        : (selecionadoOpCard1 || "Outros")
+    );
+
+    setSelecionadoOpCard2(
+      selecionadoOpCard2 === "Outros" && outroTextoCard2.trim()
+        ? outroTextoCard2.trim()
+        : (selecionadoOpCard2 || "Outros")
+    );
+
+    setSelecionadoOpCard3(
+      selecionadoOpCard3 === "Outros" && outroTextoCard3.trim()
+        ? outroTextoCard3.trim()
+        : (selecionadoOpCard3 || "Outros")
+    );
+
+    setComoSeComportou(prev => {
+      // Remove "Outros" se não estiver marcado
+      if (!prev.includes("Outros")) {
+        return prev.filter(item => item !== "Outros");
+      }
+
+      // Se "Outros" está marcado e há texto digitado, substitui pelo texto
+      if (prev.includes("Outros") && outroComportamento.trim()) {
+        return prev.map(item => (item === "Outros" ? outroComportamento.trim() : item));
+      }
+
+      // Se "Outros" está marcado mas sem texto, mantém como "Outros"
+      return prev;
+    });
+
+
+    setSelecionadoOpCard4(
+      selecionadoOpCard4 === "Outros" && outroTextoCard4.trim()
+        ? outroTextoCard4.trim()
+        : (selecionadoOpCard4 || "Outros")
+    );
+
+    updateForm({ passo8Oque: selecionadoOpCard1 || "", passo8Sentimento: selecionadoOpCard4 || "", passo8ComoSeComportou: comoSeComportou, passo8Gatilho: selecionadoOpCard2 || "", passo8Pensamento: selecionadoOpCard3 || "" });
     router.push('/passo6');
   };
 
@@ -105,13 +169,26 @@ const Passo5 = () => {
             style={styles.logo}
             resizeMode="contain"
           />
+
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🤔 Quando algo dá errado, o que vem primeiro na sua mente?</Text>
+            <Text style={[styles.title, { color: textColor }]}>📝 Preencha abaixo de forma breve e sincera.</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>Isso vai te ajudar a entender melhor o que está sentindo e dar significado ao pensamento que mais tem passado pela sua cabeça ultimamente:</Text>
+            <Text style={[styles.title, { color: textColor }]}>📌 Situação</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>Onde você estava ou o que estava acontecendo?</Text>
+            <Text style={[styles.subsubtitle, { color: textColor }]}>(Escolha uma ou mais opções)</Text>
             {opCard1.map((item) => (
               <TouchableOpacity
                 key={item}
-                style={[styles.opcao, selecionadoOpCard1 === item && { backgroundColor: inputBg }]}
-                onPress={() => setSelecionadoOpCard1(item)}
+                style={[
+                  styles.opcao,
+                  selecionadoOpCard1 === item && { backgroundColor: inputBg }
+                ]}
+                onPress={() => {
+                  setSelecionadoOpCard1(item);
+                  if (item !== "Outros") {
+                    setOutroTextoCard1(""); // limpa campo se não for outros
+                  }
+                }}
               >
                 <View style={styles.radioCirculo}>
                   {selecionadoOpCard1 === item && <View style={styles.radioSelecionado} />}
@@ -119,10 +196,36 @@ const Passo5 = () => {
                 <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
-          </View>
 
-          <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>✨ Você costuma tomar decisões mais com base:</Text>
+            {/* Campo de "Outros" */}
+            <TouchableOpacity
+              style={[
+                styles.opcao,
+                selecionadoOpCard1 === "Outros" && { backgroundColor: inputBg }
+              ]}
+              onPress={() => setSelecionadoOpCard1("Outros")}
+            >
+              <View style={styles.radioCirculo}>
+                {selecionadoOpCard1 === "Outros" && <View style={styles.radioSelecionado} />}
+              </View>
+              <Text style={[styles.opcaoTexto, { color: textColor }]}>Outros</Text>
+            </TouchableOpacity>
+
+            {/* Campo para digitar se for "Outros" */}
+            {selecionadoOpCard1 === "Outros" && (
+              <TextInput
+                style={styles.inputOutros}
+                placeholder="Digite aqui..."
+                placeholderTextColor="#999"
+                value={outroTextoCard1}
+                onChangeText={setOutroTextoCard1}
+              />
+            )}
+
+
+            <Text style={[styles.title, { color: textColor }]}>⚡ Gatilho</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>O que parece ter ativado esse sentimento?</Text>
+            <Text style={[styles.subsubtitle, { color: textColor }]}>(Escolha uma ou mais opções)</Text>
             {opCard2.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -135,10 +238,35 @@ const Passo5 = () => {
                 <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
-          </View>
 
-          <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>👩🏽‍🦱 Quando está com outras pessoas, você tende a:</Text>
+            {/* Campo de "Outros" */}
+            <TouchableOpacity
+              style={[
+                styles.opcao,
+                selecionadoOpCard2 === "Outros" && { backgroundColor: inputBg }
+              ]}
+              onPress={() => setSelecionadoOpCard2("Outros")}
+            >
+              <View style={styles.radioCirculo}>
+                {selecionadoOpCard2 === "Outros" && <View style={styles.radioSelecionado} />}
+              </View>
+              <Text style={[styles.opcaoTexto, { color: textColor }]}>Outros</Text>
+            </TouchableOpacity>
+
+            {/* Campo para digitar se for "Outros" */}
+            {selecionadoOpCard2 === "Outros" && (
+              <TextInput
+                style={styles.inputOutros}
+                placeholder="Digite aqui..."
+                placeholderTextColor="#999"
+                value={outroTextoCard2}
+                onChangeText={setOutroTextoCard2}
+              />
+            )}
+
+            <Text style={[styles.title, { color: textColor }]}>💭 Pensamento</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>O que passou pela sua cabeça? — O pensamento que mais tem ocupado sua </Text>
+            <Text style={[styles.subsubtitle, { color: textColor }]}>(Escolha a frase que mais se parece com o que inventou)</Text>
             {opCard3.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -151,10 +279,84 @@ const Passo5 = () => {
                 <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
-          </View>
 
-          <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🧩 Como você costuma reagir a situações novas ou desconhecidas?</Text>
+            {/* Campo de "Outros" */}
+            <TouchableOpacity
+              style={[
+                styles.opcao,
+                selecionadoOpCard3 === "Outros" && { backgroundColor: inputBg }
+              ]}
+              onPress={() => setSelecionadoOpCard3("Outros")}
+            >
+              <View style={styles.radioCirculo}>
+                {selecionadoOpCard3 === "Outros" && <View style={styles.radioSelecionado} />}
+              </View>
+              <Text style={[styles.opcaoTexto, { color: textColor }]}>Outros</Text>
+            </TouchableOpacity>
+
+            {/* Campo para digitar se for "Outros" */}
+            {selecionadoOpCard3 === "Outros" && (
+              <TextInput
+                style={styles.inputOutros}
+                placeholder="Digite aqui..."
+                placeholderTextColor="#999"
+                value={outroTextoCard3}
+                onChangeText={setOutroTextoCard3}
+              />
+            )}
+
+            <View style={styles.radioContainer}>
+              <Text style={[styles.title, { color: textColor }]}>🧍‍♂️ Comportamento (ações)</Text>
+              <Text style={[styles.subtitle, { color: textColor }]}>🔁 Como você reagiu naquele momento?</Text>
+              <Text style={[styles.subsubtitle, { color: textColor }]}>Pense em como você agiu ou se sentiu logo após o pensamento que surgiu. Escolha uma ou mais reações que mais se aproximem da sua experiência:</Text>
+              <View style={styles.radioGrid}>
+                {comportamentoOptions.map((option, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.radioItem,
+                      option === "Outros"
+                        ? { flexDirection: "column", alignItems: "flex-start", width: "100%" }
+                        : {}
+                    ]}
+                  >
+                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                      <Checkbox
+                        status={comoSeComportou.includes(option) ? "checked" : "unchecked"}
+                        onPress={() => toggleComportamento(option)}
+                      />
+                      <Text
+                        style={[styles.label, { color: textColor }]}
+                        onPress={() => toggleComportamento(option)}
+                      >
+                        {option}
+                      </Text>
+                    </View>
+
+                    {option === "Outros" && comoSeComportou.includes("Outros") && (
+                      <TextInput
+                        style={{
+                          marginTop: 6,
+                          borderWidth: 1,
+                          borderColor: "#ccc",
+                          borderRadius: 6,
+                          paddingHorizontal: 10,
+                          paddingVertical: 6,
+                          width: "100%", // ocupa toda a área disponível
+                          backgroundColor: inputBg,
+                        }}
+                        placeholder="Digite aqui..."
+                        value={outroComportamento}
+                        onChangeText={setOutroComportamento}
+                      />
+                    )}
+                  </View>
+
+                ))}
+              </View>
+            </View>
+
+            <Text style={[styles.title, { color: textColor }]}>💓 Corpo (reações físicas)</Text>
             {opCard4.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -167,44 +369,38 @@ const Passo5 = () => {
                 <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
               </TouchableOpacity>
             ))}
-          </View>
 
-          <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🟣 Quando você precisa tomar uma decisão importante, como costuma agir?</Text>
-            {opCard5.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={[styles.opcao, selecionadoOpCard5 === item && { backgroundColor: inputBg }]}
-                onPress={() => setSelecionadoOpCard5(item)}
-              >
-                <View style={styles.radioCirculo}>
-                  {selecionadoOpCard5 === item && <View style={styles.radioSelecionado} />}
-                </View>
-                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+            {/* Campo de "Outros" */}
+            <TouchableOpacity
+              style={[
+                styles.opcao,
+                selecionadoOpCard4 === "Outros" && { backgroundColor: inputBg }
+              ]}
+              onPress={() => setSelecionadoOpCard4("Outros")}
+            >
+              <View style={styles.radioCirculo}>
+                {selecionadoOpCard4 === "Outros" && <View style={styles.radioSelecionado} />}
+              </View>
+              <Text style={[styles.opcaoTexto, { color: textColor }]}>Outros</Text>
+            </TouchableOpacity>
 
-          <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🌟 Quando você pensa nas suas qualidades e forças internas, o que mais se destaca em você?</Text>
-            {opCard6.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={[styles.opcao, selecionadoOpCard6 === item && { backgroundColor: inputBg }]}
-                onPress={() => setSelecionadoOpCard6(item)}
-              >
-                <View style={styles.radioCirculo}>
-                  {selecionadoOpCard6 === item && <View style={styles.radioSelecionado} />}
-                </View>
-                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
-              </TouchableOpacity>
-            ))}
+            {/* Campo para digitar se for "Outros" */}
+            {selecionadoOpCard4 === "Outros" && (
+              <TextInput
+                style={styles.inputOutros}
+                placeholder="Digite aqui..."
+                placeholderTextColor="#999"
+                value={outroTextoCard4}
+                onChangeText={setOutroTextoCard4}
+              />
+            )}
+
           </View>
 
           <CustomButton
             title="Me conte mais..."
             onPress={handleNext}
-            disabled={(!selecionadoOpCard1 || !selecionadoOpCard2 || !selecionadoOpCard3 || !selecionadoOpCard4 || !selecionadoOpCard5 || !selecionadoOpCard6)}
+            disabled={!selecionadoOpCard1 || comoSeComportou.length === 0 || !selecionadoOpCard2 || !selecionadoOpCard3 || !selecionadoOpCard4}
           />
         </View>
       </ScrollView>
@@ -213,6 +409,7 @@ const Passo5 = () => {
 };
 
 export default Passo5;
+
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -220,6 +417,9 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     marginBottom: 30,
+  },
+  radioContainer: {
+    marginBottom: 16,
   },
   containerRoot: {
     flex: 1,
@@ -245,12 +445,104 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
+    marginTop: 20,
   },
   subtitle: {
     fontSize: 14,
-    textAlign: 'center',
+    textAlign: 'left',
+    marginVertical: 0,
+    fontWeight: 'bold',
+  },
+  subsubtitle: {
+    fontSize: 14,
+    textAlign: 'left',
     marginVertical: 8,
+  },
+  tagContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 10,
+  },
+  tag: {
+    backgroundColor: '#f3f4f6',
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    margin: 4,
+  },
+  tagSelected: {
+    backgroundColor: '#6366f1',
+  },
+  tagText: {
+    color: '#333',
+  },
+  tagTextSelected: {
+    color: '#fff',
+  },
+  sliderValue: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginTop: 4,
+  },
+  input: {
+    backgroundColor: '#f3f4f6',
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 10,
+    textAlignVertical: 'top',
+    minHeight: 60,
+    color: 'black',
+  },
+  submitButton: {
+    backgroundColor: '#4f46e5',
+    borderRadius: 25,
+    padding: 14,
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  submitText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  footerNote: {
+    textAlign: 'center',
+    color: '#fff',
+    fontSize: 12,
+    marginBottom: 40,
+    paddingHorizontal: 20,
+  },
+  button: {
+    backgroundColor: '#FFA45E',
+    paddingVertical: 16,
+    paddingHorizontal: 40,
+    borderRadius: 50,
+    marginTop: 40,
+    width: width - 80,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  radioGrid: {
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  radioItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 8,
+  },
+  label: {
+    fontSize: 14,
+    color: '#333',
+    flexShrink: 1,
   },
   opcao: {
     flexDirection: 'row',
@@ -278,53 +570,22 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: '#9C27B0',
   },
-  button: {
-    backgroundColor: '#FFA45E',
-    paddingVertical: 16,
-    paddingHorizontal: 40,
-    borderRadius: 50,
-    marginTop: 40,
-    width: width - 80,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  sliderLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  inputOutros: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 10,
     marginTop: 8,
+    width: "100%",
+    backgroundColor: "#fff",
+    color: "#333"
   },
-  sliderValue: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginTop: 4,
-  },
-  sliderValueContainer: {
-    alignItems: 'center',
-    marginTop: 16,
-    marginBottom: 2,
-  },
-  sliderValueText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-  },
-  labelContainer: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  labelValue: {
+  outrosInput: {
+    borderWidth: 1,
+    borderRadius: 6,
+    padding: 8,
+    marginTop: 8,
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  labelText: {
-    fontSize: 12,
-    textAlign: 'center',
-    color: '#333',
-  },
+    backgroundColor: "#fff"
+  }
 });

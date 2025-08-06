@@ -1,60 +1,72 @@
-import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
-  Image, Platform, ScrollView,
+  Image,
+  ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native';
+import { Checkbox } from 'react-native-paper';
 
 import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 
+
 const Passo4 = () => {
+  const { updateForm } = useForm();
+
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
   const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
-
-  const [selecionadoComoCostumaLidar, setSelecionadoComoCostumaLidar] = useState<string | null>(null);
-  const [selecionadoPensarFuturo, setSelecionadoPensarFuturo] = useState<string | null>(null);
-  const [sliderValuePreparado, setSliderValuePreparado] = useState(5);
+  const [selectedItemsPasso6, setSelectedItemsPasso6] = useState<string[]>([]);
 
 
 
-  const comoCostumaLidar = [
-    'Me expresso com facilidade (converso, escrevo, crio).',
-    'Levo um tempo, mas acabo organizando dentro de mim.',
-    'Guardo para mim e evito mostrar.',
-    'Nem sempre entendo o que estou sentindo.',
+  const emotionalFactors = [
+    "Estresse no trabalho ou estudos.",
+    "Conflitos familiares ou relacionamentos.",
+    "Preocupações financeiras.",
+    "Problemas de saúde física.",
+    "Solidão ou isolamento",
+    "Falta de sono ou cansaço.",
+    "Expectativas altas sobre si.",
+    "Luto.",
+    "Insegurança com o futuro.",
+    "Falta de tempo para si",
+    "Mudanças climáticas",
+    "Nenhum",
+    "Outro"
   ];
 
-  const pensarFuturo = [
-    'Sinto esperança e curiosidade',
-    'Fico ansioso(a) ou confuso(a) com o que pode acontecer',
-    'Ainda não consigo imaginar como será',
-    'Sinto insegurança e dúvidas',
-    'Tenho vontade de melhorar e fazer mudanças.',
-  ];
 
-  /*const { loading } = useAuthGuard();
+
+  const { loading } = useAuthGuard();
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
       </View>
     );
-  }*/
+  }
 
-  const { updateForm } = useForm();
+  const toggleItem = (item: string) => {
+    if (selectedItemsPasso6.includes(item)) {
+      setSelectedItemsPasso6(selectedItemsPasso6.filter(i => i !== item));
+    } else {
+      setSelectedItemsPasso6([...selectedItemsPasso6, item]);
+    }
+  };
+
   const handleNext = () => {
-    updateForm({ selecionadoComoCostumaLidar: selecionadoComoCostumaLidar ?? '', selecionadoPensarFuturo: selecionadoPensarFuturo ?? '', sliderValuePreparado: sliderValuePreparado });
+    updateForm({ selectedItemsPasso6: selectedItemsPasso6 });
     router.push('/passo5');
   };
 
@@ -70,101 +82,27 @@ const Passo4 = () => {
             resizeMode="contain"
           />
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>❤️ Como você costuma lidar com seus sentimentos?</Text>
-            {comoCostumaLidar.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={[styles.opcao, selecionadoComoCostumaLidar === item && { backgroundColor: inputBg }]}
-                onPress={() => setSelecionadoComoCostumaLidar(item)}
-              >
-                <View style={styles.radioCirculo}>
-                  {selecionadoComoCostumaLidar === item && <View style={styles.radioSelecionado} />}
-                </View>
-                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🌀 Quando você pensa no futuro, qual dessas frases mais combinam com o que sente ou imagina?</Text>
-            {pensarFuturo.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={[styles.opcao, selecionadoPensarFuturo === item && { backgroundColor: inputBg }]}
-                onPress={() => setSelecionadoPensarFuturo(item)}
-              >
-                <View style={styles.radioCirculo}>
-                  {selecionadoPensarFuturo === item && <View style={styles.radioSelecionado} />}
-                </View>
-                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>
-              🌟 O quanto você sente que está preparado(a) ou confiante em relação ao seu futuro neste momento?
-            </Text>
-
-            {/* Valor acima da barra */}
-            <View style={styles.sliderValueContainer}>
-              <Text style={styles.sliderValueText}>{sliderValuePreparado}</Text>
+            <View style={styles.header}>
+              <Text style={[styles.title, { color: textColor }]}>
+                🌀 Alguns desses fatores estão afetando seu estado emocional nesse momento?
+              </Text>
             </View>
-
-            {Platform.OS === 'web' ? (
-              <input
-                type="range"
-                min={0}
-                max={10}
-                step={1}
-                value={sliderValuePreparado}
-                onChange={(e) => setSliderValuePreparado(Number(e.target.value))}
-                style={{
-                  width: '100%',
-                  marginTop: 10,
-                  appearance: 'none',
-                  height: 6,
-                  backgroundColor: '#ddd',
-                  borderRadius: 3,
-                  outline: 'none',
-                }}
-              />
-            ) : (
-              <Slider
-                minimumValue={0}
-                maximumValue={10}
-                value={sliderValuePreparado}
-                onValueChange={setSliderValuePreparado}
-                step={1}
-                minimumTrackTintColor="#4CAF50"
-                maximumTrackTintColor="#ddd"
-                thumbTintColor="#4CAF50"
-                style={{ marginTop: 10 }}
-              />
-            )}
-
-            <View style={styles.sliderLabels}>
-              <View style={styles.labelContainerLeft}>
-                <Text style={[styles.labelValue, { color: textColor }]}>0</Text>
-                <Text style={[styles.labelText, { color: textColor }]}>Nada confiante</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>Marque as opções que se aplicam:</Text>
+            {emotionalFactors.map((item, index) => (
+              <View key={index} style={[styles.checkboxContainer, { backgroundColor: inputBg }]}>
+                <Checkbox
+                  status={selectedItemsPasso6.includes(item) ? 'checked' : 'unchecked'}
+                  onPress={() => toggleItem(item)}
+                />
+                <Text style={[styles.checkboxLabel, { color: textColor }]}>{item}</Text>
               </View>
-
-              <View style={styles.labelContainer}>
-                <Text style={[styles.labelValue, { color: textColor }]}>5</Text>
-                <Text style={[styles.labelText, { color: textColor }]}>Mais ou menos</Text>
-              </View>
-
-              <View style={styles.labelContainerRight}>
-                <Text style={[styles.labelValue, { color: textColor }]}>10</Text>
-                <Text style={[styles.labelText, { color: textColor }]}>Muito confiante</Text>
-              </View>
-            </View>
+            ))}
           </View>
 
           <CustomButton
             title="Me conte mais..."
             onPress={handleNext}
-            disabled={(!selecionadoComoCostumaLidar || !selecionadoPensarFuturo)}
+            disabled={selectedItemsPasso6.length === 0}
           />
         </View>
       </ScrollView>
@@ -205,24 +143,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-
   },
   subtitle: {
     fontSize: 14,
     textAlign: 'center',
-
     marginVertical: 8,
   },
   opcao: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
-
   },
   opcaoTexto: {
     fontSize: 16,
     color: '#333',
-    marginEnd: 20,
   },
   radioCirculo: {
     height: 20,
@@ -279,14 +213,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  labelContainerLeft: {
-    alignItems: 'flex-start',
-    flex: 1,
-  },
-  labelContainerRight: {
-    alignItems: 'flex-end',
-    flex: 1,
-  },
   labelValue: {
     fontSize: 14,
     fontWeight: 'bold',
@@ -297,4 +223,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333',
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+    flexWrap: 'wrap'
+  },
+  checkboxList: {
+    maxHeight: 300 // ou remova se quiser scroll infinito
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6
+  },
+  checkboxLabel: {
+    fontSize: 14,
+    color: '#333'
+  }
 });

@@ -1,3 +1,4 @@
+import Slider from '@react-native-community/slider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -5,12 +6,12 @@ import {
   ActivityIndicator,
   Dimensions,
   Image,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
   View
 } from 'react-native';
-import { Checkbox } from 'react-native-paper';
 
 import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
@@ -26,25 +27,8 @@ const Passo6 = () => {
   const cardColor = useThemeColor('cardBackground');
   const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
-  const [selectedItemsPasso6, setSelectedItemsPasso6] = useState<string[]>([]);
 
-
-
-  const emotionalFactors = [
-    "Estresse no trabalho ou estudos.",
-    "Conflitos familiares ou relacionamentos.",
-    "Preocupações financeiras.",
-    "Problemas de saúde física.",
-    "Solidão ou isolamento",
-    "Falta de sono ou cansaço.",
-    "Expectativas altas sobre si.",
-    "Luto.",
-    "Insegurança com o futuro.",
-    "Falta de tempo para si",
-    "Mudanças climáticas",
-    "Nenhum",
-    "Outro"
-  ];
+  const [sliderValue, setSliderValue] = useState(80);
 
 
 
@@ -57,18 +41,11 @@ const Passo6 = () => {
     );
   }
 
-  const toggleItem = (item: string) => {
-    if (selectedItemsPasso6.includes(item)) {
-      setSelectedItemsPasso6(selectedItemsPasso6.filter(i => i !== item));
-    } else {
-      setSelectedItemsPasso6([...selectedItemsPasso6, item]);
-    }
-  };
-
   const handleNext = () => {
-    updateForm({ selectedItemsPasso6: selectedItemsPasso6 });
+    updateForm({ passo7Card1: sliderValue });
     router.push('/passo7');
   };
+
 
   return (
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
@@ -81,28 +58,70 @@ const Passo6 = () => {
             style={styles.logo}
             resizeMode="contain"
           />
+
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <View style={styles.header}>
-              <Text style={[styles.title, { color: textColor }]}>
-                🌀 Alguns desses fatores estão afetando seu estado emocional nesse momento?
-              </Text>
+            <Text style={[styles.title, { color: textColor }]}>
+              🧩 Pensando na sua resposta anterior.
+De 0 a 100, o quanto você sente que este pensamento influencia seu bem-estar atualmente?
+            </Text>
+
+            {/* Valor acima da barra */}
+            <View style={styles.sliderValueContainer}>
+              <Text style={styles.sliderValueText}>{sliderValue}</Text>
             </View>
-            <Text style={[styles.subtitle, { color: textColor }]}>Marque as opções que se aplicam:</Text>
-            {emotionalFactors.map((item, index) => (
-              <View key={index} style={[styles.checkboxContainer, { backgroundColor: inputBg }]}>
-                <Checkbox
-                  status={selectedItemsPasso6.includes(item) ? 'checked' : 'unchecked'}
-                  onPress={() => toggleItem(item)}
-                />
-                <Text style={[styles.checkboxLabel, { color: textColor }]}>{item}</Text>
+
+            {Platform.OS === 'web' ? (
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={sliderValue}
+                onChange={(e) => setSliderValue(Number(e.target.value))}
+                style={{
+                  width: '100%',
+                  marginTop: 10,
+                  appearance: 'none',
+                  height: 6,
+                  backgroundColor: '#ddd',
+                  borderRadius: 3,
+                  outline: 'none',
+                }}
+              />
+            ) : (
+              <Slider
+                minimumValue={0}
+                maximumValue={100}
+                value={sliderValue}
+                onValueChange={setSliderValue}
+                step={1}
+                minimumTrackTintColor="#4CAF50"
+                maximumTrackTintColor="#ddd"
+                thumbTintColor="#4CAF50"
+                style={{ marginTop: 10 }}
+              />
+            )}
+
+
+            <View style={styles.sliderLabels}>
+              <View style={styles.labelContainerLeft}>
+                <Text style={[styles.labelValue, { color: textColor }]}>0</Text>
+                <Text style={[styles.labelText, { color: textColor }]}>Quase nada</Text>
               </View>
-            ))}
+
+
+
+              <View style={styles.labelContainerRight}>
+                <Text style={[styles.labelValue, { color: textColor }]}>100</Text>
+                <Text style={[styles.labelText, { color: textColor }]}>Totalmente</Text>
+              </View>
+            </View>
           </View>
 
           <CustomButton
             title="Me conte mais..."
             onPress={handleNext}
-            disabled={selectedItemsPasso6.length === 0}
+            disabled={false}
           />
         </View>
       </ScrollView>
@@ -209,8 +228,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#4CAF50',
   },
-  labelContainer: {
-    alignItems: 'center',
+  labelContainerLeft: {
+    alignItems: 'flex-start',
+    flex: 1,
+  },
+  labelContainerRight: {
+    alignItems: 'flex-end',
     flex: 1,
   },
   labelValue: {
@@ -223,22 +246,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-    flexWrap: 'wrap'
-  },
-  checkboxList: {
-    maxHeight: 300 // ou remova se quiser scroll infinito
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6
-  },
-  checkboxLabel: {
-    fontSize: 14,
-    color: '#333'
-  }
 });

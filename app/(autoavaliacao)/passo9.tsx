@@ -8,14 +8,15 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View
 } from 'react-native';
-import { Checkbox } from 'react-native-paper';
 
 import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
+
 
 
 const Passo9 = () => {
@@ -25,45 +26,58 @@ const Passo9 = () => {
   const cardColor = useThemeColor('cardBackground');
   const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
-  const [selecionados, setSelecionados] = useState<string[]>([]);
 
+  const [selecionadoOpCard1, setSelecionadoOpCard1] = useState<string | null>(null);
+  const [selecionadoOpCard2, setSelecionadoOpCard2] = useState<string | null>(null);
+  const [selecionadoOpCard3, setSelecionadoOpCard3] = useState<string | null>(null);
+  const [selecionadoOpCard4, setSelecionadoOpCard4] = useState<string | null>(null);
+  const [selecionadoOpCard5, setSelecionadoOpCard5] = useState<string | null>(null);
+  const [selecionadoOpCard6, setSelecionadoOpCard6] = useState<string | null>(null);
 
-
-  const distorcoes = [
-    {
-      titulo: 'Leitura mental',
-      descricao: 'Acho que sei o que os outros estão pensando sobre mim.',
-    },
-    {
-      titulo: 'Catastrofização',
-      descricao: 'Sempre imagino o pior cenário possível.',
-    },
-    {
-      titulo: 'Tudo ou nada',
-      descricao: 'Se não for perfeito, é um fracasso.',
-    },
-    {
-      titulo: 'Generalização',
-      descricao: 'Sempre que algo dá errado, penso que tudo sempre será assim.',
-    },
-    {
-      titulo: 'Filtro negativo',
-      descricao: 'Só consigo ver o lado ruim da situação.',
-    },
-    {
-      titulo: 'Desqualificar o positivo',
-      descricao: 'Esqueço ou minimizo as coisas boas que acontecem.',
-    },
-    {
-      titulo: 'Rotação',
-      descricao: 'Eu não sou boa o suficiente.',
-    },
-    {
-      titulo: 'Personalização',
-      descricao: 'Sinto que tudo é culpa minha.',
-    },
+  const opCard1 = [
+    'Tudo bem, faz parte.',
+    'O que posso aprender com isso?',
+    'A culpa é minha…',
+    'Isso sempre acontece comigo.',
   ];
 
+  const opCard2 = [
+    'No que sente.',
+    'No que pensa.',
+    'No que os outros esperam.',
+    'No que faça mais sentido no momento.',
+  ];
+
+  const opCard3 = [
+    'Ouvir com empatia, mas sem se sobrecarregar.',
+    'Tentar agradar e evitar conflitos.',
+    'Se proteger e manter certa distância.',
+    'Assumir a liderança ou tomar iniciativa.',
+  ];
+
+  const opCard4 = [
+    'Me animo com o novo e me adapto fácil.',
+    'Analiso primeiro, mas topo se fizer sentido.',
+    'Sinto receio e prefiro ficar na zona de conforto.',
+    'Evito mudanças drásticas.',
+  ];
+
+  const opCard5 = [
+    'Penso demais, fico inseguro(a) e adio a decisão.',
+    'Sigo meu impulso ou intuição, sem pensar muito.',
+    'Faça listas, compare prós e contras.',
+    'Peço conselhos e opiniões antes de decidir.',
+    'Confie em mim e escolho o que mais faz sentido na hora.',
+  ];
+
+  const opCard6 = [
+    'Criatividade.',
+    'Persistência.',
+    'Foco e organização.',
+    'Empatia.',
+    'Resiliência.',
+    'Capacidade de ouvir.',
+  ];
 
 
   const { loading } = useAuthGuard();
@@ -75,17 +89,10 @@ const Passo9 = () => {
     );
   }
 
-  const toggleItem = (titulo: string) => {
-    setSelecionados(prev =>
-      prev.includes(titulo) ? prev.filter(i => i !== titulo) : [...prev, titulo]
-    );
-  };
-
   const handleNext = () => {
-    updateForm({ distorcoesPensamento: selecionados });
-    router.push('/passo10');
+    updateForm({ passo5Card1: selecionadoOpCard1 ?? '', passo5Card2: selecionadoOpCard2 ?? '', passo5Card3: selecionadoOpCard3 ?? '', passo5Card4: selecionadoOpCard4 ?? '', passo5Card5: selecionadoOpCard5 ?? '', passo5Card6: selecionadoOpCard6 ?? '' });
+    router.push('/passo6');
   };
-
 
   return (
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
@@ -98,33 +105,106 @@ const Passo9 = () => {
             style={styles.logo}
             resizeMode="contain"
           />
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>🤔 Quando algo dá errado, o que vem primeiro na sua mente?</Text>
+            {opCard1.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={[styles.opcao, selecionadoOpCard1 === item && { backgroundColor: inputBg }]}
+                onPress={() => setSelecionadoOpCard1(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard1 === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>
-              💗 <Text style={{ fontWeight: 'bold' }}>Seu pensamento contém alguma dessas distorções?</Text> Marque as opções que se aplicam:
-            </Text>
-
-            <View style={styles.lista}>
-              {distorcoes.map((item, idx) => (
-                <View key={idx} style={[styles.item, { backgroundColor: inputBg }]}>
-                  <Checkbox
-                    status={selecionados.includes(item.titulo) ? 'checked' : 'unchecked'}
-                    onPress={() => toggleItem(item.titulo)}
-                  />
-                  <View style={{ flex: 1 }}>
-                    <Text style={[styles.itemTitulo, { color: textColor }]}>{item.titulo}</Text>
-                    <Text style={[styles.itemDescricao, { color: textColor }]}>{item.descricao}</Text>
-                  </View>
+            <Text style={[styles.title, { color: textColor }]}>✨ Você costuma tomar decisões mais com base:</Text>
+            {opCard2.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={[styles.opcao, selecionadoOpCard2 === item && { backgroundColor: inputBg }]}
+                onPress={() => setSelecionadoOpCard2(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard2 === item && <View style={styles.radioSelecionado} />}
                 </View>
-              ))}
-            </View>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>👩🏽‍🦱 Quando está com outras pessoas, você tende a:</Text>
+            {opCard3.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={[styles.opcao, selecionadoOpCard3 === item && { backgroundColor: inputBg }]}
+                onPress={() => setSelecionadoOpCard3(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard3 === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>🧩 Como você costuma reagir a situações novas ou desconhecidas?</Text>
+            {opCard4.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={[styles.opcao, selecionadoOpCard4 === item && { backgroundColor: inputBg }]}
+                onPress={() => setSelecionadoOpCard4(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard4 === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>🟣 Quando você precisa tomar uma decisão importante, como costuma agir?</Text>
+            {opCard5.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={[styles.opcao, selecionadoOpCard5 === item && { backgroundColor: inputBg }]}
+                onPress={() => setSelecionadoOpCard5(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard5 === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>🌟 Quando você pensa nas suas qualidades e forças internas, o que mais se destaca em você?</Text>
+            {opCard6.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={[styles.opcao, selecionadoOpCard6 === item && { backgroundColor: inputBg }]}
+                onPress={() => setSelecionadoOpCard6(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard6 === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
           <CustomButton
             title="Me conte mais..."
             onPress={handleNext}
-            disabled={selecionados.length === 0}
+            disabled={(!selecionadoOpCard1 || !selecionadoOpCard2 || !selecionadoOpCard3 || !selecionadoOpCard4 || !selecionadoOpCard5 || !selecionadoOpCard6)}
           />
         </View>
       </ScrollView>
@@ -133,7 +213,6 @@ const Passo9 = () => {
 };
 
 export default Passo9;
-
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -173,59 +252,31 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 8,
   },
-  tagContainer: {
+  opcao: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginTop: 10,
-  },
-  tag: {
-    backgroundColor: '#f3f4f6',
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    margin: 4,
-  },
-  tagSelected: {
-    backgroundColor: '#6366f1',
-  },
-  tagText: {
-    color: '#333',
-  },
-  tagTextSelected: {
-    color: '#fff',
-  },
-  sliderValue: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginTop: 4,
-  },
-  input: {
-    backgroundColor: '#f3f4f6',
-    borderRadius: 8,
-    padding: 10,
-    marginTop: 10,
-    textAlignVertical: 'top',
-    minHeight: 60,
-  },
-  submitButton: {
-    backgroundColor: '#4f46e5',
-    borderRadius: 25,
-    padding: 14,
     alignItems: 'center',
-    marginVertical: 16,
+    marginBottom: 12,
   },
-  submitText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  opcaoTexto: {
+    fontSize: 16,
+    color: '#333',
+    marginEnd: 20,
   },
-  footerNote: {
-    textAlign: 'center',
-    color: '#fff',
-    fontSize: 12,
-    marginBottom: 40,
-    paddingHorizontal: 20,
+  radioCirculo: {
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#999',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  radioSelecionado: {
+    height: 10,
+    width: 10,
+    borderRadius: 5,
+    backgroundColor: '#9C27B0',
   },
   button: {
     backgroundColor: '#FFA45E',
@@ -241,35 +292,39 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  radioGrid: {
+  sliderLabels: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
+    marginTop: 8,
   },
-  radioItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '48%',
-    marginBottom: 8,
-  },
-  label: {
-    fontSize: 14,
-    color: '#333',
-    flexShrink: 1,
-  }, lista: {
-    gap: 10,
-  },
-  item: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  itemTitulo: {
+  sliderValue: {
+    textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 4,
   },
-  itemDescricao: {
-    fontSize: 13,
-    color: '#555',
+  sliderValueContainer: {
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 2,
+  },
+  sliderValueText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+  },
+  labelContainer: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  labelValue: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  labelText: {
+    fontSize: 12,
+    textAlign: 'center',
+    color: '#333',
   },
 });
