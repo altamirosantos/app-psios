@@ -19,7 +19,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 
 
 
-const Passo10 = () => {
+const Passo11 = () => {
   const { updateForm } = useForm();
 
   const textColor = useThemeColor('text');
@@ -29,10 +29,13 @@ const Passo10 = () => {
   const [selecionado, setSelecionado] = useState<string | null>(null);
 
 
-  const ocupacoes = [
-    'Tudo parece difícil ou injusto',
-    'Vejo altos e baixos, tentando encontrar equilíbrio',
-    'Apesar dos desafios, veja beleza e oportunidade',
+
+  const opcoes = [
+    { id: 1, label: "Espelho 1 – Confiante e Positiva", emoji: "🌟" },
+    { id: 2, label: "Espelho 2 – Em busca de si mesma(o)", emoji: "☁️" },
+    { id: 3, label: "Espelho 3 – Crítico e Exigente", emoji: "😔" },
+    { id: 4, label: "Espelho 4 – Fragilizada(o) emocionalmente", emoji: "🌧️" },
+    { id: 5, label: "Espelho 5 – Em construção com carinho", emoji: "✨" },
   ];
 
 
@@ -47,8 +50,8 @@ const Passo10 = () => {
   }
 
   const handleNext = () => {
-    updateForm({ enxergarMundo: selecionado ?? '' });
-    router.push('/passo11');
+    updateForm({ espelho: selecionado ?? '' });
+    router.push('/passoFinaliza');
   };
 
   return (
@@ -63,34 +66,50 @@ const Passo10 = () => {
             resizeMode="contain"
           />
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🌍 Como você costuma enxergar o mundo ao seu redor?</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>Seu pensamento contem…</Text>
-            {ocupacoes.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={[styles.opcao, { backgroundColor: item === selecionado ? inputBg : 'transparent' }]}
-                onPress={() => setSelecionado(item)}
-              >
-                <View style={styles.radioCirculo}>
-                  {selecionado === item && <View style={styles.radioSelecionado} />}
-                </View>
-                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
-              </TouchableOpacity>
-            ))}
+            <Text style={[styles.title, { color: textColor }]}>
+              🪞Qual espelho representa melhor como você se vê hoje?
+              Escolha a opção que mais representa o seu autoconceito no momento:
+            </Text>
+
+            <View style={styles.containerImage}>
+              <Image source={require("@/assets/images/mirror.png")} style={styles.imagem} resizeMode="contain" />
+
+              {/* Números sobre a imagem */}
+              <Text style={[styles.numero, styles.pos1]}>1</Text>
+              <Text style={[styles.numero, styles.pos2]}>2</Text>
+              <Text style={[styles.numero, styles.pos3]}>3</Text>
+              <Text style={[styles.numero, styles.pos4]}>4</Text>
+              <Text style={[styles.numero, styles.pos5]}>5</Text>
+            </View>
+
+            <View style={styles.opcoes}>
+              {opcoes.map((opcao) => (
+                <TouchableOpacity
+                  key={opcao.id}
+                  style={[styles.opcao, selecionado === opcao.label && styles.opcaoSelecionada]}
+                  onPress={() => setSelecionado(opcao.label)}
+                >
+                  <Text style={styles.opcaoTexto}>
+                    {opcao.emoji} {opcao.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
 
           <CustomButton
-            title="Me conte mais..."
+            title="Enviar"
             onPress={handleNext}
             disabled={!selecionado}
           />
+
         </View>
       </ScrollView>
     </LinearGradient>
   );
 };
 
-export default Passo10;
+export default Passo11;
 const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -116,6 +135,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
+    alignItems: 'center',
     width: '100%', // ocupa 100% da área do container pai
     maxWidth: 400,
   },
@@ -128,16 +148,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginVertical: 8,
-    marginBottom: 20,
-  },
-  opcao: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  opcaoTexto: {
-    fontSize: 16,
-    marginEnd: 20,
   },
   radioCirculo: {
     height: 20,
@@ -168,5 +178,63 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  containerImage: {
+    position: 'relative',
+    width: 344,
+    height: 344,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    marginTop: 20
+  },
+  imagem: {
+    width: 344,
+    height: 344,
+  },
+  opcoes: {
+    width: "100%",
+    marginBottom: 40,
+  },
+  opcao: {
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+  opcaoSelecionada: {
+    borderColor: "#6200EE",
+    backgroundColor: "#E0D7F8",
+  },
+  opcaoTexto: {
+    fontSize: 16,
+  },
+  numero: {
+    position: 'absolute',
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#6B21A8', // roxo escuro
+  },
+  pos1: {
+    left: '12%',
+    bottom: 50,
+  },
+  pos2: {
+    left: '30%',
+    bottom: 40,
+  },
+  pos3: {
+    left: '47%',
+    bottom: 50,
+  },
+  pos4: {
+    left: '63%',
+    bottom: 40,
+  },
+  pos5: {
+    left: '80%',
+    bottom: 50,
   },
 });

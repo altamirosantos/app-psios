@@ -172,7 +172,10 @@ const Passo5 = () => {
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
             <Text style={[styles.title, { color: textColor }]}>📝 Preencha abaixo de forma breve e sincera.</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>Isso vai te ajudar a entender melhor o que está sentindo e dar significado ao pensamento que mais tem passado pela sua cabeça ultimamente:</Text>
+            <Text style={[styles.subsubtitle, { color: textColor }]}>Isso vai te ajudar a entender melhor o que está sentindo e dar significado ao pensamento que mais tem passado pela sua cabeça ultimamente:</Text>
+
+          </View>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
             <Text style={[styles.title, { color: textColor }]}>📌 Situação</Text>
             <Text style={[styles.subtitle, { color: textColor }]}>Onde você estava ou o que estava acontecendo?</Text>
             <Text style={[styles.subsubtitle, { color: textColor }]}>(Escolha uma ou mais opções)</Text>
@@ -221,7 +224,8 @@ const Passo5 = () => {
                 onChangeText={setOutroTextoCard1}
               />
             )}
-
+          </View>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
 
             <Text style={[styles.title, { color: textColor }]}>⚡ Gatilho</Text>
             <Text style={[styles.subtitle, { color: textColor }]}>O que parece ter ativado esse sentimento?</Text>
@@ -264,6 +268,8 @@ const Passo5 = () => {
               />
             )}
 
+          </View>
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
             <Text style={[styles.title, { color: textColor }]}>💭 Pensamento</Text>
             <Text style={[styles.subtitle, { color: textColor }]}>O que passou pela sua cabeça? — O pensamento que mais tem ocupado sua </Text>
             <Text style={[styles.subsubtitle, { color: textColor }]}>(Escolha a frase que mais se parece com o que inventou)</Text>
@@ -305,6 +311,9 @@ const Passo5 = () => {
               />
             )}
 
+          </View>
+
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
             <View style={styles.radioContainer}>
               <Text style={[styles.title, { color: textColor }]}>🧍‍♂️ Comportamento (ações)</Text>
               <Text style={[styles.subtitle, { color: textColor }]}>🔁 Como você reagiu naquele momento?</Text>
@@ -356,6 +365,9 @@ const Passo5 = () => {
               </View>
             </View>
 
+          </View>
+
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
             <Text style={[styles.title, { color: textColor }]}>💓 Corpo (reações físicas)</Text>
             {opCard4.map((item) => (
               <TouchableOpacity

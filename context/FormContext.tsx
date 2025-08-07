@@ -8,6 +8,7 @@ type FormData = {
   selecionadoComoCostumaLidar?: string;
   selecionadoPensarFuturo?: string;
   selecionadoConcentracao?: string;
+  concentracao?: string;
   sliderValuePreparado?: number;
   passo5Card1?: string;
   passo5Card2?: string;
@@ -20,7 +21,8 @@ type FormData = {
   passo8Oque?: string; 
   passo8Sentimento?: string;
   passo8ComoSeComportou?: string[];
-  //passo8AlguemEnvolvido?: string;
+  passo11Card1?:string
+  passo11Card2?:string
   passo8Gatilho?: string;
   passo8Pensamento?: string;
   distorcoesPensamento?: string[];
