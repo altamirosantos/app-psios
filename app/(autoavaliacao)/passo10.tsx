@@ -51,7 +51,7 @@ const Passo11 = () => {
 
   const handleNext = () => {
     updateForm({ espelho: selecionado ?? '' });
-    router.push('/passoFinaliza');
+    router.push('/passo11');
   };
 
   return (

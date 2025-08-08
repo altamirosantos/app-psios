@@ -20,7 +20,7 @@ type FormData = {
   passo7Card1?: number;
   passo8Oque?: string; 
   passo8Sentimento?: string;
-  passo8ComoSeComportou?: string[];
+  passo8ComoSeComportou?: (string | null[]);
   passo11Card1?:string
   passo11Card2?:string
   passo8Gatilho?: string;

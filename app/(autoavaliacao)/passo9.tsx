@@ -90,7 +90,7 @@ const Passo9 = () => {
 
   const handleNext = () => {
     updateForm({ passo5Card1: selecionadoOpCard1 ?? '', passo5Card2: selecionadoOpCard2 ?? '', passo5Card3: selecionadoOpCard3 ?? '', passo5Card4: selecionadoOpCard4 ?? '', passo5Card5: selecionadoOpCard5 ?? '', passo5Card6: selecionadoOpCard6 ?? '' });
-    router.push('/passo11');
+    router.push('/passo10');
   };
 
   return (

@@ -1,5 +1,4 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -17,6 +16,7 @@ import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { supabase } from '@/lib/supabase';
+import { router } from 'expo-router';
 
 
 const PassoFinal = () => {
@@ -27,7 +27,6 @@ const PassoFinal = () => {
   const cardColor = useThemeColor('cardBackground');
   const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
-
 
 
   const { loading } = useAuthGuard();
@@ -42,58 +41,55 @@ const PassoFinal = () => {
 
   const enviar = async () => {
     try {
-      //const session = await AsyncStorage.getItem('user');
       const { data, error } = await supabase.auth.getSession();
       console.log('session >>>>>>  ', data.session);
-      //const user = data.session?.user
-      updateForm({ email: data.session?.user?.email ?? '' });
-      //data.email = email ?? '';
+
+      const userSession = data?.session?.user;
+      if (!userSession) return;
+
+      updateForm({ email: userSession.email ?? '' });
 
 
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userSession.id)
+        .single();
+
+      if (profileError) {
+        console.error('Erro ao buscar perfil do usuário:', profileError.message);
+        return;
+      }
       const dadosParaEnvio = {
         ...dadosForm,
-        idUsuario: data.session?.user?.id ?? '',
-        email: data.session?.user?.email ?? '',
-        nome: user?.nome ?? '',
-        apelido: user?.apelido ?? '',
-        nascimento: user?.nascimento ?? '',
-        genero: user?.genero ?? '',
+        idUsuario: userSession.id ?? '',
+        email: userSession.email ?? '',
+        nome: profile?.nome ?? '',
+        apelido: profile?.apelido ?? '',
+        nascimento: profile?.nascimento ?? '',
+        genero: profile?.genero ?? '',
       };
 
+      console.log('Dados para envio:', dadosParaEnvio);
 
-      /* const { data: insertData, error: insertError } = await supabase
-         .from('autoavaliacao')
-         .insert([
-           {
-             user_id: user?.id,
-             dados_entrada: JSON.stringify(dadosParaEnvio),
+
+       const response = await fetch(
+         'https://n8n.softdados.com/webhook/4d114a91-60ed-4286-b2a4-f6795f562d18',
+         {
+           method: 'POST',
+           headers: {
+             'Content-Type': 'application/json',
            },
-         ]);
+           body: JSON.stringify(dadosParaEnvio), // `data` deve estar definido no seu escopo
+         }
+       );
  
-       if (insertError) {
-         console.error('Erro ao salvar autoavaliação:', insertError);
-         throw new Error(`Erro ao enviar dados: ${insertError}`);
-       } else {
-         console.log('Autoavaliação salva com sucesso:', insertData);
-       }*/
-
-      const response = await fetch(
-        'https://n8n.softdados.com/webhook/4d114a91-60ed-4286-b2a4-f6795f562d18',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(dadosParaEnvio), // `data` deve estar definido no seu escopo
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Erro ao enviar dados: ${response.status}`);
-      }
-
-      console.log('Formulário enviado com sucesso!', dadosParaEnvio);
-      router.push('/(tabs)/home');
+       if (!response.ok) {
+         throw new Error(`Erro ao enviar dados: ${response.status}`);
+       }
+ 
+       console.log('Formulário enviado com sucesso!', dadosParaEnvio);
+       router.push('/(tabs)/home');
     } catch (error) {
       console.error('Erro ao enviar formulário:', error);
     }

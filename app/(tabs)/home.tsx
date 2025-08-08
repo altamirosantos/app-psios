@@ -5,13 +5,14 @@ import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
+  Image,
   Modal,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { useAuthGuard } from '../../hooks/useAuthGuard';
 
@@ -48,7 +49,7 @@ export default function DashboardScreen() {
   };
 
   const goToSubscription = () => {
-    
+
     router.push('/(tabs)/assinatura');
     closeModal();
   };
@@ -69,6 +70,14 @@ export default function DashboardScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('@/assets/images/logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </View>
+
         <Text style={styles.welcome}>Seja bem-vindo(a)</Text>
         <Text style={styles.subtitle}>
           Pronto (a) para transformar sua vida? Mude a forma de pensar, sentir e agir com novas conexões e autoconsciência.
@@ -164,7 +173,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
-    paddingTop: 80,
+    paddingTop: 40,
     paddingBottom: 40,
     paddingHorizontal: 20,
   },
@@ -311,4 +320,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 10,
   },
+  logo: {
+    width: 60,
+    height: 60,
+    marginBottom: 30,
+  },
+  logoContainer: {
+    width: "100%",
+    alignItems: 'center'
+  }
 });

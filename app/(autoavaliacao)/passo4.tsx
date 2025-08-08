@@ -1,6 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
@@ -8,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View
 } from 'react-native';
 import { Checkbox } from 'react-native-paper';
@@ -16,17 +16,20 @@ import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { supabase } from '@/lib/supabase';
+import { router } from 'expo-router';
 
 
 
 const Passo4 = () => {
-  const { updateForm } = useForm();
+  const { updateForm, dadosForm } = useForm();
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
-  const placeholder = useThemeColor('placeholder');
   const inputBg = useThemeColor('inputBackground');
   const [selectedItemsPasso6, setSelectedItemsPasso6] = useState<string[]>([]);
+  const [outroTexto, setOutroTexto] = useState('');
+
 
 
 
@@ -36,20 +39,55 @@ const Passo4 = () => {
     "Preocupações financeiras.",
     "Problemas de saúde física.",
     "Solidão ou isolamento",
-    "Falta de sono ou cansaço.",
-    "Expectativas altas sobre si.",
+    "Práticas espirituais ou de gratidão",
+    "Expectativas altas sobre si",
     "Luto.",
-    "Insegurança com o futuro.",
+    "Sentir que estou evoluindo pessoalmente",
     "Falta de tempo para si",
     "Mudanças climáticas",
+    "Dormir melhor ou descansar mais",
+    "Prática de atividades físicas",
     "Nenhum",
     "Outro"
   ];
 
+  const [nome, setNome] = useState<string | null>(null);
 
+  useEffect(() => {
+    const buscarUsuario = async () => {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error('Erro ao buscar sessão:', error);
+        return;
+      }
+
+      const user = data?.session?.user;
+      console.log('session >>>>>>  ', data.session);
+
+      if (user) {
+        // const nomeUsuario = user.user_metadata?.full_name || user.email || 'Usuário';
+
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.error('Erro ao buscar perfil do usuário:', profileError.message);
+          return;
+        }
+        setNome(profile.apelido + ',' || profile.nome + ',' || '');
+      }
+    };
+
+    buscarUsuario();
+  }, []);
 
   const { loading } = useAuthGuard();
   if (loading) {
+    console.log('loading...', nome);
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
@@ -57,16 +95,42 @@ const Passo4 = () => {
     );
   }
 
-  const toggleItem = (item: string) => {
-    if (selectedItemsPasso6.includes(item)) {
-      setSelectedItemsPasso6(selectedItemsPasso6.filter(i => i !== item));
+  const toggleItem = (opcao: string) => {
+    if (opcao === "Nenhum") {
+      setSelectedItemsPasso6(["Nenhum"]);
+      setOutroTexto("");
     } else {
-      setSelectedItemsPasso6([...selectedItemsPasso6, item]);
+
+      let novasOpcoes = selectedItemsPasso6.filter(item => item !== "Nenhum");
+
+      // let novaSelecao = [...selectedItemsPasso6];
+
+      if (novasOpcoes.includes(opcao)) {
+        // Desmarca a opção
+        novasOpcoes = novasOpcoes.filter(item => item !== opcao);
+        if (opcao === "Outro") setOutroTexto("");
+      } else {
+        // Marca a opção
+        novasOpcoes.push(opcao);
+      }
+
+      setSelectedItemsPasso6(novasOpcoes);
     }
   };
 
+
   const handleNext = () => {
-    updateForm({ selectedItemsPasso6: selectedItemsPasso6 });
+    let itemsToSend = [...selectedItemsPasso6];
+
+    // Se tiver texto digitado em "outro", substitui o literal "Outros"
+    if (outroTexto.trim() !== "") {
+      itemsToSend = itemsToSend.map(item =>
+        item === "Outro" ? outroTexto.trim() : item
+      );
+    }
+
+    updateForm({ selectedItemsPasso6: itemsToSend });
+    console.log("Dados Form: ", itemsToSend);
     router.push('/passo5');
   };
 
@@ -84,12 +148,15 @@ const Passo4 = () => {
           <View style={[styles.card, { backgroundColor: cardColor }]}>
             <View style={styles.header}>
               <Text style={[styles.title, { color: textColor }]}>
-                🌀 Alguns desses fatores estão afetando seu estado emocional nesse momento?
+                🌀 {nome} Alguns desses fatores estão influenciando seu bem-estar — de forma positiva ou negativa. Com quais você se identifica agora?
               </Text>
             </View>
             <Text style={[styles.subtitle, { color: textColor }]}>Marque as opções que se aplicam:</Text>
             {emotionalFactors.map((item, index) => (
-              <View key={index} style={[styles.checkboxContainer, { backgroundColor: inputBg }]}>
+              <View
+                key={index}
+                style={[styles.checkboxContainer, { backgroundColor: inputBg }]}
+              >
                 <Checkbox
                   status={selectedItemsPasso6.includes(item) ? 'checked' : 'unchecked'}
                   onPress={() => toggleItem(item)}
@@ -97,6 +164,32 @@ const Passo4 = () => {
                 <Text style={[styles.checkboxLabel, { color: textColor }]}>{item}</Text>
               </View>
             ))}
+
+            {/* Se "Outro" estiver selecionado, exibe campo de texto */}
+            {selectedItemsPasso6.includes('Outro') && (
+              <TextInput
+                style={[styles.inputOutro, { backgroundColor: inputBg, color: textColor }]}
+                placeholder="Digite aqui..."
+                placeholderTextColor="#999"
+                value={outroTexto}
+                onChangeText={(texto) => {
+                  setOutroTexto(texto);
+
+                  if (!selectedItemsPasso6.includes("Outro")) {
+                    // Garante que "Outro" fique selecionado ao digitar
+                    setSelectedItemsPasso6(prev => [...prev.filter(item => item !== "Nenhum"), "Outro"]);
+                  }
+                  /* setSelectedItemsPasso6((prev) => {
+                     const semOutro = prev.filter((i) => i !== "Outro");
+                     if (texto.trim() !== "") {
+                       return [...semOutro, texto.trim()];
+                     }
+                     return semOutro; // Se apagou o texto, apenas remove "Outro"
+                   });*/
+                }}
+              />
+            )}
+
           </View>
 
           <CustomButton
@@ -240,5 +333,13 @@ const styles = StyleSheet.create({
   checkboxLabel: {
     fontSize: 14,
     color: '#333'
+  },
+  inputOutro: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 8,
+    fontSize: 14
   }
 });

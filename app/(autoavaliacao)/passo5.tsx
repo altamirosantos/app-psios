@@ -1,5 +1,4 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -17,13 +16,14 @@ import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import { router } from 'expo-router';
 import { Checkbox } from 'react-native-paper';
 
 
 
 
 const Passo5 = () => {
-  const { updateForm } = useForm();
+  const { updateForm, dadosForm } = useForm();
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
@@ -114,49 +114,61 @@ const Passo5 = () => {
   };
 
   const handleNext = () => {
-    setSelecionadoOpCard1(
-      selecionadoOpCard1 === "Outros" && outroTextoCard1.trim()
+    // Substitui "Outros" pelo texto correspondente, caso tenha sido digitado
+    const finalCard1 =
+      selecionadoOpCard1 === "Outros" && outroTextoCard1.trim() !== ""
         ? outroTextoCard1.trim()
-        : (selecionadoOpCard1 || "Outros")
-    );
+        : selecionadoOpCard1 || "";
 
-    setSelecionadoOpCard2(
-      selecionadoOpCard2 === "Outros" && outroTextoCard2.trim()
+    const finalCard2 =
+      selecionadoOpCard2 === "Outros" && outroTextoCard2.trim() !== ""
         ? outroTextoCard2.trim()
-        : (selecionadoOpCard2 || "Outros")
-    );
+        : selecionadoOpCard2 || "";
 
-    setSelecionadoOpCard3(
-      selecionadoOpCard3 === "Outros" && outroTextoCard3.trim()
+    const finalCard3 =
+      selecionadoOpCard3 === "Outros" && outroTextoCard3.trim() !== ""
         ? outroTextoCard3.trim()
-        : (selecionadoOpCard3 || "Outros")
-    );
+        : selecionadoOpCard3 || "";
 
-    setComoSeComportou(prev => {
-      // Remove "Outros" se não estiver marcado
-      if (!prev.includes("Outros")) {
-        return prev.filter(item => item !== "Outros");
-      }
+    const finalCard4 =
+      selecionadoOpCard4 === "Outros" && outroTextoCard4.trim() !== ""
+        ? outroTextoCard4.trim()
+        : selecionadoOpCard4 || "";
 
-      // Se "Outros" está marcado e há texto digitado, substitui pelo texto
-      if (prev.includes("Outros") && outroComportamento.trim()) {
-        return prev.map(item => (item === "Outros" ? outroComportamento.trim() : item));
-      }
+    // Ajusta lista de comportamentos
+    const finalComportamento: any[] = comoSeComportou
+      .map(item => {
+        if (item === "Outros") {
+          // Se marcou "Outros" e digitou algo, usa o texto digitado
+          if (outroComportamento.trim() !== "") {
+            return outroComportamento.trim();
+          }
+          // Se marcou "Outros" mas não digitou nada, ignora
+          return null;
+        }
+        return item;
+      })
+      .filter(Boolean); // remove nulls
 
-      // Se "Outros" está marcado mas sem texto, mantém como "Outros"
-      return prev;
+    updateForm({
+      passo8Oque: finalCard1,
+      passo8Sentimento: finalCard4,
+      passo8ComoSeComportou: finalComportamento,
+      passo8Gatilho: finalCard2,
+      passo8Pensamento: finalCard3
     });
 
+    console.log("dadosForm atualizado", {
+      passo8Oque: finalCard1,
+      passo8Sentimento: finalCard4,
+      passo8ComoSeComportou: finalComportamento,
+      passo8Gatilho: finalCard2,
+      passo8Pensamento: finalCard3
+    });
 
-    setSelecionadoOpCard4(
-      selecionadoOpCard4 === "Outros" && outroTextoCard4.trim()
-        ? outroTextoCard4.trim()
-        : (selecionadoOpCard4 || "Outros")
-    );
-
-    updateForm({ passo8Oque: selecionadoOpCard1 || "", passo8Sentimento: selecionadoOpCard4 || "", passo8ComoSeComportou: comoSeComportou, passo8Gatilho: selecionadoOpCard2 || "", passo8Pensamento: selecionadoOpCard3 || "" });
     router.push('/passo6');
   };
+
 
   return (
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>

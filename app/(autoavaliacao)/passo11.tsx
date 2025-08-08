@@ -59,7 +59,7 @@ const Passo10 = () => {
 
   const handleNext = () => {
     updateForm({ passo11Card1: selecionadoPasso11Card1 ?? '', passo11Card2: selecionadoPasso11Card2 ?? '' });
-    router.push('/passo11');
+    router.push('/passoFinaliza');
   };
 
   return (
@@ -74,8 +74,8 @@ const Passo10 = () => {
             resizeMode="contain"
           />
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🌍 Como você costuma enxergar o mundo ao seu redor?</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>Seu pensamento contem…</Text>
+            <Text style={[styles.title, { color: textColor }]}>🌱 Se você pudesse falar com você mesmo(a) com mais carinho hoje, o que você diria para se motivar sem se cobrar tanto?</Text>
+          
             {passo11Card1.map((item) => (
               <TouchableOpacity
                 key={item}
@@ -91,8 +91,8 @@ const Passo10 = () => {
           </View>
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>🌍 Como você costuma enxergar o mundo ao seu redor?</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>Seu pensamento contem…</Text>
+            <Text style={[styles.title, { color: textColor }]}>➕Se você pudesse melhorar um aspecto do seu bem-estar emocional agora, qual escolheria?</Text>
+            
             {passo11Card2.map((item) => (
               <TouchableOpacity
                 key={item}
