@@ -98,7 +98,7 @@ const Passo11 = () => {
           </View>
 
           <CustomButton
-            title="Enviar"
+            title="Próximo"
             onPress={handleNext}
             disabled={!selecionado}
           />

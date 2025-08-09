@@ -89,7 +89,7 @@ const PassoFinal = () => {
        }
  
        console.log('Formulário enviado com sucesso!', dadosParaEnvio);
-       router.push('/(tabs)/home');
+       router.push('/(outros)/DiagnosticoScreen');
     } catch (error) {
       console.error('Erro ao enviar formulário:', error);
     }

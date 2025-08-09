@@ -18,14 +18,14 @@ import { useAuthGuard } from '../../hooks/useAuthGuard';
 
 const data = [
   { id: '1', label: 'Home', icon: <Feather name="home" size={28} color="#4a00e0" />, premium: false },
-  { id: '2', label: 'Search', icon: <Feather name="search" size={28} color="#00c6ff" />, premium: false },
-  { id: '3', label: 'Favorites', icon: <FontAwesome name="heart" size={28} color="#f47c57" />, premium: true },
-  { id: '4', label: 'Notifications', icon: <Feather name="bell" size={28} color="#4a00e0" />, premium: false },
-  { id: '5', label: 'Settings', icon: <Feather name="settings" size={28} color="#00c6ff" />, premium: true },
+  { id: '2', label: 'Busca', icon: <Feather name="search" size={28} color="#00c6ff" />, premium: false },
+  { id: '3', label: 'Favoritos', icon: <FontAwesome name="heart" size={28} color="#f47c57" />, premium: true },
+  { id: '4', label: 'Notificações', icon: <Feather name="bell" size={28} color="#4a00e0" />, premium: false },
+  { id: '5', label: 'Config', icon: <Feather name="settings" size={28} color="#00c6ff" />, premium: false },
   { id: '6', label: 'Profile', icon: <Feather name="user" size={28} color="#f47c57" />, premium: false },
-  { id: '7', label: 'Shop', icon: <Feather name="shopping-cart" size={28} color="#4a00e0" />, premium: true },
-  { id: '8', label: 'Calendar', icon: <Feather name="calendar" size={28} color="#00c6ff" />, premium: false },
-  { id: '9', label: 'Messages', icon: <Feather name="message-square" size={28} color="#f47c57" />, premium: true },
+  { id: '7', label: 'Assinaturas', icon: <Feather name="shopping-cart" size={28} color="#4a00e0" />, premium: false },
+  { id: '8', label: 'Agenda', icon: <Feather name="calendar" size={28} color="#00c6ff" />, premium: true },
+  { id: '9', label: 'Menssagens', icon: <Feather name="message-square" size={28} color="#f47c57" />, premium: true },
 ];
 
 const numColumns = 3;
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     width: size,
     height: size,
     backgroundColor: '#fff',
-    borderRadius: 20,
+    borderRadius: 10,
     marginVertical: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFA45E',
     paddingVertical: 16,
     paddingHorizontal: 40,
-    borderRadius: 50,
+    borderRadius: 20,
     marginTop: 40,
     width: width - 80,
   },
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   logoContainer: {
-    width: "100%",
-    alignItems: 'center'
+    alignItems: 'center',
+    height:60
   }
 });

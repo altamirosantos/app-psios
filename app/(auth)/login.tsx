@@ -3,7 +3,7 @@ import { useColorScheme } from '@/hooks/useColorScheme.web';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { supabase } from '@/lib/supabase';
 import { loginWithEmail, signInWithFacebook, signInWithGoogle } from '@/services/auth.service';
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -144,7 +144,12 @@ export default function LoginScreen() {
             genero: profile.genero,
         });
 
-        router.replace('/boasVindas');
+        if (profile.nome === '') {
+            router.replace('/updateProfile');
+        } else {
+            router.replace('/boasVindas');
+        }
+
     };
 
 
@@ -197,6 +202,7 @@ export default function LoginScreen() {
                         onPress={handleGoogleLogin}
                     />
 
+                    {/*
                     <TouchableOpacity
                         style={[styles.loginButton, { backgroundColor: '#3b5998' }]}
                         onPress={handleLoginFacebook}
@@ -206,7 +212,7 @@ export default function LoginScreen() {
                             <Text style={styles.buttonText}>Login com Facebook</Text>
                         </View>
                     </TouchableOpacity>
-
+*/}
 
                     <Pressable onPress={() => router.push('/(auth)/signup')}>
                         <Text style={[styles.signupText, { color: textColor }]}>

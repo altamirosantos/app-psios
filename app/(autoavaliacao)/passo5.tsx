@@ -283,7 +283,7 @@ const Passo5 = () => {
           </View>
           <View style={[styles.card, { backgroundColor: cardColor }]}>
             <Text style={[styles.title, { color: textColor }]}>💭 Pensamento</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>O que passou pela sua cabeça? — O pensamento que mais tem ocupado sua </Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>O que passou pela sua cabeça? — O pensamento que mais tem ocupado sua mente</Text>
             <Text style={[styles.subsubtitle, { color: textColor }]}>(Escolha a frase que mais se parece com o que inventou)</Text>
             {opCard3.map((item) => (
               <TouchableOpacity

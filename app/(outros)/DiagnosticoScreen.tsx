@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import React from 'react';
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { Dimensions, Image, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const DiagnosticoScreen = () => {
   const exercicios = [
@@ -9,6 +9,8 @@ const DiagnosticoScreen = () => {
     { id: 2, titulo: 'Meditação Guiada', tipo: 'Áudio' },
     { id: 3, titulo: 'Diário de Emoções', tipo: 'Texto' },
   ];
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
@@ -18,17 +20,17 @@ const DiagnosticoScreen = () => {
         </View>
 
         {/* Botão de Diagnóstico */}
-        <TouchableOpacity style={[styles.card, styles.diagnosticoCard]}>
+        <TouchableOpacity style={[styles.card, styles.diagnosticoCard]} onPress={() => setModalVisible(true)}>
           <Text style={styles.diagnosticoTitle}>📋 Seu Guia de Cuidado</Text>
           <Text style={styles.diagnosticoText} numberOfLines={3} ellipsizeMode="tail">
-           Preparamos uma análise gentil do seu momento, com dicas e orientações feitas para você. Toque aqui para saber mais.
+            Preparamos uma análise gentil do seu momento, com dicas e orientações feitas para você. Toque aqui para saber mais.
           </Text>
         </TouchableOpacity>
 
         {/* Lista de Exercícios */}
         <Text style={styles.sectionTitle}>Sugestões de Autocuidado</Text>
         {exercicios.map((item) => (
-          <TouchableOpacity key={item.id} style={styles.card}>
+          <TouchableOpacity key={item.id} style={styles.card} onPress={() => setModalVisible(true)}>
             <Text style={styles.exerciseTitle}>{item.titulo}</Text>
             <Text style={styles.exerciseSubtitle}>{item.tipo}</Text>
           </TouchableOpacity>
@@ -42,6 +44,31 @@ const DiagnosticoScreen = () => {
           <Text style={styles.buttonText}>👉 Refazer Autoavaliação</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Modal Elegante */}
+      <Modal
+        transparent
+        visible={modalVisible}
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Análise enviada</Text>
+            <Text style={styles.modalMessage}>
+              Sua análise foi enviada para um de nossos especialistas.
+              Nesta fase do projeto, os resultados ainda não serão exibidos no aplicativo, mas em breve você poderá acompanhar tudo diretamente por aqui.
+            </Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>Entendi</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </LinearGradient>
   );
 };
@@ -130,5 +157,43 @@ const styles = StyleSheet.create({
   imagem: {
     width: 244,
     height: 244,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    width: '100%',
+    maxWidth: 400,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 10,
+    color: '#2D4B73',
+  },
+  modalMessage: {
+    fontSize: 15,
+    color: '#444',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  modalButton: {
+    backgroundColor: '#2D4B73',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });

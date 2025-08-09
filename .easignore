@@ -1,0 +1,31 @@
+# Ignorar node_modules (EAS instala de novo)
+node_modules
+
+# Pastas de build e cache
+.expo
+.expo-shared
+dist
+build
+android/app/build
+ios/build
+
+# Pastas de testes e docs
+__tests__
+docs
+.storybook
+
+# Arquivos grandes e desnecessários para build
+*.log
+*.md
+*.zip
+*.tar.gz
+*.rar
+
+# Configurações locais e IDE
+.vscode
+.idea
+.DS_Store
+
+# Assets grandes que não são usados no app
+assets/videos/*
+assets/temp/*

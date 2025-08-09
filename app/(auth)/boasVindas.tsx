@@ -1,6 +1,7 @@
+import { supabase } from '@/lib/supabase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -13,6 +14,37 @@ import {
 
 
 const FeedbackScreen = () => {
+  const [nome, setNome] = useState<string | null>(null);
+
+  useEffect(() => {
+    const buscarUsuario = async () => {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error('Erro ao buscar sessão:', error);
+        return;
+      }
+
+      const user = data?.session?.user;
+      console.log('session >>>>>>  ', data.session);
+
+      if (user) {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.error('Erro ao buscar perfil do usuário:', profileError.message);
+          return;
+        }
+        setNome(profile.apelido + ',' || profile.nome + ',' || '');
+      }
+    };
+
+    buscarUsuario();
+  }, []);
 
   return (
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
@@ -29,7 +61,7 @@ const FeedbackScreen = () => {
                 ✨ ✨🤩 🥳 ✨ ✨
               </Text>
               <Text style={styles.title}>
-                Olá! Que bom ter você por aqui! Eu sou a Ana 😊
+                Olá {nome}! Que bom ter você por aqui! Eu sou a Ana 😊
               </Text>
 
               <Text style={styles.subtitle}>
