@@ -1,0 +1,32 @@
+## Listar chaves SHA-1
+keytool -list -v -keystore "C:\Users\altam\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
+
+## limpar e instalar
+rmdir /s /q node_modules
+del package-lock.json
+npm install
+
+npm cache clean --force
+
+
+Android Credentials     
+Project                 app-psios
+Application Identifier  com.altamirosantos.apppsios
+
+Push Notifications (FCM Legacy)
+  None assigned yet
+
+Push Notifications (FCM V1): Google Service Account Key For FCM V1
+  None assigned yet
+
+Submissions: Google Service Account Key for Play Store Submissions
+  None assigned yet
+
+Configuration: Build Credentials Wlt686tHXC (Default)
+Keystore
+Type                JKS
+Key Alias           050568cb5ea3951a7a8dd9862ed3819d
+MD5 Fingerprint     30:89:CC:BE:01:F8:86:54:D6:2A:4D:36:88:2D:F0:01
+SHA1 Fingerprint    39:55:7E:9B:AF:FF:B9:05:DC:3A:FE:33:B5:B9:BB:8D:B0:D6:4A:C0
+SHA256 Fingerprint  26:E5:D7:C6:79:D0:74:00:02:9D:7B:7C:9B:84:8F:A6:3A:B5:02:BA:90:1F:EA:7E:40:0A:FA:C3:C3:41:23:74
+Updated             1 month ago

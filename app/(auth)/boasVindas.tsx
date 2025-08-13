@@ -26,7 +26,7 @@ const FeedbackScreen = () => {
       }
 
       const user = data?.session?.user;
-      console.log('session >>>>>>  ', data.session);
+      console.log('session boasVindas >>>>>>  ', data.session);
 
       if (user) {
         const { data: profile, error: profileError } = await supabase

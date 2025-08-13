@@ -23,7 +23,7 @@ export async function signInWithGoogle() {
         if (error) throw error;
         return data;
     } catch (err) {
-        console.error('Erro login Google:', err);
+        console.error('Erro login Google (googlinSign):', err);
         throw err;
     }
 }
