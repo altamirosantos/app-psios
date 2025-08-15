@@ -108,7 +108,7 @@ const Passo10 = () => {
           </View>
 
           <CustomButton
-            title="Me conte mais..."
+            title="Próximo..."
             onPress={handleNext}
             disabled={!selecionadoPasso11Card1 || !selecionadoPasso11Card2}
           />

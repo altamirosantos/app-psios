@@ -202,7 +202,7 @@ const Passo9 = () => {
           </View>
 
           <CustomButton
-            title="Me conte mais..."
+            title="Mais um pouco e a gente finaliza juntos 🎉"
             onPress={handleNext}
             disabled={(!selecionadoOpCard1 || !selecionadoOpCard2 || !selecionadoOpCard3 || !selecionadoOpCard4 || !selecionadoOpCard5 || !selecionadoOpCard6)}
           />

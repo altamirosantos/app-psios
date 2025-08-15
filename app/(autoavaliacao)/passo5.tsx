@@ -72,7 +72,9 @@ const Passo5 = () => {
     '“Eu atrapalho as pessoas”',
     '“Ninguém se importa comigo”',
     '“Não vou conseguir lidar com isso”',
-    '“Sempre estrago tudo”'
+    '“Sempre estrago tudo”',
+    '"Uma preocupação com o futuro"',
+    '"Um medo de julgamento"'
   ];
 
   const opCard4 = [
@@ -422,7 +424,7 @@ const Passo5 = () => {
           </View>
 
           <CustomButton
-            title="Me conte mais..."
+            title="Próximo..."
             onPress={handleNext}
             disabled={!selecionadoOpCard1 || comoSeComportou.length === 0 || !selecionadoOpCard2 || !selecionadoOpCard3 || !selecionadoOpCard4}
           />

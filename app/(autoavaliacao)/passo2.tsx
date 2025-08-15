@@ -98,7 +98,7 @@ const Passo2 = () => {
           </View>
 
           <CustomButton
-            title="Me conte mais..."
+            title="Próximo..."
             onPress={handleNext}
             disabled={selectedEmotions.length === 0}
           />

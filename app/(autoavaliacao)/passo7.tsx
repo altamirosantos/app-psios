@@ -122,7 +122,7 @@ const Passo7 = () => {
           </View>
 
           <CustomButton
-            title="Me conte mais..."
+            title="Você está quase lá 🚀"
             onPress={handleNext}
             disabled={selecionados.length === 0}
           />

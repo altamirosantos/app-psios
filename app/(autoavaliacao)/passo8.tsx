@@ -187,7 +187,7 @@ const Passo8 = () => {
           </View>
 
           <CustomButton
-            title="Me conte mais..."
+            title="Próximo..."
             onPress={handleNext}
             disabled={(!selecionadoComoCostumaLidar || !selecionadoPensarFuturo)}
           />

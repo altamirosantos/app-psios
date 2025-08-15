@@ -119,7 +119,7 @@ De 0 a 100, o quanto você sente que este pensamento influencia seu bem-estar at
           </View>
 
           <CustomButton
-            title="Me conte mais..."
+            title="Próximo..."
             onPress={handleNext}
             disabled={false}
           />

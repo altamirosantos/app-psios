@@ -9,6 +9,10 @@ npm install
 npm cache clean --force
 
 
+######## IOS Privacy Policy Generator ############
+https://app.privacypolicies.com/
+
+
 Android Credentials     
 Project                 app-psios
 Application Identifier  com.altamirosantos.apppsios
@@ -21,3 +25,6 @@ Para o login do Google no modo de desenvolvimento, você precisa do SHA-1 da var
 
 SHA-1 debug
 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+
+
+

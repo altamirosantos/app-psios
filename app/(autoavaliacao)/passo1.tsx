@@ -98,7 +98,7 @@ export default function Passo1() {
         </View>
 
         <CustomButton
-          title="Me conte mais..."
+          title="Próximo..."
           onPress={handleNext}
           disabled={!sentimentoSelecionado}
         />

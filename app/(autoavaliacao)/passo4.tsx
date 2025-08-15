@@ -193,7 +193,7 @@ const Passo4 = () => {
           </View>
 
           <CustomButton
-            title="Me conte mais..."
+            title="Próximo..."
             onPress={handleNext}
             disabled={selectedItemsPasso6.length === 0}
           />
