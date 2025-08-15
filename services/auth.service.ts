@@ -10,10 +10,15 @@ GoogleSignin.configure({
 export async function signInWithGoogle() {
   try {
     await GoogleSignin.hasPlayServices();
+    console.log('Google Play Services disponíveis');
     const userInfo = await GoogleSignin.signIn();
+
+    console.log('Login com Google iniciado:', userInfo);
 
     const { idToken } = await GoogleSignin.getTokens();
     if (!idToken) throw new Error('ID Token ausente');
+
+    console.log('ID Token:', idToken);
 
     // Login com Supabase usando o ID Token do Google
     const { data, error } = await supabase.auth.signInWithIdToken({
