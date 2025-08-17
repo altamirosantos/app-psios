@@ -68,6 +68,8 @@ const Passo11 = () => {
           <View style={[styles.card, { backgroundColor: cardColor }]}>
             <Text style={[styles.title, { color: textColor }]}>
               🪞Qual espelho representa melhor como você se vê hoje?
+            </Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>
               Escolha a opção que mais representa o seu autoconceito no momento:
             </Text>
 

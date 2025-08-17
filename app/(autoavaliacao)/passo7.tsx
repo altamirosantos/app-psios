@@ -62,6 +62,10 @@ const Passo7 = () => {
       titulo: 'Personalização',
       descricao: 'Sinto que tudo é culpa minha.',
     },
+    {
+      titulo: 'Sem distorções.',
+      descricao: 'Observando meus pensamentos com neutralidade.',
+    }
   ];
 
 

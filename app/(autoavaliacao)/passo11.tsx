@@ -91,7 +91,7 @@ const Passo10 = () => {
           </View>
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>➕Se você pudesse melhorar um aspecto do seu bem-estar emocional agora, qual escolheria?</Text>
+            <Text style={[styles.title, { color: textColor }]}>💜 Se você pudesse melhorar um aspecto do seu bem-estar emocional agora, qual escolheria?</Text>
             
             {passo11Card2.map((item) => (
               <TouchableOpacity
@@ -148,9 +148,10 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+    paddingBottom: 20,
   },
   subtitle: {
     fontSize: 14,

@@ -148,7 +148,7 @@ const Passo4 = () => {
           <View style={[styles.card, { backgroundColor: cardColor }]}>
             <View style={styles.header}>
               <Text style={[styles.title, { color: textColor }]}>
-                🌀 {nome} Alguns desses fatores estão influenciando seu bem-estar — de forma positiva ou negativa. Com quais você se identifica agora?
+                🌀 {nome} Seu bem-estar é influenciado por alguns desses fatores agora? Identifique.
               </Text>
             </View>
             <Text style={[styles.subtitle, { color: textColor }]}>Marque as opções que se aplicam:</Text>
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
   },

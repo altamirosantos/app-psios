@@ -61,8 +61,7 @@ const Passo6 = () => {
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
             <Text style={[styles.title, { color: textColor }]}>
-              🧩 Pensando na sua resposta anterior.
-De 0 a 100, o quanto você sente que este pensamento influencia seu bem-estar atualmente?
+              🧩 Com base na sua resposta anterior. De 0 a 100, qual o impacto deste pensamento no seu bem-estar?
             </Text>
 
             {/* Valor acima da barra */}

@@ -185,8 +185,8 @@ const Passo5 = () => {
           />
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>📝 Preencha abaixo de forma breve e sincera.</Text>
-            <Text style={[styles.subsubtitle, { color: textColor }]}>Isso vai te ajudar a entender melhor o que está sentindo e dar significado ao pensamento que mais tem passado pela sua cabeça ultimamente:</Text>
+            <Text style={[styles.title, { color: textColor }]}>📝 Seu bem-estar é importante! Vamos olhar juntos para o que você sente e o que se passa na sua mente.</Text>
+            <Text style={[styles.subsubtitle, { color: textColor }]}>Preencha abaixo de forma breve e sincera.</Text>
 
           </View>
           <View style={[styles.card, { backgroundColor: cardColor }]}>
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
