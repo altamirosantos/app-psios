@@ -63,7 +63,7 @@ const Passo8 = () => {
 
   const { updateForm } = useForm();
   const handleNext = () => {
-    updateForm({ selecionadoComoCostumaLidar: selecionadoComoCostumaLidar ?? '', selecionadoPensarFuturo: selecionadoPensarFuturo ?? '', sliderValuePreparado: sliderValuePreparado, concentracao: selecionadoConcentracao ?? '' });
+    updateForm({ passo08Pergunta1: selecionadoComoCostumaLidar ?? '', passo08Pergunta2: selecionadoPensarFuturo ?? '', passo08Pergunta3: selecionadoConcentracao ?? '', passo08Pergunta4: sliderValuePreparado.toString() });
     router.push('/passo9');
   };
 

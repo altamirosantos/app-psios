@@ -16,7 +16,6 @@ import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { supabase } from '@/lib/supabase';
-import { router } from 'expo-router';
 
 
 const PassoFinal = () => {
@@ -47,7 +46,7 @@ const PassoFinal = () => {
       const userSession = data?.session?.user;
       if (!userSession) return;
 
-      updateForm({ email: userSession.email ?? '' });
+     // updateForm({ email: userSession.email ?? '' });
 
 
       const { data: profile, error: profileError } = await supabase
@@ -60,40 +59,86 @@ const PassoFinal = () => {
         console.error('Erro ao buscar perfil do usuário:', profileError.message);
         return;
       }
+
+      console.log('foi')
+      const respostasJSON = await gerarRespostasJSON(dadosForm);
+
       const dadosParaEnvio = {
-        ...dadosForm,
-        idUsuario: userSession.id ?? '',
-        email: userSession.email ?? '',
-        nome: profile?.nome ?? '',
-        apelido: profile?.apelido ?? '',
-        nascimento: profile?.nascimento ?? '',
-        genero: profile?.genero ?? '',
+        respostas: respostasJSON,
+        dadosUser: {
+          idUsuario: userSession.id ?? '',
+          email: userSession.email ?? '',
+          nome: profile?.nome ?? '',
+          apelido: profile?.apelido ?? '',
+          nascimento: profile?.nascimento ?? '',
+          genero: profile?.genero ?? '',
+        }
       };
 
       console.log('Dados para envio:', dadosParaEnvio);
 
 
-       const response = await fetch(
-         'https://n8n.softdados.com/webhook/4d114a91-60ed-4286-b2a4-f6795f562d18',
-         {
-           method: 'POST',
-           headers: {
-             'Content-Type': 'application/json',
-           },
-           body: JSON.stringify(dadosParaEnvio), // `data` deve estar definido no seu escopo
-         }
-       );
- 
-       if (!response.ok) {
-         throw new Error(`Erro ao enviar dados: ${response.status}`);
-       }
- 
-       console.log('Formulário enviado com sucesso!', dadosParaEnvio);
-       router.push('/(outros)/DiagnosticoScreen');
+        const response = await fetch(
+          //'https://n8n.softdados.com/webhook/4d114a91-60ed-4286-b2a4-f6795f562d18',
+          'https://n8n.softdados.com/webhook/4d114a91-60ed-4286-b2a4-f6795f562d18',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dadosParaEnvio), // `data` deve estar definido no seu escopo
+          }
+        );
+  
+        if (!response.ok) {
+          throw new Error(`Erro ao enviar dados: ${response.status}`);
+        }
+  
+        console.log('Formulário enviado com sucesso!', dadosParaEnvio);
+        //router.push('/(outros)/DiagnosticoScreen');*/
     } catch (error) {
       console.error('Erro ao enviar formulário:', error);
     }
   };
+
+  async function gerarRespostasJSON(formContext: Record<string, any>) {
+    // 1️⃣ Pega todas as chaves do formContext
+    const campos = Object.keys(formContext);
+
+    //console.log('campos >>', campos)
+
+    // 2️⃣ Busca as perguntas correspondentes no Supabase
+    const { data: perguntasData, error } = await supabase
+      .from('perguntas')
+      .select('nome, descricao')
+      .in('nome', campos);
+
+    if (error) throw error;
+
+    //console.log('perguntasData >>', perguntasData)
+
+    if (!perguntasData || perguntasData.length === 0) return [];
+
+    // 3️⃣ Cria um mapa: chave do formContext -> descricao
+    const mapaPerguntas: Record<string, string> = {};
+    perguntasData.forEach(p => {
+      if (p.nome && p.descricao) {
+        mapaPerguntas[p.nome] = p.descricao;
+      }
+    });
+
+    //console.log('perguntasData >>', perguntasData)
+
+    // 4️⃣ Monta o array final com pergunta = descricao
+    const resultado = campos
+      .filter(c => formContext[c] !== undefined && formContext[c] !== null && formContext[c] !== '')
+      .map(c => ({
+        pergunta: mapaPerguntas[c] || c, // ✅ usa descricao
+        resposta: formContext[c]
+      }));
+
+    return resultado;
+  }
 
 
   return (

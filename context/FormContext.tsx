@@ -2,37 +2,30 @@
 import React, { createContext, useContext, useState } from 'react';
 
 type FormData = {
-  sentimentoSelecionado?: string;
-  selectedEmotions?: string[];
-  ocupacoes?: string;
-  selecionadoComoCostumaLidar?: string;
-  selecionadoPensarFuturo?: string;
-  selecionadoConcentracao?: string;
-  concentracao?: string;
-  sliderValuePreparado?: number;
-  passo5Card1?: string;
-  passo5Card2?: string;
-  passo5Card3?: string;
-  passo5Card4?: string;
-  passo5Card5?: string;
-  passo5Card6?: string;
-  selectedItemsPasso6?: string[];
-  passo7Card1?: number;
-  passo8Oque?: string; 
-  passo8Sentimento?: string;
-  passo8ComoSeComportou?: (string | null[]);
-  passo11Card1?:string
-  passo11Card2?:string
-  passo8Gatilho?: string;
-  passo8Pensamento?: string;
-  distorcoesPensamento?: string[];
-  enxergarMundo?: string;
-  espelho?: string;
-  email?: string;
-  nome?: string;
-  apelido?: string;
-  nascimento?: Date;
-  genero?: string;
+  passo01Pergunta1?: string;
+  passo02Pergunta1?: string[];
+  passo03Pergunta1?: string;
+  passo04Pergunta1?: string[];
+  passo05Pergunta1?: string;
+  passo05Pergunta2?: string;
+  passo05Pergunta3?: string;
+  passo05Pergunta4?: string[];
+  passo05Pergunta5?: string;
+  passo06Pergunta1?: string;
+  passo07Pergunta1?: string[];
+  passo08Pergunta1?: string;
+  passo08Pergunta2?: string;
+  passo08Pergunta3?: string;
+  passo08Pergunta4?: string;
+  passo09Pergunta1?: string;
+  passo09Pergunta2?: string; 
+  passo09Pergunta3?: string;
+  passo09Pergunta4?: (string | null[]);
+  passo09Pergunta5?:string
+  passo09Pergunta6?:string
+  passo10Pergunta1?: string;
+  passo11Pergunta1?: string;
+  passo11Pergunta2?: string;
 };
 
 type FormContextType = {

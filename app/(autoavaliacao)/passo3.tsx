@@ -50,7 +50,7 @@ const Passo3 = () => {
   }
 
   const handleNext = () => {
-    updateForm({ ocupacoes: selecionado ?? '' });
+    updateForm({ passo03Pergunta1: selecionado ?? '' });
     router.push('/passo4');
   };
 

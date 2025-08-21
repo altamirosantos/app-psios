@@ -61,7 +61,7 @@ const Passo2 = () => {
   };
 
   const handleNext = () => {
-    updateForm({ selectedEmotions: selectedEmotions });
+    updateForm({ passo02Pergunta1: selectedEmotions });
     router.push('/passo3');
   };
 

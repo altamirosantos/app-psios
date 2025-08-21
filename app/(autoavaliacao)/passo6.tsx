@@ -42,7 +42,7 @@ const Passo6 = () => {
   }
 
   const handleNext = () => {
-    updateForm({ passo7Card1: sliderValue });
+    updateForm({ passo06Pergunta1: sliderValue.toString() });
     router.push('/passo7');
   };
 

@@ -70,12 +70,12 @@ const Passo9 = () => {
   ];
 
   const opCard6 = [
-    'Criatividade.',
-    'Persistência.',
-    'Foco e organização.',
-    'Empatia.',
+    '🎨 Criatividade.',
+    '💪 Persistência.',
+    '🧠 Foco e organização.',
+    '👂 Empatia.',
     'Resiliência.',
-    'Capacidade de ouvir.',
+    '🌱 Capacidade de ouvir e se adaptar com equilíbrio',
   ];
 
 
@@ -89,7 +89,7 @@ const Passo9 = () => {
   }
 
   const handleNext = () => {
-    updateForm({ passo5Card1: selecionadoOpCard1 ?? '', passo5Card2: selecionadoOpCard2 ?? '', passo5Card3: selecionadoOpCard3 ?? '', passo5Card4: selecionadoOpCard4 ?? '', passo5Card5: selecionadoOpCard5 ?? '', passo5Card6: selecionadoOpCard6 ?? '' });
+    updateForm({ passo09Pergunta1: selecionadoOpCard1 ?? '', passo09Pergunta2: selecionadoOpCard2 ?? '', passo09Pergunta3: selecionadoOpCard3 ?? '', passo09Pergunta4: selecionadoOpCard4 ?? '', passo09Pergunta5: selecionadoOpCard5 ?? '', passo09Pergunta6: selecionadoOpCard6 ?? '' });
     router.push('/passo10');
   };
 

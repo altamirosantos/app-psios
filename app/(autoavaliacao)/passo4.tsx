@@ -129,7 +129,7 @@ const Passo4 = () => {
       );
     }
 
-    updateForm({ selectedItemsPasso6: itemsToSend });
+    updateForm({ passo04Pergunta1: itemsToSend });
     console.log("Dados Form: ", itemsToSend);
     router.push('/passo5');
   };

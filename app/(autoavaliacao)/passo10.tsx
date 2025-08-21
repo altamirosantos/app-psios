@@ -31,7 +31,7 @@ const Passo11 = () => {
 
 
   const opcoes = [
-    { id: 1, label: "Espelho 1 – Confiante e Positiva", emoji: "🌟" },
+    { id: 1, label: "Espelho 1 – Confiante e Positiva(o)", emoji: "🌟" },
     { id: 2, label: "Espelho 2 – Em busca de si mesma(o)", emoji: "☁️" },
     { id: 3, label: "Espelho 3 – Crítico e Exigente", emoji: "😔" },
     { id: 4, label: "Espelho 4 – Fragilizada(o) emocionalmente", emoji: "🌧️" },
@@ -50,7 +50,7 @@ const Passo11 = () => {
   }
 
   const handleNext = () => {
-    updateForm({ espelho: selecionado ?? '' });
+    updateForm({ passo10Pergunta1: selecionado ?? '' });
     router.push('/passo11');
   };
 

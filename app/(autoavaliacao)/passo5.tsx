@@ -153,11 +153,11 @@ const Passo5 = () => {
       .filter(Boolean); // remove nulls
 
     updateForm({
-      passo8Oque: finalCard1,
-      passo8Sentimento: finalCard4,
-      passo8ComoSeComportou: finalComportamento,
-      passo8Gatilho: finalCard2,
-      passo8Pensamento: finalCard3
+      passo05Pergunta1: finalCard1,
+      passo05Pergunta2: finalCard2,
+      passo05Pergunta3: finalCard3,
+      passo05Pergunta4: finalComportamento,
+      passo05Pergunta5: finalCard4
     });
 
     console.log("dadosForm atualizado", {
@@ -243,7 +243,7 @@ const Passo5 = () => {
 
             <Text style={[styles.title, { color: textColor }]}>⚡ Gatilho</Text>
             <Text style={[styles.subtitle, { color: textColor }]}>O que parece ter ativado esse sentimento?</Text>
-            <Text style={[styles.subsubtitle, { color: textColor }]}>(Escolha uma ou mais opções)</Text>
+            <Text style={[styles.subsubtitle, { color: textColor }]}>(Escolha uma opção)</Text>
             {opCard2.map((item) => (
               <TouchableOpacity
                 key={item}

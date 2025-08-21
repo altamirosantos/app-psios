@@ -58,7 +58,7 @@ const Passo10 = () => {
   }
 
   const handleNext = () => {
-    updateForm({ passo11Card1: selecionadoPasso11Card1 ?? '', passo11Card2: selecionadoPasso11Card2 ?? '' });
+    updateForm({ passo11Pergunta1: selecionadoPasso11Card1 ?? '', passo11Pergunta2: selecionadoPasso11Card2 ?? '' });
     router.push('/passoFinaliza');
   };
 

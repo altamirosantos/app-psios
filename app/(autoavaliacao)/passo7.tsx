@@ -63,7 +63,7 @@ const Passo7 = () => {
       descricao: 'Sinto que tudo é culpa minha.',
     },
     {
-      titulo: 'Sem distorções.',
+      titulo: 'Sem distorções',
       descricao: 'Observando meus pensamentos com neutralidade.',
     }
   ];
@@ -86,7 +86,7 @@ const Passo7 = () => {
   };
 
   const handleNext = () => {
-    updateForm({ distorcoesPensamento: selecionados });
+    updateForm({ passo07Pergunta1: selecionados });
     router.push('/passo8');
   };
 

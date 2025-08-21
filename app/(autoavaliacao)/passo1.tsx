@@ -49,7 +49,7 @@ export default function Passo1() {
   }
 
   const handleNext = () => {
-    updateForm({ sentimentoSelecionado: sentimentoSelecionado ?? '' });
+    updateForm({ passo01Pergunta1: sentimentoSelecionado ?? '' });
     router.push('/passo2');
   };
 
