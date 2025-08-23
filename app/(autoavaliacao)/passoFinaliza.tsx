@@ -16,6 +16,7 @@ import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { supabase } from '@/lib/supabase';
+import { router } from 'expo-router';
 
 
 const PassoFinal = () => {
@@ -95,7 +96,7 @@ const PassoFinal = () => {
         }
   
         console.log('Formulário enviado com sucesso!', dadosParaEnvio);
-        //router.push('/(outros)/DiagnosticoScreen');*/
+        router.push('/(outros)/DiagnosticoScreen');
     } catch (error) {
       console.error('Erro ao enviar formulário:', error);
     }
