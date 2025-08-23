@@ -1,17 +1,19 @@
+import { supabase } from '@/lib/supabase';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    FlatList,
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
 type Message = {
@@ -23,13 +25,16 @@ type Message = {
 const N8N_ENDPOINT = "https://n8n.softdados.com/webhook/14b734df-5c2b-440e-979c-31d8af85f261";
 const SESSION_KEY = "chatSessionId";
 
+
+
 export default function ChatScreen() {
   const [messages, setMessages] = useState<Message[]>([
-    { id: '1', role: 'assistant', content: '👋 Olá! Estou aqui para conversar com você. Como está se sentindo hoje?' },
+    { id: '1', role: 'assistant', content: `👋 Olá, Estou aqui para conversar com você. Sinta-se à vontade para compartilhar o que quiser` },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [apelido, setApelido] = useState<string | null>(null);
 
   // Carrega ou cria uma sessão ao iniciar
   useEffect(() => {
@@ -44,6 +49,53 @@ export default function ChatScreen() {
     initSession();
   }, []);
 
+  useEffect(() => {
+    const carregarPerfil = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      const userSession = data?.session?.user;
+      if (!userSession) return;
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("apelido")
+        .eq("id", userSession.id)
+        .single();
+
+      if (profileError) {
+        console.error("Erro ao buscar perfil do usuário:", profileError.message);
+        return;
+      }
+
+      setApelido(profile.apelido);
+    };
+
+    carregarPerfil();
+  }, []);
+
+  useEffect(() => {
+    if (apelido) {
+      setMessages([
+        {
+          id: '1',
+          role: 'assistant',
+          content: `👋 Olá, ${apelido}! Estou aqui para conversar com você. Sinta-se à vontade para compartilhar o que quiser`,
+        },
+      ]);
+    }
+  }, [apelido]);
+
+
+  const handleLogout = async () => {
+    try {
+      // Remove a SESSION_KEY
+      await AsyncStorage.removeItem(SESSION_KEY);
+
+      // Redireciona para a home
+      router.push('/(tabs)/home');
+    } catch (error) {
+      console.log('Erro ao sair:', error);
+    }
+  };
   const sendMessage = async () => {
     if (!input.trim() || !sessionId) return;
 
@@ -63,7 +115,8 @@ export default function ChatScreen() {
         headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify({
           sessionId,
-          message: input
+          message: input,
+          apelido: apelido
         }),
       });
 
@@ -109,6 +162,7 @@ export default function ChatScreen() {
   );
 
   return (
+
     <View style={styles.container}>
       {/* Header */}
       <LinearGradient
@@ -117,7 +171,14 @@ export default function ChatScreen() {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
-        <Text style={styles.headerTitle}>Bate-papo com sua assistente PSIOS</Text>
+        <View style={styles.headerContent}>
+          <Text style={styles.headerTitle}>
+            Bate-papo com sua assistente PSIOS
+          </Text>
+          <TouchableOpacity onPress={handleLogout}>
+            <Feather name="log-out" size={26} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </LinearGradient>
 
       {/* Lista de mensagens */}
@@ -145,7 +206,10 @@ export default function ChatScreen() {
             value={input}
             onChangeText={setInput}
           />
-          <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+          <TouchableOpacity style={[styles.sendButton,
+          (loading || !input.trim()) && { backgroundColor: "#ccc" }
+          ]} onPress={sendMessage}
+            disabled={loading || !input.trim()}>
             <Feather name="send" size={22} color="#fff" />
           </TouchableOpacity>
         </View>
@@ -168,4 +232,11 @@ const styles = StyleSheet.create({
   inputContainer: { flexDirection: 'row', alignItems: 'center', padding: 10, borderTopWidth: 1, borderColor: '#ddd', backgroundColor: '#fff' },
   input: { flex: 1, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 20, backgroundColor: '#f2f2f2', fontSize: 14, marginRight: 10 },
   sendButton: { backgroundColor: '#9333ea', padding: 12, borderRadius: 30 },
+  headerContent: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+  },
 });

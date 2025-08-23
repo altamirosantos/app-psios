@@ -1,6 +1,6 @@
 import { Feather, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
+import { Route, router } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -25,7 +25,7 @@ const data = [
   { id: '6', label: 'Profile', icon: <Feather name="user" size={28} color="#f47c57" />, premium: false },
   { id: '7', label: 'Assinaturas', icon: <Feather name="shopping-cart" size={28} color="#4a00e0" />, premium: false },
   { id: '8', label: 'Agenda', icon: <Feather name="calendar" size={28} color="#00c6ff" />, premium: true },
-  { id: '9', label: 'Menssagens', icon: <Feather name="message-square" size={28} color="#f47c57" />, premium: true },
+  { id: '9', label: 'Chat', icon: <Feather name="message-square" size={28} color="#f47c57" />, premium: false, route: '/(outros)/ChatScreen' },
 ];
 
 const numColumns = 3;
@@ -101,7 +101,9 @@ export default function DashboardScreen() {
                     openModal(item.label);
                     return;
                   }
-                  console.log(`Acessando: ${item.label}`);
+                  console.log(`Acessando: ${item.route}`);
+                  const route: Route = item.route || "/(tabs)/home";
+                  router.push(route);
                 }}
               >
                 <View style={{ alignItems: 'center' }}>
