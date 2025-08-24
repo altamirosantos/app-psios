@@ -26,6 +26,10 @@ const data = [
   { id: '7', label: 'Assinaturas', icon: <Feather name="shopping-cart" size={28} color="#4a00e0" />, premium: false },
   { id: '8', label: 'Agenda', icon: <Feather name="calendar" size={28} color="#00c6ff" />, premium: true },
   { id: '9', label: 'Chat', icon: <Feather name="message-square" size={28} color="#f47c57" />, premium: false, route: '/(outros)/ChatScreen' },
+  { id: '10', label: 'Diãrio de Emoções', icon: <Feather name="book-open" size={28} color="#00c6ff" />, premium: true },
+  { id: '11', label: 'Sono e Relaxamento', icon: <Feather name="moon" size={28} color="#00c6ff" />, premium: true },
+  { id: '12', label: 'Relatórios de bem-estar', icon: <Feather name="bar-chart-2" size={28} color="#00c6ff" />, premium: true },
+  { id: '13', label: 'Gamificação', icon: <Feather name="award" size={28} color="#00c6ff" />, premium: true },
 ];
 
 const numColumns = 3;
@@ -134,7 +138,7 @@ export default function DashboardScreen() {
           <Text style={styles.buttonText}>Começar minha autoavaliação</Text>
         </TouchableOpacity>
 
-        <Text style={styles.recent}>Atividade Recente</Text>
+        {/* <Text style={styles.recent}>Atividade Recente</Text> */}
       </ScrollView>
 
       {/* Modal de Assinatura */}

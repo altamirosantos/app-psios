@@ -1,11 +1,12 @@
 import { supabase } from '@/lib/supabase';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -35,6 +36,9 @@ export default function ChatScreen() {
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [apelido, setApelido] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isFavorited, setIsFavorited] = useState(false);
+
 
   // Carrega ou cria uma sessão ao iniciar
   useEffect(() => {
@@ -67,6 +71,7 @@ export default function ChatScreen() {
       }
 
       setApelido(profile.apelido);
+      setUserId(userSession.id);
     };
 
     carregarPerfil();
@@ -84,6 +89,44 @@ export default function ChatScreen() {
     }
   }, [apelido]);
 
+
+  const handleFavorite = async () => {
+    if (!sessionId || !apelido) return;
+
+    try {
+      if (!isFavorited) {
+        const { error } = await supabase
+          .from("chat_favoritos")
+          .insert([
+            {
+              session_id: sessionId,
+              user_id: userId,
+              apelido,
+              mensagens: messages, // salva o histórico completo
+              created_at: new Date(),
+            },
+          ]);
+
+        if (error) throw error;
+
+        setIsFavorited(true);
+        Alert.alert("✨ Favoritado", "Esta conversa foi salva nos seus favoritos.");
+      } else {
+        const { error } = await supabase
+          .from("chat_favoritos")
+          .delete()
+          .eq("session_id", sessionId);
+
+        if (error) throw error;
+
+        setIsFavorited(false);
+        Alert.alert("🗑 Removido", "Conversa removida dos favoritos.");
+      }
+    } catch (err) {
+      console.error("Erro ao favoritar conversa:", err);
+      Alert.alert("Erro", "Não foi possível salvar a conversa.");
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -175,9 +218,18 @@ export default function ChatScreen() {
           <Text style={styles.headerTitle}>
             Bate-papo com sua assistente PSIOS
           </Text>
-          <TouchableOpacity onPress={handleLogout}>
-            <Feather name="log-out" size={26} color="#fff" />
-          </TouchableOpacity>
+          <View style={{ flexDirection: "row", gap: 20 }}>
+            <TouchableOpacity onPress={handleFavorite}>
+              <Ionicons
+                name={isFavorited ? "star" : "star-outline"}
+                size={26}
+                color="#fff"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleLogout}>
+              <Feather name="log-out" size={26} color="#fff" />
+            </TouchableOpacity>
+          </View>
         </View>
       </LinearGradient>
 
@@ -221,7 +273,7 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f2f5f9' },
   header: { paddingTop: 50, paddingBottom: 20, alignItems: 'center' },
-  headerTitle: { fontSize: 20, color: '#fff', fontWeight: 'bold' },
+  headerTitle: { fontSize: 20, color: '#fff', fontWeight: 'bold', width: "70%" },
   chatContainer: { padding: 16, paddingBottom: 80 },
   messageBubble: { maxWidth: '75%', padding: 12, borderRadius: 16, marginBottom: 10 },
   userBubble: { alignSelf: 'flex-end', backgroundColor: '#9333ea', borderBottomRightRadius: 0 },
