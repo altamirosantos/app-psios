@@ -30,6 +30,8 @@ const data = [
   { id: '11', label: 'Sono e Relaxamento', icon: <Feather name="moon" size={28} color="#00c6ff" />, premium: true },
   { id: '12', label: 'Relatórios de bem-estar', icon: <Feather name="bar-chart-2" size={28} color="#00c6ff" />, premium: true },
   { id: '13', label: 'Gamificação', icon: <Feather name="award" size={28} color="#00c6ff" />, premium: true },
+  { id: '14', label: 'Recursos de Apoio', icon: <FontAwesome name="flag" size={28} color="#00c6ff" />, premium: false, route: '/(outros)/RecursosApoioScreen' },
+
 ];
 
 const numColumns = 3;
@@ -333,6 +335,6 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    height:60
+    height: 60
   }
 });

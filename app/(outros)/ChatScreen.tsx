@@ -78,15 +78,31 @@ export default function ChatScreen() {
   }, []);
 
   useEffect(() => {
-    if (apelido) {
-      setMessages([
-        {
+    const saveMessage = async () => {
+      if (apelido) {
+        const aiMessage: Message = {
           id: '1',
           role: 'assistant',
           content: `👋 Olá, ${apelido}! Estou aqui para conversar com você. Sinta-se à vontade para compartilhar o que quiser`,
-        },
-      ]);
+        }
+
+        const { data, error } = await supabase.from("chat").insert([
+          {
+            session_id: sessionId,
+            user_id: userId,
+            mensagens: [aiMessage]
+          },
+        ]);
+        if (error) console.error("Erro ao salvar mensagem:", error);
+
+        setMessages([
+          aiMessage
+        ]);
+
+
+      }
     }
+    saveMessage();
   }, [apelido]);
 
 
@@ -139,6 +155,20 @@ export default function ChatScreen() {
       console.log('Erro ao sair:', error);
     }
   };
+
+  const updateMensages = async (message: Message) => {
+    try {
+      const { error } = await supabase.rpc("append_mensagem", {
+        p_session_id: sessionId,
+        p_user_id: userId,
+        p_mensagem: message,
+      });
+
+      if (error) console.error("Erro ao salvar mensagem:", error);
+    } catch (error) {
+      console.error("Erro ao salvar mensagem:", error);
+    }
+  }
   const sendMessage = async () => {
     if (!input.trim() || !sessionId) return;
 
@@ -147,6 +177,8 @@ export default function ChatScreen() {
       role: 'user',
       content: input,
     };
+
+    await updateMensages(userMessage);
 
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
@@ -172,7 +204,10 @@ export default function ChatScreen() {
         content: data.output || "🤖 Desculpe, não consegui entender. Pode repetir?",
       };
 
+      await updateMensages(aiMessage);
+
       setMessages((prev) => [...prev, aiMessage]);
+
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
       const errorMessage: Message = {

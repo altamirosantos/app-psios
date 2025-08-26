@@ -38,7 +38,7 @@ const Passo2 = () => {
       "Suor frio", "Náuseas", "Sufocamento", "Palpitações", "Dor ou pressão no peito",
       "Tremor", "Vazio", "Desesperança", "Sobrecarregado", "Me sentindo estranho(a)", "Desânimo",
       "Motivado (a)", "Otimista", "Estressado (a) Inseguro(a)","Desatento (a)", "Calmo (a)","Neutro",
-      "Equilíbrio","Indiferença"
+      "Equilíbrio","Indiferença","Decepcionado(a)", "Desmotivado (a)", "Angustiado (a)", "Chateado (a)"
     ]
   };
 
