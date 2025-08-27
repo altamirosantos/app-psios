@@ -3,20 +3,19 @@ import { Feather, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
-  FlatList,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Message = {
   id: string;
@@ -27,12 +26,12 @@ type Message = {
 const N8N_ENDPOINT = "https://n8n.softdados.com/webhook/14b734df-5c2b-440e-979c-31d8af85f261";
 const SESSION_KEY = "chatSessionId";
 
-
-
 export default function ChatScreen() {
-  
+  const insets = useSafeAreaInsets();
+  const scrollViewRef = useRef<ScrollView>(null);
+
   const [messages, setMessages] = useState<Message[]>([
-    { id: '1', role: 'assistant', content: `👋 Olá, Estou aqui para conversar com você. Sinta-se à vontade para compartilhar o que quiser` },
+    { id: '1', role: 'assistant', content: `👋 Olá, Estou aqui para conversar com você.` },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,8 +40,7 @@ export default function ChatScreen() {
   const [userId, setUserId] = useState<string | null>(null);
   const [isFavorited, setIsFavorited] = useState(false);
 
-
-  // Carrega ou cria uma sessão ao iniciar
+  // Inicializa sessão
   useEffect(() => {
     const initSession = async () => {
       let storedSession = await AsyncStorage.getItem(SESSION_KEY);
@@ -55,134 +53,44 @@ export default function ChatScreen() {
     initSession();
   }, []);
 
+  // Carrega perfil
   useEffect(() => {
     const carregarPerfil = async () => {
-      const { data, error } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
       const userSession = data?.session?.user;
       if (!userSession) return;
 
-      const { data: profile, error: profileError } = await supabase
+      const { data: profile, error } = await supabase
         .from("profiles")
         .select("apelido")
         .eq("id", userSession.id)
         .single();
 
-      if (profileError) {
-        console.error("Erro ao buscar perfil do usuário:", profileError.message);
-        return;
-      }
+      if (error) return;
 
       setApelido(profile.apelido);
       setUserId(userSession.id);
     };
-
     carregarPerfil();
   }, []);
 
+  // Scroll automático sempre que mensagens mudam
   useEffect(() => {
-    const saveMessage = async () => {
-      if (apelido) {
-        const aiMessage: Message = {
-          id: '1',
-          role: 'assistant',
-          content: `👋 Olá, ${apelido}! Estou aqui para conversar com você. Sinta-se à vontade para compartilhar o que quiser`,
-        }
-
-        const { data, error } = await supabase.from("chat").insert([
-          {
-            session_id: sessionId,
-            user_id: userId,
-            mensagens: [aiMessage]
-          },
-        ]);
-        if (error) console.error("Erro ao salvar mensagem:", error);
-
-        setMessages([
-          aiMessage
-        ]);
-
-
-      }
-    }
-    saveMessage();
-  }, [apelido]);
-
-
-  const handleFavorite = async () => {
-    if (!sessionId || !apelido) return;
-
-    try {
-      if (!isFavorited) {
-        const { error } = await supabase
-          .from("chat_favoritos")
-          .insert([
-            {
-              session_id: sessionId,
-              user_id: userId,
-              apelido,
-              mensagens: messages, // salva o histórico completo
-              created_at: new Date(),
-            },
-          ]);
-
-        if (error) throw error;
-
-        setIsFavorited(true);
-        Alert.alert("✨ Favoritado", "Esta conversa foi salva nos seus favoritos.");
-      } else {
-        const { error } = await supabase
-          .from("chat_favoritos")
-          .delete()
-          .eq("session_id", sessionId);
-
-        if (error) throw error;
-
-        setIsFavorited(false);
-        Alert.alert("🗑 Removido", "Conversa removida dos favoritos.");
-      }
-    } catch (err) {
-      console.error("Erro ao favoritar conversa:", err);
-      Alert.alert("Erro", "Não foi possível salvar a conversa.");
-    }
-  };
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  }, [messages]);
 
   const handleLogout = async () => {
-    try {
-      // Remove a SESSION_KEY
-      await AsyncStorage.removeItem(SESSION_KEY);
-
-      // Redireciona para a home
-      router.push('/(tabs)/home');
-    } catch (error) {
-      console.log('Erro ao sair:', error);
-    }
+    await AsyncStorage.removeItem(SESSION_KEY);
+    router.push('/(tabs)/home');
   };
 
-  const updateMensages = async (message: Message) => {
-    try {
-      const { error } = await supabase.rpc("append_mensagem", {
-        p_session_id: sessionId,
-        p_user_id: userId,
-        p_mensagem: message,
-      });
-
-      if (error) console.error("Erro ao salvar mensagem:", error);
-    } catch (error) {
-      console.error("Erro ao salvar mensagem:", error);
-    }
-  }
   const sendMessage = async () => {
     if (!input.trim() || !sessionId) return;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      content: input,
-    };
-
-    await updateMensages(userMessage);
-
-    setMessages((prev) => [...prev, userMessage]);
+    const userMessage: Message = { id: Date.now().toString(), role: 'user', content: input };
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
     setLoading(true);
 
@@ -190,129 +98,102 @@ export default function ChatScreen() {
       const response = await fetch(N8N_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json; charset=utf-8" },
-        body: JSON.stringify({
-          sessionId,
-          message: input,
-          apelido: apelido
-        }),
+        body: JSON.stringify({ sessionId, message: input, apelido }),
       });
-
       const data = await response.json();
-
-      console.log('Resposta da API: ', data);
       const aiMessage: Message = {
         id: Date.now().toString(),
         role: 'assistant',
-        content: data.output || "🤖 Desculpe, não consegui entender. Pode repetir?",
+        content: data.output || "🤖 Desculpe, não consegui entender.",
       };
-
-      await updateMensages(aiMessage);
-
-      setMessages((prev) => [...prev, aiMessage]);
-
+      setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
-      console.error("Erro ao enviar mensagem:", error);
-      const errorMessage: Message = {
-        id: Date.now().toString(),
-        role: 'assistant',
-        content: "⚠️ Ocorreu um erro ao conectar com a assistente. Tente novamente.",
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
-  const renderMessage = ({ item }: { item: Message }) => (
-    <View
-      style={[
-        styles.messageBubble,
-        item.role === 'user' ? styles.userBubble : styles.assistantBubble,
-      ]}
-    >
-      <Text
-        style={[
-          styles.messageText,
-          item.role === 'user' ? styles.userText : styles.assistantText,
-        ]}
-      >
-        {item.content}
+  const renderMessage = (msg: Message) => (
+    <View style={[styles.messageBubble, msg.role === 'user' ? styles.userBubble : styles.assistantBubble]}>
+      <Text style={[styles.messageText, msg.role === 'user' ? styles.userText : styles.assistantText]}>
+        {msg.content}
       </Text>
     </View>
   );
 
   return (
-    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-      <View style={styles.container}>
-        {/* Header */}
-        <LinearGradient
-          colors={['#9333ea', '#d763f8']}
-          style={styles.header}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <View style={styles.headerContent}>
-            <Text style={styles.headerTitle}>
-              Bate-papo com sua assistente PSIOS
-            </Text>
-            <View style={{ flexDirection: "row", gap: 20 }}>
-              <TouchableOpacity onPress={handleFavorite}>
-                <Ionicons
-                  name={isFavorited ? "star" : "star-outline"}
-                  size={26}
-                  color="#fff"
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleLogout}>
-                <Feather name="log-out" size={26} color="#fff" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </LinearGradient>
-
-        {/* Lista de mensagens */}
-        <FlatList
-          data={messages}
-          renderItem={renderMessage}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.chatContainer}
-        />
-
-        {loading && (
-          <ActivityIndicator size="small" color="#9333ea" style={{ marginBottom: 10 }} />
-        )}
-
-        {/* Campo de input */}
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={80}
-        >
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite sua mensagem..."
-              placeholderTextColor="#aaa"
-              value={input}
-              onChangeText={setInput}
-            />
-            <TouchableOpacity style={[styles.sendButton,
-            (loading || !input.trim()) && { backgroundColor: "#ccc" }
-            ]} onPress={sendMessage}
-              disabled={loading || !input.trim()}>
-              <Feather name="send" size={22} color="#fff" />
+    <SafeAreaView style={styles.safe}>
+      {/* Header */}
+      <LinearGradient
+        colors={['#9333ea', '#d763f8']}
+        style={[styles.header, { paddingTop: insets.top + 20 }]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <View style={styles.headerContent}>
+          <Text style={styles.headerTitle}>Bate-papo com sua assistente PSIOS</Text>
+          <View style={{ flexDirection: "row", gap: 20 }}>
+            <TouchableOpacity onPress={() => { }}>
+              <Ionicons name={isFavorited ? "star" : "star-outline"} size={26} color="#fff" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleLogout}>
+              <Feather name="log-out" size={26} color="#fff" />
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
-      </View>
+        </View>
+      </LinearGradient>
+
+      {/* Chat + Input */}
+      <KeyboardAvoidingView
+  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  style={{ flex: 1 }}
+  keyboardVerticalOffset={0}
+>
+  <View style={{ flex: 1 }}>
+    <ScrollView
+      ref={scrollViewRef}
+      contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', padding: 16 }}
+      keyboardShouldPersistTaps="handled"
+    >
+      {messages.map(msg => (
+        <View key={msg.id}>{renderMessage(msg)}</View>
+      ))}
+
+      {loading && <ActivityIndicator size="small" color="#9333ea" style={{ marginVertical: 10 }} />}
+    </ScrollView>
+
+    <View style={[styles.inputContainer, { paddingBottom: insets.bottom || 10 }]}>
+      <TextInput
+        style={[styles.input, { minHeight: 40, maxHeight: 120 }]}
+        placeholder="Digite sua mensagem..."
+        placeholderTextColor="#aaa"
+        value={input}
+        onChangeText={setInput}
+        multiline
+        textAlignVertical="top"
+        blurOnSubmit={false}
+      />
+      <TouchableOpacity
+        style={[styles.sendButton, (loading || !input.trim()) && { backgroundColor: "#ccc" }]}
+        onPress={sendMessage}
+        disabled={loading || !input.trim()}
+      >
+        <Feather name="send" size={22} color="#fff" />
+      </TouchableOpacity>
+    </View>
+  </View>
+</KeyboardAvoidingView>
+
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f2f5f9' },
-  header: { paddingTop: 50, paddingBottom: 20, alignItems: 'center' },
+  safe: { flex: 1, backgroundColor: "#F7F7FA" },
+  header: { paddingBottom: 20, alignItems: 'center' },
   headerTitle: { fontSize: 20, color: '#fff', fontWeight: 'bold', width: "70%" },
-  chatContainer: { padding: 16, paddingBottom: 80 },
+  headerContent: { width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 16 },
   messageBubble: { maxWidth: '75%', padding: 12, borderRadius: 16, marginBottom: 10 },
   userBubble: { alignSelf: 'flex-end', backgroundColor: '#9333ea', borderBottomRightRadius: 0 },
   assistantBubble: { alignSelf: 'flex-start', backgroundColor: '#fff', borderBottomLeftRadius: 0, borderWidth: 1, borderColor: '#e0e0e0' },
@@ -320,17 +201,16 @@ const styles = StyleSheet.create({
   userText: { color: '#fff' },
   assistantText: { color: '#333' },
   inputContainer: { flexDirection: 'row', alignItems: 'center', padding: 10, borderTopWidth: 1, borderColor: '#ddd', backgroundColor: '#fff' },
-  input: { flex: 1, paddingVertical: 10, paddingHorizontal: 15, borderRadius: 20, backgroundColor: '#f2f2f2', fontSize: 14, marginRight: 10 },
-  sendButton: { backgroundColor: '#9333ea', padding: 12, borderRadius: 30 },
-  headerContent: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-  },
-  safe: {
+  input: {
     flex: 1,
-    backgroundColor: "#F7F7FA",
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+    backgroundColor: '#f2f2f2', 
+    fontSize: 14,
+    marginRight: 10,
+    minHeight: 40,
+    maxHeight: 120,
   },
+  sendButton: { backgroundColor: '#9333ea', padding: 12, borderRadius: 30 },
 });
