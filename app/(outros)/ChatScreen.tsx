@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type Message = {
   id: string;
@@ -29,6 +30,7 @@ const SESSION_KEY = "chatSessionId";
 
 
 export default function ChatScreen() {
+  
   const [messages, setMessages] = useState<Message[]>([
     { id: '1', role: 'assistant', content: `👋 Olá, Estou aqui para conversar com você. Sinta-se à vontade para compartilhar o que quiser` },
   ]);
@@ -240,68 +242,69 @@ export default function ChatScreen() {
   );
 
   return (
+    <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
+      <View style={styles.container}>
+        {/* Header */}
+        <LinearGradient
+          colors={['#9333ea', '#d763f8']}
+          style={styles.header}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.headerContent}>
+            <Text style={styles.headerTitle}>
+              Bate-papo com sua assistente PSIOS
+            </Text>
+            <View style={{ flexDirection: "row", gap: 20 }}>
+              <TouchableOpacity onPress={handleFavorite}>
+                <Ionicons
+                  name={isFavorited ? "star" : "star-outline"}
+                  size={26}
+                  color="#fff"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleLogout}>
+                <Feather name="log-out" size={26} color="#fff" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </LinearGradient>
 
-    <View style={styles.container}>
-      {/* Header */}
-      <LinearGradient
-        colors={['#9333ea', '#d763f8']}
-        style={styles.header}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <View style={styles.headerContent}>
-          <Text style={styles.headerTitle}>
-            Bate-papo com sua assistente PSIOS
-          </Text>
-          <View style={{ flexDirection: "row", gap: 20 }}>
-            <TouchableOpacity onPress={handleFavorite}>
-              <Ionicons
-                name={isFavorited ? "star" : "star-outline"}
-                size={26}
-                color="#fff"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleLogout}>
-              <Feather name="log-out" size={26} color="#fff" />
+        {/* Lista de mensagens */}
+        <FlatList
+          data={messages}
+          renderItem={renderMessage}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.chatContainer}
+        />
+
+        {loading && (
+          <ActivityIndicator size="small" color="#9333ea" style={{ marginBottom: 10 }} />
+        )}
+
+        {/* Campo de input */}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={80}
+        >
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Digite sua mensagem..."
+              placeholderTextColor="#aaa"
+              value={input}
+              onChangeText={setInput}
+            />
+            <TouchableOpacity style={[styles.sendButton,
+            (loading || !input.trim()) && { backgroundColor: "#ccc" }
+            ]} onPress={sendMessage}
+              disabled={loading || !input.trim()}>
+              <Feather name="send" size={22} color="#fff" />
             </TouchableOpacity>
           </View>
-        </View>
-      </LinearGradient>
-
-      {/* Lista de mensagens */}
-      <FlatList
-        data={messages}
-        renderItem={renderMessage}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.chatContainer}
-      />
-
-      {loading && (
-        <ActivityIndicator size="small" color="#9333ea" style={{ marginBottom: 10 }} />
-      )}
-
-      {/* Campo de input */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={80}
-      >
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite sua mensagem..."
-            placeholderTextColor="#aaa"
-            value={input}
-            onChangeText={setInput}
-          />
-          <TouchableOpacity style={[styles.sendButton,
-          (loading || !input.trim()) && { backgroundColor: "#ccc" }
-          ]} onPress={sendMessage}
-            disabled={loading || !input.trim()}>
-            <Feather name="send" size={22} color="#fff" />
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </View>
+        </KeyboardAvoidingView>
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -325,5 +328,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
+  },
+  safe: {
+    flex: 1,
+    backgroundColor: "#F7F7FA",
   },
 });
