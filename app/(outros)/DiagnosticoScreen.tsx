@@ -43,6 +43,12 @@ const DiagnosticoScreen = () => {
         >
           <Text style={styles.buttonText}>👉 Refazer Autoavaliação</Text>
         </TouchableOpacity>
+         <TouchableOpacity
+          style={styles.button}
+          onPress={() => router.push('/(tabs)/home')}
+        >
+          <Text style={styles.buttonText}>Voltar para Home</Text>
+        </TouchableOpacity>
       </ScrollView>
 
       {/* Modal Elegante */}
@@ -137,7 +143,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 40,
     borderRadius: 50,
-    marginTop: 30,
+    marginTop: 10,
     width: width - 80,
   },
   buttonText: {

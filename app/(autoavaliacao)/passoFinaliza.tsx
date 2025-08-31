@@ -41,13 +41,13 @@ const PassoFinal = () => {
 
   const enviar = async () => {
     try {
-      const { data, error } = await supabase.auth.getSession();
-      console.log('session >>>>>>  ', data.session);
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      console.log('session >>>>>>  ', sessionData.session);
 
-      const userSession = data?.session?.user;
+      const userSession = sessionData?.session?.user;
       if (!userSession) return;
 
-     // updateForm({ email: userSession.email ?? '' });
+      // updateForm({ email: userSession.email ?? '' });
 
 
       const { data: profile, error: profileError } = await supabase
@@ -79,24 +79,35 @@ const PassoFinal = () => {
       console.log('Dados para envio:', dadosParaEnvio);
 
 
-        const response = await fetch(
-          //'https://n8n.softdados.com/webhook/4d114a91-60ed-4286-b2a4-f6795f562d18',
-          'https://n8n.softdados.com/webhook/4d114a91-60ed-4286-b2a4-f6795f562d18',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dadosParaEnvio), // `data` deve estar definido no seu escopo
-          }
-        );
-  
-        if (!response.ok) {
-          throw new Error(`Erro ao enviar dados: ${response.status}`);
-        }
-  
-        console.log('Formulário enviado com sucesso!', dadosParaEnvio);
-        router.push('/(outros)/DiagnosticoScreen');
+      /* const response = await fetch(
+         //'https://n8n.softdados.com/webhook/4d114a91-60ed-4286-b2a4-f6795f562d18',
+         'https://n8n.softdados.com/webhook/4d114a91-60ed-4286-b2a4-f6795f562d18',
+         {
+           method: 'POST',
+           headers: {
+             'Content-Type': 'application/json',
+           },
+           body: JSON.stringify(dadosParaEnvio), // `data` deve estar definido no seu escopo
+         }
+       );
+ 
+       if (!response.ok) {
+         throw new Error(`Erro ao enviar dados: ${response.status}`);
+       }*/
+
+      const { data: webhookData, error: webhookError } = await supabase.functions.invoke("n8n-webhook-questions-psios", {
+        body: dadosParaEnvio
+      })
+
+      if (webhookError) {
+        console.error("Erro ao chamar webhook:", webhookError);
+      } else {
+        console.log("Resposta do webhook:", webhookData);
+      }
+
+
+      console.log('Formulário enviado com sucesso!', dadosParaEnvio);
+      router.push('/(outros)/DiagnosticoScreen');
     } catch (error) {
       console.error('Erro ao enviar formulário:', error);
     }

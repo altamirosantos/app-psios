@@ -23,16 +23,13 @@ type Message = {
   content: string;
 };
 
-const N8N_ENDPOINT = "https://n8n.softdados.com/webhook/14b734df-5c2b-440e-979c-31d8af85f261";
 const SESSION_KEY = "chatSessionId";
 
 export default function ChatScreen() {
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const [messages, setMessages] = useState<Message[]>([
-    { id: '1', role: 'assistant', content: `👋 Olá, Estou aqui para conversar com você.` },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -70,6 +67,10 @@ export default function ChatScreen() {
 
       setApelido(profile.apelido);
       setUserId(userSession.id);
+
+      // const aiMessage: Message = { id: '1', role: 'assistant', content: `👋 Olá, ${profile.apelido}, Estou aqui para conversar com você.` }
+      //setMessages([aiMessage]);
+      // updateMensages(aiMessage);
     };
     carregarPerfil();
   }, []);
@@ -81,11 +82,52 @@ export default function ChatScreen() {
     }, 100);
   }, [messages]);
 
+  useEffect(() => {
+    const saveMessage = async () => {
+      if (apelido) {
+        const aiMessage: Message = {
+          id: '1',
+          role: 'assistant',
+          content: `👋 Olá, ${apelido}! Estou aqui para conversar com você. Sinta-se à vontade para compartilhar o que quiser`,
+        }
+
+        const { data, error } = await supabase.from("chat").insert([
+          {
+            session_id: sessionId,
+            user_id: userId,
+            mensagens: [aiMessage]
+          },
+        ]);
+        if (error) console.error("Erro ao salvar mensagem:", error);
+
+        setMessages([
+          aiMessage
+        ]);
+
+
+      }
+    }
+    saveMessage();
+  }, [apelido]);
+
   const handleLogout = async () => {
     await AsyncStorage.removeItem(SESSION_KEY);
     router.push('/(tabs)/home');
   };
 
+  const updateMensages = async (message: Message) => {
+    try {
+      const { error } = await supabase.rpc("append_mensagem", {
+        p_session_id: sessionId,
+        p_user_id: userId,
+        p_mensagem: message,
+      });
+
+      if (error) console.error("Erro ao salvar mensagem:", error);
+    } catch (error) {
+      console.error("Erro ao salvar mensagem:", error);
+    }
+  }
   const sendMessage = async () => {
     if (!input.trim() || !sessionId) return;
 
@@ -95,24 +137,33 @@ export default function ChatScreen() {
     setLoading(true);
 
     try {
-      const response = await fetch(N8N_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json; charset=utf-8" },
-        body: JSON.stringify({ sessionId, message: input, apelido }),
-      });
-      const data = await response.json();
+
+      const { data, error } = await supabase.functions.invoke("n8n-webhook-chat-psios", {
+        body: { sessionId, message: input, apelido }
+      })
+
+      /* const response = await fetch(N8N_ENDPOINT, {
+         method: "POST",
+         headers: { "Content-Type": "application/json; charset=utf-8" },
+         body: JSON.stringify({ sessionId, message: input, apelido }),
+       });
+       const data = await response.json();*/
       const aiMessage: Message = {
         id: Date.now().toString(),
         role: 'assistant',
         content: data.output || "🤖 Desculpe, não consegui entender.",
       };
       setMessages(prev => [...prev, aiMessage]);
+      updateMensages(aiMessage);
+
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
   };
+
+
 
   const renderMessage = (msg: Message) => (
     <View style={[styles.messageBubble, msg.role === 'user' ? styles.userBubble : styles.assistantBubble]}>
@@ -146,44 +197,44 @@ export default function ChatScreen() {
 
       {/* Chat + Input */}
       <KeyboardAvoidingView
-  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-  style={{ flex: 1 }}
-  keyboardVerticalOffset={0}
->
-  <View style={{ flex: 1 }}>
-    <ScrollView
-      ref={scrollViewRef}
-      contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', padding: 16 }}
-      keyboardShouldPersistTaps="handled"
-    >
-      {messages.map(msg => (
-        <View key={msg.id}>{renderMessage(msg)}</View>
-      ))}
-
-      {loading && <ActivityIndicator size="small" color="#9333ea" style={{ marginVertical: 10 }} />}
-    </ScrollView>
-
-    <View style={[styles.inputContainer, { paddingBottom: insets.bottom || 10 }]}>
-      <TextInput
-        style={[styles.input, { minHeight: 40, maxHeight: 120 }]}
-        placeholder="Digite sua mensagem..."
-        placeholderTextColor="#aaa"
-        value={input}
-        onChangeText={setInput}
-        multiline
-        textAlignVertical="top"
-        blurOnSubmit={false}
-      />
-      <TouchableOpacity
-        style={[styles.sendButton, (loading || !input.trim()) && { backgroundColor: "#ccc" }]}
-        onPress={sendMessage}
-        disabled={loading || !input.trim()}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={0}
       >
-        <Feather name="send" size={22} color="#fff" />
-      </TouchableOpacity>
-    </View>
-  </View>
-</KeyboardAvoidingView>
+        <View style={{ flex: 1 }}>
+          <ScrollView
+            ref={scrollViewRef}
+            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end', padding: 16 }}
+            keyboardShouldPersistTaps="handled"
+          >
+            {messages.map(msg => (
+              <View key={msg.id}>{renderMessage(msg)}</View>
+            ))}
+
+            {loading && <ActivityIndicator size="small" color="#9333ea" style={{ marginVertical: 10 }} />}
+          </ScrollView>
+
+          <View style={[styles.inputContainer, { paddingBottom: insets.bottom || 10 }]}>
+            <TextInput
+              style={[styles.input, { minHeight: 40, maxHeight: 120 }]}
+              placeholder="Digite sua mensagem..."
+              placeholderTextColor="#aaa"
+              value={input}
+              onChangeText={setInput}
+              multiline
+              textAlignVertical="top"
+              blurOnSubmit={false}
+            />
+            <TouchableOpacity
+              style={[styles.sendButton, (loading || !input.trim()) && { backgroundColor: "#ccc" }]}
+              onPress={sendMessage}
+              disabled={loading || !input.trim()}
+            >
+              <Feather name="send" size={22} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
 
     </SafeAreaView>
   );
@@ -206,7 +257,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 20,
-    backgroundColor: '#f2f2f2', 
+    backgroundColor: '#f2f2f2',
     fontSize: 14,
     marginRight: 10,
     minHeight: 40,
