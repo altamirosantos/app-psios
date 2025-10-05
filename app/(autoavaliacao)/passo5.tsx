@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Image,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -16,6 +17,7 @@ import { CustomButton } from '@/components/CustomButton';
 import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
+import Slider from '@react-native-community/slider';
 import { router } from 'expo-router';
 import { Checkbox } from 'react-native-paper';
 
@@ -47,6 +49,8 @@ const Passo5 = () => {
   const [outroTextoCard4, setOutroTextoCard4] = useState("");
   const [outroComportamento, setOutroComportamento] = useState("");
 
+  const [sliderValue, setSliderValue] = useState(80);
+
 
   const opCard1 = [
     'Sozinho(a) no quarto',
@@ -74,7 +78,11 @@ const Passo5 = () => {
     '“Não vou conseguir lidar com isso”',
     '“Sempre estrago tudo”',
     '"Uma preocupação com o futuro"',
-    '"Um medo de julgamento"'
+    '"Um medo de julgamento"',
+    '“Isso me motiva a seguir em frente”',
+    '“Estou conseguindo ver o lado bom das coisas”',
+    '“Sou capaz de lidar com o que vem”',
+    '“Tudo vai dar certo no tempo certo”'
   ];
 
   const opCard4 = [
@@ -93,7 +101,7 @@ const Passo5 = () => {
     "Chorei ou tive vontade de chorar",
     "Busquei alguma distração (TV, celular, comida etc.)",
     "Procurei alguém para conversar",
-    "Respirei fundo e tentei me entusiasmado",
+    "Respirei fundo e tentei me entusiasmar",
     "Outros"
   ];
 
@@ -157,7 +165,8 @@ const Passo5 = () => {
       passo05Pergunta2: finalCard2,
       passo05Pergunta3: finalCard3,
       passo05Pergunta4: finalComportamento,
-      passo05Pergunta5: finalCard4
+      passo05Pergunta5: finalCard4,
+      passo06Pergunta1: sliderValue.toString()
     });
 
     console.log("dadosForm atualizado", {
@@ -168,7 +177,7 @@ const Passo5 = () => {
       passo8Pensamento: finalCard3
     });
 
-    router.push('/passo6');
+    router.push('/passo7');
   };
 
 
@@ -185,13 +194,115 @@ const Passo5 = () => {
           />
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>📝 Seu bem-estar é importante! Vamos olhar juntos para o que você sente e o que se passa na sua mente.</Text>
+            <Text style={[styles.title, { color: textColor }]}>📝 Seu bem-estar é importante! O que você sente agora pode revelar muito sobre o que se passa na sua mente. Vamos juntos observar os sentimentos e pensamentos que influenciam esse momento? Esse é um passo significativo para o seu autocuidado.</Text>
             <Text style={[styles.subsubtitle, { color: textColor }]}>Preencha abaixo de forma breve e sincera.</Text>
 
           </View>
+
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>💭 Pensamento</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>O que passou pela sua cabeça? Qual pensamento surge com mais frequência na sua mente?</Text>
+            <Text style={[styles.subsubtitle, { color: textColor }]}>(Escolha a frase que melhor representa esse pensamento)</Text>
+            {opCard3.map((item) => (
+              <TouchableOpacity
+                key={item}
+                style={[styles.opcao, selecionadoOpCard3 === item && { backgroundColor: inputBg }]}
+                onPress={() => setSelecionadoOpCard3(item)}
+              >
+                <View style={styles.radioCirculo}>
+                  {selecionadoOpCard3 === item && <View style={styles.radioSelecionado} />}
+                </View>
+                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
+              </TouchableOpacity>
+            ))}
+
+            {/* Campo de "Outros" */}
+            <TouchableOpacity
+              style={[
+                styles.opcao,
+                selecionadoOpCard3 === "Outros" && { backgroundColor: inputBg }
+              ]}
+              onPress={() => setSelecionadoOpCard3("Outros")}
+            >
+              <View style={styles.radioCirculo}>
+                {selecionadoOpCard3 === "Outros" && <View style={styles.radioSelecionado} />}
+              </View>
+              <Text style={[styles.opcaoTexto, { color: textColor }]}>Outros</Text>
+            </TouchableOpacity>
+
+            {/* Campo para digitar se for "Outros" */}
+            {selecionadoOpCard3 === "Outros" && (
+              <TextInput
+                style={styles.inputOutros}
+                placeholder="Digite aqui..."
+                placeholderTextColor="#999"
+                value={outroTextoCard3}
+                onChangeText={setOutroTextoCard3}
+              />
+            )}
+
+          </View>
+
+          <View style={[styles.card, { backgroundColor: cardColor }]}>
+            <Text style={[styles.title, { color: textColor }]}>
+              🧩 De 0 a 100, quanto você acredita nesse pensamento agora?
+            </Text>
+
+            {/* Valor acima da barra */}
+            <View style={styles.sliderValueContainer}>
+              <Text style={styles.sliderValueText}>{sliderValue}</Text>
+            </View>
+
+            {Platform.OS === 'web' ? (
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={sliderValue}
+                onChange={(e) => setSliderValue(Number(e.target.value))}
+                style={{
+                  width: '100%',
+                  marginTop: 10,
+                  appearance: 'none',
+                  height: 6,
+                  backgroundColor: '#ddd',
+                  borderRadius: 3,
+                  outline: 'none',
+                }}
+              />
+            ) : (
+              <Slider
+                minimumValue={0}
+                maximumValue={100}
+                value={sliderValue}
+                onValueChange={setSliderValue}
+                step={1}
+                minimumTrackTintColor="#4CAF50"
+                maximumTrackTintColor="#ddd"
+                thumbTintColor="#4CAF50"
+                style={{ marginTop: 10 }}
+              />
+            )}
+
+
+            <View style={styles.sliderLabels}>
+              <View style={styles.labelContainerLeft}>
+                <Text style={[styles.labelValue, { color: textColor }]}>0</Text>
+                <Text style={[styles.labelText, { color: textColor }]}>Quase nada</Text>
+              </View>
+
+              <View style={styles.labelContainerRight}>
+                <Text style={[styles.labelValue, { color: textColor }]}>100</Text>
+                <Text style={[styles.labelText, { color: textColor }]}>Totalmente</Text>
+              </View>
+            </View>
+          </View>
+
+
           <View style={[styles.card, { backgroundColor: cardColor }]}>
             <Text style={[styles.title, { color: textColor }]}>📌 Situação</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>Onde você estava ou o que estava acontecendo?</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>Onde você estava e o que fazia quando esse pensamento surgiu?</Text>
             <Text style={[styles.subsubtitle, { color: textColor }]}>(Escolha uma ou mais opções)</Text>
             {opCard1.map((item) => (
               <TouchableOpacity
@@ -239,10 +350,13 @@ const Passo5 = () => {
               />
             )}
           </View>
+
+
+
           <View style={[styles.card, { backgroundColor: cardColor }]}>
 
             <Text style={[styles.title, { color: textColor }]}>⚡ Gatilho</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>O que parece ter ativado esse sentimento?</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>O que pode ter despertado esse sentimento?</Text>
             <Text style={[styles.subsubtitle, { color: textColor }]}>(Escolha uma opção)</Text>
             {opCard2.map((item) => (
               <TouchableOpacity
@@ -283,54 +397,12 @@ const Passo5 = () => {
             )}
 
           </View>
-          <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>💭 Pensamento</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>O que passou pela sua cabeça? — O pensamento que mais tem ocupado sua mente</Text>
-            <Text style={[styles.subsubtitle, { color: textColor }]}>(Escolha a frase que mais se parece com o que inventou)</Text>
-            {opCard3.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={[styles.opcao, selecionadoOpCard3 === item && { backgroundColor: inputBg }]}
-                onPress={() => setSelecionadoOpCard3(item)}
-              >
-                <View style={styles.radioCirculo}>
-                  {selecionadoOpCard3 === item && <View style={styles.radioSelecionado} />}
-                </View>
-                <Text style={[styles.opcaoTexto, { color: textColor }]}>{item}</Text>
-              </TouchableOpacity>
-            ))}
 
-            {/* Campo de "Outros" */}
-            <TouchableOpacity
-              style={[
-                styles.opcao,
-                selecionadoOpCard3 === "Outros" && { backgroundColor: inputBg }
-              ]}
-              onPress={() => setSelecionadoOpCard3("Outros")}
-            >
-              <View style={styles.radioCirculo}>
-                {selecionadoOpCard3 === "Outros" && <View style={styles.radioSelecionado} />}
-              </View>
-              <Text style={[styles.opcaoTexto, { color: textColor }]}>Outros</Text>
-            </TouchableOpacity>
-
-            {/* Campo para digitar se for "Outros" */}
-            {selecionadoOpCard3 === "Outros" && (
-              <TextInput
-                style={styles.inputOutros}
-                placeholder="Digite aqui..."
-                placeholderTextColor="#999"
-                value={outroTextoCard3}
-                onChangeText={setOutroTextoCard3}
-              />
-            )}
-
-          </View>
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
             <View style={styles.radioContainer}>
               <Text style={[styles.title, { color: textColor }]}>🧍‍♂️ Comportamento (ações)</Text>
-              <Text style={[styles.subtitle, { color: textColor }]}>🔁 Como você reagiu naquele momento?</Text>
+              <Text style={[styles.subtitle, { color: textColor }]}>🔁 Como você reagiu ou se comportou nesse momento?</Text>
               <Text style={[styles.subsubtitle, { color: textColor }]}>Pense em como você agiu ou se sentiu logo após o pensamento que surgiu. Escolha uma ou mais reações que mais se aproximem da sua experiência:</Text>
               <View style={styles.radioGrid}>
                 {comportamentoOptions.map((option, index) => (
@@ -613,5 +685,44 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
     backgroundColor: "#fff"
-  }
+  },
+  sliderLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+  },
+  /*sliderValue: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginTop: 4,
+  },*/
+  sliderValueContainer: {
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 2,
+  },
+  sliderValueText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+  },
+  labelContainerLeft: {
+    alignItems: 'flex-start',
+    flex: 1,
+  },
+  labelContainerRight: {
+    alignItems: 'flex-end',
+    flex: 1,
+  },
+  labelValue: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  labelText: {
+    fontSize: 12,
+    textAlign: 'center',
+    color: '#333',
+  },
 });

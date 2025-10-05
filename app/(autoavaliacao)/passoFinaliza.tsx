@@ -132,10 +132,13 @@ const PassoFinal = () => {
     if (!perguntasData || perguntasData.length === 0) return [];
 
     // 3️⃣ Cria um mapa: chave do formContext -> descricao
-    const mapaPerguntas: Record<string, string> = {};
+    const mapaPerguntas: Record<string, { nome: string, descricao: string }> = {};
     perguntasData.forEach(p => {
       if (p.nome && p.descricao) {
-        mapaPerguntas[p.nome] = p.descricao;
+        mapaPerguntas[p.nome] = {
+          nome: p.nome,
+          descricao: p.descricao
+        };
       }
     });
 
@@ -144,10 +147,17 @@ const PassoFinal = () => {
     // 4️⃣ Monta o array final com pergunta = descricao
     const resultado = campos
       .filter(c => formContext[c] !== undefined && formContext[c] !== null && formContext[c] !== '')
-      .map(c => ({
-        pergunta: mapaPerguntas[c] || c, // ✅ usa descricao
-        resposta: formContext[c]
-      }));
+      .map(c => {
+        const dadosPergunta = mapaPerguntas[c];
+
+        return {
+          // ✅ NOVO: Retorna o nome do campo/pergunta (p.nome)
+          nome_pergunta: dadosPergunta ? dadosPergunta.nome : c,
+          // Mantém a descrição da pergunta (descricao)
+          descricao_pergunta: dadosPergunta ? dadosPergunta.descricao : c,
+          resposta: formContext[c]
+        };
+      });
 
     return resultado;
   }

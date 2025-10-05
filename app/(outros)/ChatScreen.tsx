@@ -107,7 +107,7 @@ export default function ChatScreen() {
 
       }
     }
-    saveMessage();
+    //saveMessage();
   }, [apelido]);
 
   const handleLogout = async () => {
@@ -154,7 +154,7 @@ export default function ChatScreen() {
         content: data.output || "🤖 Desculpe, não consegui entender.",
       };
       setMessages(prev => [...prev, aiMessage]);
-      updateMensages(aiMessage);
+      //updateMensages(aiMessage);
 
     } catch (error) {
       console.error(error);

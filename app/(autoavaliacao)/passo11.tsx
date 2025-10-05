@@ -32,7 +32,7 @@ const Passo10 = () => {
 
   const passo11Card1 = [
     'Está tudo bem, não estar no controle de tudo. Um passo de cada vez já é avanço.',
-    'Você não precisa ser perfeito(a) para começar — só precisa começar do seu jeito.',
+    'Você não precisa ser perfeito(a) para começar. Só precisa começar do seu jeito.',
     'Errar não te define. O que você define é sua coragem de tentar de novo.',
     'Você merece crescer com gentileza, e não com cobrança.',
     'Toda mudança começa com um gesto pequeno, mas sincero.'

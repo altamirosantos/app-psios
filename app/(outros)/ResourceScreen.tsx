@@ -44,7 +44,7 @@ export default function ResourcesScreen() {
   const fetchResources = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const { any:data, error } = await supabase
         .from('resources')
         .select('*')
         .order('created_at', { ascending: false });
@@ -52,7 +52,7 @@ export default function ResourcesScreen() {
       if (error) throw error;
       setResources(data || []);
       setError(null);
-    } catch (err) {
+    } catch (err:any) {
       console.warn('Erro ao buscar resources', err);
       setError(err.message || 'Erro ao buscar dados');
     } finally {
