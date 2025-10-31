@@ -64,10 +64,13 @@ const Passo5 = () => {
   const opCard2 = [
     'Uma crítica ou julgamento',
     'Um silêncio ou afastamento',
-    'Uma lembrança desconfortável',
     'Uma cobrança ou pressão',
     'Um conflito ou discussão',
-    'Um medo interno'
+    'Um medo interno',
+    'Receber um elogio sincero',
+    'Um cheiro ou aroma agradável',
+    'Uma imagem, música, som ou tom de voz que despertou sensações',
+    'Um objeto ou detalhe que chamou a atenção'
   ];
 
   const opCard3 = [

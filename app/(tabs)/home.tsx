@@ -17,20 +17,17 @@ import {
 import { useAuthGuard } from '../../hooks/useAuthGuard';
 
 const data = [
-  { id: '1', label: 'Home', icon: <Feather name="home" size={28} color="#4a00e0" />, premium: false },
-  { id: '2', label: 'Busca', icon: <Feather name="search" size={28} color="#00c6ff" />, premium: false },
-  { id: '3', label: 'Favoritos', icon: <FontAwesome name="heart" size={28} color="#f47c57" />, premium: true },
-  { id: '4', label: 'Notificações', icon: <Feather name="bell" size={28} color="#4a00e0" />, premium: false },
-  { id: '5', label: 'Config', icon: <Feather name="settings" size={28} color="#00c6ff" />, premium: false },
-  { id: '6', label: 'Profile', icon: <Feather name="user" size={28} color="#f47c57" />, premium: false, route: '/(outros)/ProfileScreen' },
-  { id: '7', label: 'Assinaturas', icon: <Feather name="shopping-cart" size={28} color="#4a00e0" />, premium: false },
-  { id: '8', label: 'Agenda', icon: <Feather name="calendar" size={28} color="#00c6ff" />, premium: false, route: '/(outros)/AgendaScreen' },
-  { id: '9', label: 'Chat', icon: <Feather name="message-square" size={28} color="#f47c57" />, premium: false, route: '/(outros)/ChatScreen' },
-  { id: '10', label: 'Diãrio de Emoções', icon: <Feather name="book-open" size={28} color="#00c6ff" />, premium: true },
-  { id: '11', label: 'Sono e Relaxamento', icon: <Feather name="moon" size={28} color="#00c6ff" />, premium: true },
-  { id: '12', label: 'Relatórios de bem-estar', icon: <Feather name="bar-chart-2" size={28} color="#00c6ff" />, premium: true },
-  { id: '13', label: 'Gamificação', icon: <Feather name="award" size={28} color="#00c6ff" />, premium: true },
-  { id: '14', label: 'Recursos de Apoio', icon: <FontAwesome name="flag" size={28} color="#00c6ff" />, premium: false, route: '/(outros)/RecursosApoioScreen' },
+  { id: '1', label: 'Favoritos', icon: <FontAwesome name="heart" size={28} color="#f47c57" />, premium: true },
+  { id: '2', label: 'Notificações', icon: <Feather name="bell" size={28} color="#4a00e0" />, premium: false },
+  { id: '3', label: 'Profile', icon: <Feather name="user" size={28} color="#f47c57" />, premium: false, route: '/(outros)/ProfileScreen' },
+  { id: '4', label: 'Assinaturas', icon: <Feather name="shopping-cart" size={28} color="#4a00e0" />, premium: false },
+  { id: '5', label: 'Agenda', icon: <Feather name="calendar" size={28} color="#00c6ff" />, premium: false, route: '/(outros)/AgendaScreen' },
+  { id: '6', label: 'Chat', icon: <Feather name="message-square" size={28} color="#f47c57" />, premium: false, route: '/(outros)/ChatScreen' },
+  { id: '7', label: 'Dirio de Emoções', icon: <Feather name="book-open" size={28} color="#00c6ff" />, premium: true },
+  { id: '8', label: 'Sono e Relaxamento', icon: <Feather name="moon" size={28} color="#00c6ff" />, premium: true },
+  { id: '9', label: 'Relatórios de bem-estar', icon: <Feather name="bar-chart-2" size={28} color="#00c6ff" />, premium: true },
+  { id: '10', label: 'Gamificação', icon: <Feather name="award" size={28} color="#00c6ff" />, premium: false, route: '/(outros)/GamificacaoScreen' },
+  { id: '11', label: 'Recursos de Apoio', icon: <FontAwesome name="flag" size={28} color="#00c6ff" />, premium: false, route: '/(outros)/RecursosApoioScreen' },
 
 ];
 

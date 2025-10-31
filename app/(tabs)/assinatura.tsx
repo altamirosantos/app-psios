@@ -78,7 +78,7 @@ export default function PlanosScreen() {
             resizeMode="contain"
           />
         </View>
-        <Text style={[styles.titulo]}>Escolha Seu Plano</Text>
+        <Text style={[styles.titulo]}>Escolha o plano ideal para suas necessidades</Text>
         {planos.map((plano) => (
           <View
             key={plano.id}
