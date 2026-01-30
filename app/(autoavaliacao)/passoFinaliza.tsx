@@ -12,7 +12,7 @@ import {
 
 import { CustomButton } from '@/components/CustomButton';
 import { useAuth } from '@/context/AuthContext';
-import { useForm } from '@/context/FormContext';
+//import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { supabase } from '@/lib/supabase';
@@ -21,7 +21,7 @@ import { router } from 'expo-router';
 
 const PassoFinal = () => {
   const { user } = useAuth();
-  const { dadosForm, updateForm } = useForm();
+  //const { dadosForm, updateForm } = useForm();
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
@@ -62,7 +62,7 @@ const PassoFinal = () => {
       }
 
       console.log('foi')
-      const respostasJSON = await gerarRespostasJSON(dadosForm);
+      const respostasJSON = await gerarRespostasJSON({});
 
       const dadosParaEnvio = {
         respostas: respostasJSON,

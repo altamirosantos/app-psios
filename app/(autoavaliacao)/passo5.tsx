@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 
 import { CustomButton } from '@/components/CustomButton';
-import { useForm } from '@/context/FormContext';
+//import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import Slider from '@react-native-community/slider';
@@ -25,7 +25,7 @@ import { Checkbox } from 'react-native-paper';
 
 
 const Passo5 = () => {
-  const { updateForm, dadosForm } = useForm();
+  //const { updateForm, dadosForm } = useForm();
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
@@ -161,16 +161,16 @@ const Passo5 = () => {
         }
         return item;
       })
-      .filter(Boolean); // remove nulls
+      .filter(Boolean); // remove nul
 
-    updateForm({
+    /*updateForm({
       passo05Pergunta1: finalCard1,
       passo05Pergunta2: finalCard2,
       passo05Pergunta3: finalCard3,
       passo05Pergunta4: finalComportamento,
       passo05Pergunta5: finalCard4,
       passo06Pergunta1: sliderValue.toString()
-    });
+    });*/
 
     console.log("dadosForm atualizado", {
       passo8Oque: finalCard1,

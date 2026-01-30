@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 import { CustomButton } from '@/components/CustomButton';
-import { useForm } from '@/context/FormContext';
+//import { useForm } from '@/context/FormContext';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 
@@ -61,9 +61,9 @@ const Passo8 = () => {
     );
   }*/
 
-  const { updateForm } = useForm();
+  //const { updateForm } = useForm();
   const handleNext = () => {
-    updateForm({ passo08Pergunta1: selecionadoComoCostumaLidar ?? '', passo08Pergunta2: selecionadoPensarFuturo ?? '', passo08Pergunta3: selecionadoConcentracao ?? '', passo08Pergunta4: sliderValuePreparado.toString() });
+    //updateForm({ passo08Pergunta1: selecionadoComoCostumaLidar ?? '', passo08Pergunta2: selecionadoPensarFuturo ?? '', passo08Pergunta3: selecionadoConcentracao ?? '', passo08Pergunta4: sliderValuePreparado.toString() });
     router.push('/passo9');
   };
 

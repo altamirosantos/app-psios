@@ -105,7 +105,7 @@ export default function DashboardScreen() {
                     return;
                   }
                   console.log(`Acessando: ${item.route}`);
-                  const route: Route = item.route || "/(tabs)/home";
+                  const route: Route = (item.route || "/(tabs)/home") as Route;
                   router.push(route);
                 }}
               >

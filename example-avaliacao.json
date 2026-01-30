@@ -1,0 +1,38 @@
+{
+  "avaliacao_id": "10e107c2-c4cd-4c87-af11-d4693494875b",
+  "contextos": [
+    {
+      "contexto_id": "c1b2d3e4-1111-2222-3333-444455556666",
+      "nome": "Contexto 1",
+      "descricao": "💓 Como você se sente hoje?",
+      "ordem": 1,
+      "etapas": [
+        {
+          "contexto_id": "c1b2d3e4-1111-2222-3333-444455556666",
+          "titulo": "Etapa 1",
+          "subtitulo": "Introdução",
+          "ordem": 1,
+          "etapa_perguntas": [
+            {
+              "etapa_id": "e1111111-aaaa-bbbb-cccc-000000000001",
+              "pergunta_id": "p1111111-aaaa-bbbb-cccc-000000000001",
+              "ordem": 1,
+              "analisavel": true,
+              "pergunta": {
+                "nome": "passo01Pergunta1",
+                "descricao": "💓 Como você se sente hoje?",
+                "tipo": "SELECT",
+                "nota": null,
+                "respostas": [
+                  { "descricao": "Bem" },
+                  { "descricao": "Mais ou menos" },
+                  { "descricao": "Mal" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

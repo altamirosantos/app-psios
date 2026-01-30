@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Avaliacao",
+  "type": "object",
+  "properties": {
+    "contextos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "avaliacao_id": { "type": "string", "format": "uuid" },
+          "nome": { "type": "string" },
+          "descricao": { "type": "string" },
+          "etapas": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "contexto_id": { "type": "string", "format": "uuid" },
+                "titulo": { "type": "string" },
+                "subtitulo": { "type": "string" },
+                "ordem": { "type": "integer" },
+                "etapa_perguntas": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "etapa_id": { "type": "string", "format": "uuid" },
+                      "pergunta_id": { "type": "string", "format": "uuid" },
+                      "ordem": { "type": "integer" },
+                      "analisavel": { "type": "boolean" },
+                      "pergunta": {
+                        "type": "object",
+                        "properties": {
+                          "nome": { "type": "string" },
+                          "descricao": { "type": "string" },
+                          "tipo": { "type": "string" },
+                          "nota": { "type": "number" },
+                          "respostas": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "descricao": { "type": "string" }
+                              },
+                              "required": ["descricao"]
+                            }
+                          }
+                        },
+                        "required": ["nome", "descricao", "tipo"]
+                      }
+                    },
+                    "required": ["etapa_id", "pergunta_id", "ordem", "analisavel", "pergunta"]
+                  }
+                }
+              },
+              "required": ["contexto_id", "titulo", "ordem", "etapa_perguntas"]
+            }
+          }
+        },
+        "required": ["avaliacao_id", "nome", "descricao", "etapas"]
+      }
+    }
+  },
+  "required": ["contextos"]
+}

@@ -13,14 +13,14 @@ import {
 } from 'react-native';
 
 import { CustomButton } from '@/components/CustomButton';
-import { useForm } from '@/context/FormContext';
+//import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 
 
 const Passo2 = () => {
-  const { updateForm } = useForm();
+  //const { updateForm } = useForm();
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
@@ -61,7 +61,7 @@ const Passo2 = () => {
   };
 
   const handleNext = () => {
-    updateForm({ passo02Pergunta1: selectedEmotions });
+    //updateForm({ passo02Pergunta1: selectedEmotions });
     router.push('/passo3');
   };
 
@@ -77,8 +77,8 @@ const Passo2 = () => {
           />
 
           <View style={[styles.card, { backgroundColor: cardColor }]}>
-            <Text style={[styles.title, { color: textColor }]}>Quais sentimentos e sensações estão mais presentes em você neste momento?</Text>
-            <Text style={[styles.subtitle, { color: textColor }]}>Selecione todas as emoções que se aplicam.</Text>
+            <Text style={[styles.title, { color: textColor }]}>Quais emoções, sentimentos e sensações estão mais presentes em você?</Text>
+            <Text style={[styles.subtitle, { color: textColor }]}>Selecione as opções que se aplicam.</Text>
 
             <View style={styles.tagContainer}>
               {options.emotions.map((emotion) => (

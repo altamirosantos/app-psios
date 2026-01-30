@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 
 import { AuthProvider } from '@/context/AuthContext';
-import { FormProvider } from '@/context/FormContext'; // ← importe o provider
+//import { FormProvider } from '@/context/FormContext'; // ← importe o provider
 //import { useColorScheme } from '@/hooks/useColorScheme';
 import { useColorScheme } from 'react-native';
 import Toast from 'react-native-toast-message';
@@ -32,11 +32,11 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <AuthProvider> {/* ⬅️ Envolve tudo com o AuthProvider */}
-        <FormProvider>
-          <Slot />
-          <Toast />
-          <StatusBar style="auto" />
-        </FormProvider>
+
+        <Slot />
+        <Toast />
+        <StatusBar style="auto" />
+
       </AuthProvider>
     </ThemeProvider>
   );

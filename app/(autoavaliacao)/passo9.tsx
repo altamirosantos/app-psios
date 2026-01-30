@@ -13,14 +13,14 @@ import {
 } from 'react-native';
 
 import { CustomButton } from '@/components/CustomButton';
-import { useForm } from '@/context/FormContext';
+//import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 
 
 const Passo9 = () => {
-  const { updateForm } = useForm();
+  //const { updateForm } = useForm();
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
@@ -89,7 +89,7 @@ const Passo9 = () => {
   }
 
   const handleNext = () => {
-    updateForm({ passo09Pergunta1: selecionadoOpCard1 ?? '', passo09Pergunta2: selecionadoOpCard2 ?? '', passo09Pergunta3: selecionadoOpCard3 ?? '', passo09Pergunta4: selecionadoOpCard4 ?? '', passo09Pergunta5: selecionadoOpCard5 ?? '', passo09Pergunta6: selecionadoOpCard6 ?? '' });
+    //updateForm({ passo09Pergunta1: selecionadoOpCard1 ?? '', passo09Pergunta2: selecionadoOpCard2 ?? '', passo09Pergunta3: selecionadoOpCard3 ?? '', passo09Pergunta4: selecionadoOpCard4 ?? '', passo09Pergunta5: selecionadoOpCard5 ?? '', passo09Pergunta6: selecionadoOpCard6 ?? '' });
     router.push('/passo10');
   };
 

@@ -12,19 +12,20 @@ import {
 } from 'react-native';
 
 import { CustomButton } from '@/components/CustomButton';
-import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 
 
 export default function Passo1() {
-  const { updateForm } = useForm();
+   //const { setResposta, resetForm, getResposta } = useForm();
+
+  //const [respostas, setRespostas] = useState<Respostas>({});
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
-  const placeholder = useThemeColor('placeholder');
-  const inputBg = useThemeColor('inputBackground');
+  //const placeholder = useThemeColor('placeholder');
+  //const inputBg = useThemeColor('inputBackground');
   const router = useRouter();
   const [sentimentoSelecionado, setSentimentoSelecionado] = useState<string | null>(null);
 
@@ -49,7 +50,13 @@ export default function Passo1() {
   }
 
   const handleNext = () => {
-    updateForm({ passo01Pergunta1: sentimentoSelecionado ?? '' });
+    //updateForm({ passo01Pergunta1: sentimentoSelecionado ?? '' });
+   //resetForm();
+    const questionUuid = "";
+    const etapaUUid = "";
+   // const atual = (getResposta(etapaUUid, questionUuid) as string[]) || [];
+
+    //setResposta(etapaUUid, questionUuid, sentimentoSelecionado)
     router.push('/passo2');
   };
 

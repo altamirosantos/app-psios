@@ -1,0 +1,48 @@
+{
+    "contextos": [
+        {
+            "descricao": "💓 Como você se sente hoje?",
+            "perguntas": [
+                {
+                    "nome_pergunta": "passo01Pergunta1",
+                    "descricao_pergunta": "💓 Como você se sente hoje?",
+                    "resposta": "Bem"
+                },
+                {
+                    "nome_pergunta": "passo02Pergunta1",
+                    "descricao_pergunta": "Quais sentimentos e sensações estão mais presentes em você neste momento?",
+                    "resposta": [
+                        "Confiança",
+                        "Calmo (a)",
+                        "Indiferença"
+                    ]
+                }
+            ]
+        },        {
+            "descricao": "📊 Resultados Gerais",
+            "perguntas": [
+                {
+                    "nome_pergunta": "resultadoPergunta1",
+                    "descricao_pergunta": "Nível Geral de Bem-Estar",
+                    "resposta": "Moderado"
+                },
+                {
+                    "nome_pergunta": "resultadoPergunta2",
+                    "descricao_pergunta": "Fatores que mais influenciam seu bem-estar",
+                    "resposta": [
+                        "Evolução Pessoal",
+                        "Mudanças Climáticas"
+                    ]
+                },
+                {
+                    "nome_pergunta": "resultadoPergunta3",
+                    "descricao_pergunta": "Distorções Cognitivas Identificadas",
+                    "resposta": [
+                        "Generalização",
+                        "Rotação"
+                    ]
+                }
+            ]
+        }
+    ]
+}

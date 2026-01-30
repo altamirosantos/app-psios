@@ -1,7 +1,12 @@
-import { Stack } from "expo-router";
+import { FormProvider } from "@/context/FormContext2";
+import { Slot, Stack } from "expo-router";
 
 export default function AuthLayout() {
-    return (
-        <Stack screenOptions={{ headerShown: false }} />
-    );
+  return (
+    <FormProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Slot />
+      </Stack>
+    </FormProvider>
+  );
 }

@@ -13,7 +13,7 @@ import {
 import { Checkbox } from 'react-native-paper';
 
 import { CustomButton } from '@/components/CustomButton';
-import { useForm } from '@/context/FormContext';
+//import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { supabase } from '@/lib/supabase';
@@ -22,7 +22,7 @@ import { router } from 'expo-router';
 
 
 const Passo4 = () => {
-  const { updateForm, dadosForm } = useForm();
+  //const { updateForm, dadosForm } = useForm();
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
@@ -129,7 +129,7 @@ const Passo4 = () => {
       );
     }
 
-    updateForm({ passo04Pergunta1: itemsToSend });
+    //updateForm({ passo04Pergunta1: itemsToSend });
     console.log("Dados Form: ", itemsToSend);
     router.push('/passo5');
   };

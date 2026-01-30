@@ -13,14 +13,14 @@ import {
 } from 'react-native';
 
 import { CustomButton } from '@/components/CustomButton';
-import { useForm } from '@/context/FormContext';
+//import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 
 
 const Passo3 = () => {
-  const { updateForm } = useForm();
+  //const { updateForm } = useForm();
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
@@ -50,7 +50,7 @@ const Passo3 = () => {
   }
 
   const handleNext = () => {
-    updateForm({ passo03Pergunta1: selecionado ?? '' });
+    //updateForm({ passo03Pergunta1: selecionado ?? '' });
     router.push('/passo4');
   };
 

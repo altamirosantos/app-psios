@@ -13,13 +13,13 @@ import {
 import { Checkbox } from 'react-native-paper';
 
 import { CustomButton } from '@/components/CustomButton';
-import { useForm } from '@/context/FormContext';
+//import { useForm } from '@/context/FormContext';
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 
 const Passo7 = () => {
-  const { updateForm } = useForm();
+  //const { updateForm } = useForm();
 
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
@@ -86,7 +86,7 @@ const Passo7 = () => {
   };
 
   const handleNext = () => {
-    updateForm({ passo07Pergunta1: selecionados });
+    //updateForm({ passo07Pergunta1: selecionados });
     router.push('/passo8');
   };
 

@@ -1,0 +1,38 @@
+{
+    "groupUuid": "c3b2f2c1-8e9a-4c1b-9f2e-123456789abc",
+    "descricao": "",
+    "enunciado": "",
+    "nota": "",
+    "perguntas": [
+        {
+            "questionUuid": "c3b2f2c1-8e9a-4c1b-9f2e-123456789abc",
+            "tipo": "SELECT",
+            "opcoes": [
+                "Me expresso com facilidade (converso, escrevo, crio).",
+                "Levo um tempo, mas acabo organizando dentro de mim."
+            ]
+        },
+        {
+            "questionUuid": "c3b2f2c1-8e9a-4c1b-9f2e-123456789abc",
+            "tipo": "MULTISELECT",
+            "opcoes": [
+                "Me expresso com facilidade (converso, escrevo, crio).",
+                "Levo um tempo, mas acabo organizando dentro de mim."
+            ]
+        },
+        {
+            "questionUuid": "c3b2f2c1-8e9a-4c1b-9f2e-123456789abc",
+            "tipo": "ESCALA",
+            "faixas": [
+                0,
+                50,
+                100
+            ],
+            "labels": [
+                "0",
+                "50",
+                "100"
+            ]
+        }
+    ]
+}

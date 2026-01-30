@@ -6,59 +6,62 @@ import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
+import { FormProvider } from '@/context/FormContext2';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
-        name="home"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="start-autoavaliacao"
-        options={{
-          title: 'Autoavaliação',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="assinatura"
-        options={{
-          title: 'Assinaturas',
-          tabBarIcon: ({ color }) => (
-            <IconSymbol
-              size={28}
-              name="credit" // ícone sugestivo para planos/assinaturas
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="logout"
-        options={{
-          title: 'Sair',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="rectangle.portrait.and.arrow.right.fill" color={color} />,
-        }}
-      />
-    </Tabs>
+    <FormProvider>
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+          headerShown: false,
+          tabBarButton: HapticTab,
+          tabBarBackground: TabBarBackground,
+          tabBarStyle: Platform.select({
+            ios: {
+              // Use a transparent background on iOS to show the blur effect
+              position: 'absolute',
+            },
+            default: {},
+          }),
+        }}>
+        <Tabs.Screen
+          name="home"
+          options={{
+            title: 'Home',
+            tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="start-autoavaliacao"
+          options={{
+            title: 'Autoavaliação',
+            tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="assinatura"
+          options={{
+            title: 'Assinaturas',
+            tabBarIcon: ({ color }) => (
+              <IconSymbol
+                size={28}
+                name="credit" // ícone sugestivo para planos/assinaturas
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="logout"
+          options={{
+            title: 'Sair',
+            tabBarIcon: ({ color }) => <IconSymbol size={28} name="rectangle.portrait.and.arrow.right.fill" color={color} />,
+          }}
+        />
+      </Tabs>
+    </FormProvider>
   );
 }

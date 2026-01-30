@@ -1,0 +1,40 @@
+{
+    "contextos": [
+        {
+            "descricao_contetxo": "Descrição do contexto 1",
+            "perguntas": [
+                {
+                    "nome_pergunta": "passo01Pergunta1",
+                    "descricao_pergunta": "💓 Como você se sente hoje?",
+                    "resposta": "Bem"
+                },
+                {
+                    "nome_pergunta": "passo02Pergunta1",
+                    "descricao_pergunta": "Quais sentimentos e sensações estão mais presentes em você neste momento?",
+                    "resposta": [
+                        "Confiança",
+                        "Calmo (a)"
+                    ]
+                }
+            ]
+        },
+        {
+            "descricao_contetxo": "Descricao do contexto 2",
+            "perguntas": [
+                {
+                    "nome_pergunta": "passo03Pergunta1",
+                    "descricao_pergunta": "🧠 Como você avalia sua saúde mental atualmente?",
+                    "resposta": "Boa"
+                },
+                {
+                    "nome_pergunta": "passo04Pergunta1",
+                    "descricao_pergunta": "Você tem enfrentado algum desafio específico relacionado à sua saúde mental?",
+                    "resposta": [
+                        "Estresse no trabalho",
+                        "Ansiedade social"
+                    ]
+                }
+            ]
+        }
+    ]
+}

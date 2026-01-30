@@ -1,3 +1,5 @@
+import { useForm } from '@/context/FormContext2';
+import { etapaService } from '@/services/etapa.service';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React from 'react';
@@ -5,6 +7,8 @@ import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'rea
 
 export default function WelcomeScreen() {
     const router = useRouter();
+    const { registrarPerguntas, resetForm } = useForm();
+
     return (
         <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
             <View style={styles.container}>
@@ -35,7 +39,31 @@ export default function WelcomeScreen() {
                     </Text>
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={() => router.push('/(autoavaliacao)/passo1')}>
+                <TouchableOpacity style={styles.button} onPress={async () => {
+                    const avaliacaoId = '10e107c2-c4cd-4c87-af11-d4693494875b';
+                    
+                    try {
+                        // Busca TODAS as etapas da avaliação e armazena no contexto
+                        const etapas = await etapaService.getEtapasByAvaliacao(avaliacaoId);
+                        console.log('Etapas carregadas:', etapas);
+                        
+                        if (etapas && etapas.length > 0) {
+                            // Reseta o formulário antes de começar
+                            resetForm();
+                            
+                            // Navega para a primeira etapa (índice 0)
+                            const primeiraEtapa = etapas[0];
+                            router.push(
+                                `/(autoavaliacao)/PassoScreen?etapaId=${primeiraEtapa.id}&avaliacaoId=${avaliacaoId}`
+                            );
+                        } else {
+                            console.error('Nenhuma etapa encontrada');
+                        }
+                    } catch (error) {
+                        console.error('Erro ao carregar etapas:', error);
+                    }
+                }
+                }>
                     <Text style={styles.buttonText}>Começar minha autoavaliação</Text>
                 </TouchableOpacity>
             </View>
