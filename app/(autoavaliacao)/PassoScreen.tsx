@@ -38,7 +38,7 @@ const PassoScreen = () => {
             setLoading(true);
             try {
                 console.log('fetchGrupo >>', etapaId);
-                
+
                 const etapa = await etapaService.getEtapaById(
                     etapaId
                 );
@@ -131,7 +131,7 @@ const PassoScreen = () => {
                 console.log('Mapa de perguntas:', perguntasMap);
                 console.log('Payload final transformado:', respostasTransformadas);
 
-               /* const { data: webhookData, error: webhookError } = await supabase.functions.invoke("n8n-webhook-questions-psios2", {
+                const { data: webhookData, error: webhookError } = await supabase.functions.invoke("n8n-webhook-questions-psios2", {
                     body: respostasTransformadas
                 })
 
@@ -140,7 +140,7 @@ const PassoScreen = () => {
                 } else {
                     console.log("Resposta do webhook:", webhookData);
                 }
-*/
+
 
                 console.log('Formulário enviado com sucesso!', respostasTransformadas);
                 router.push('/(outros)/DiagnosticoScreen');
