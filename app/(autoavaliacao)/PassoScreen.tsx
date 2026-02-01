@@ -1,9 +1,11 @@
+import { useAuth } from '@/context/AuthContext';
 import { useForm } from '@/context/FormContext2';
+import { supabase } from '@/lib/supabase';
 import { transformarRespostas } from '@/lib/transformRespostas';
 import { etapaService } from '@/services/etapa.service';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Text, View } from 'react-native';
 import PassoDinamico from '../../components/passoDinamico';
 
 type EtapaData = {
@@ -24,6 +26,7 @@ const PassoScreen = () => {
     const [data, setData] = useState<EtapaData | null>(null);
     const [loading, setLoading] = useState(true);
     const { dadosForm, registrarPerguntas, perguntasMap } = useForm();
+    const { user } = useAuth();
 
     useEffect(() => {
         console.log('📦 Estado global:', dadosForm);
@@ -35,92 +38,11 @@ const PassoScreen = () => {
             setLoading(true);
             try {
                 console.log('fetchGrupo >>', etapaId);
-                // const response = await fetch(`https://suaapi.com/grupos/${groupId}`);
-                //   const json = await response.json();
+                
                 const etapa = await etapaService.getEtapaById(
                     etapaId
                 );
                 console.log('etapa >>', etapa);
-
-                /*const json = {
-                    "etapaUuid": "c3b2f2c1-8e9a-4c1b-9f2e-123456789abc",
-                    "descricao": "Teste",
-                    "titulo": "📝 Seu bem-estar é importante! O que você sente agora pode revelar muito sobre o que se passa na sua mente. Vamos juntos observar os sentimentos e pensamentos que influenciam esse momento? Esse é um passo significativo para o seu autocuidado.",
-                    "subtitulo": "Preencha abaixo de forma breve e sincera.",
-                    "ordem": 1,
-                    "perguntas": [
-                        {
-                            "questionUuid": "c3b2f2c1-8e9a-4c1b-9f2e-123456789abe",
-                            "tipo": "SELECT",
-                            "titulo": "",
-                            "descricao": "💓 Como você se sente hoje?",
-                            "nota": "Sua saúde emocional é prioridade?\nCompartilhe como se sente e avance rumo ao seu bem-estar!",
-                            "ordem": 1,
-                            "analisavel": true,
-                            "opcoes": [
-                                "Me expresso com facilidade (converso, escrevo, crio).",
-                                "Levo um tempo, mas acabo organizando dentro de mim."
-                            ]
-                        },
-                        {
-                            "questionUuid": "c3b2f2c1-8e9a-4c1b-9f2e-123456789abh",
-                            "tipo": "SELECT_EMOJI",
-                            "titulo": "",
-                            "descricao": "💓 Como você se sente hoje?",
-                            "nota": "Sua saúde emocional é prioridade?\nCompartilhe como se sente e avance rumo ao seu bem-estar!",
-                            "ordem": 2,
-                            "analisavel": true,
-                            "opcoes": [{
-                                "emoji": "👍",
-                                "label": "Muito Okay",
-                                "color": "#ef4444"
-                            },
-                            {
-                                "emoji": "👎",
-                                "label": "Nada Okay",
-                                "color": "#facc15"
-                            },
-                            {
-                                "emoji": "👎",
-                                "label": "Médio",
-                                "color": "#facc15"
-                            }
-                            ]
-                        },
-                        {
-                            "questionUuid": "c3b2f2c1-8e9a-4c1b-9f2e-123456789abf",
-                            "tipo": "MULTISELECT",
-                            "titulo": "",
-                            "descricao": "💓 Como você se sente hoje?",
-                            "nota": "Sua saúde emocional é prioridade?\nCompartilhe como se sente e avance rumo ao seu bem-estar!",
-                            "ordem": 3,
-                            "analisavel": true,
-                            "opcoes": [
-                                "Me expresso com facilidade (converso, escrevo, crio).",
-                                "Levo um tempo, mas acabo organizando dentro de mim."
-                            ]
-                        },
-                        {
-                            "questionUuid": "c3b2f2c1-8e9a-4c1b-9f2e-123456789abg",
-                            "tipo": "ESCALA",
-                            "titulo": "",
-                            "descricao": "💓 Como você se sente hoje?",
-                            "nota": "Sua saúde emocional é prioridade?\nCompartilhe como se sente e avance rumo ao seu bem-estar!",
-                            "ordem": 4,
-                            "analisavel": true,
-                            "faixas": [
-                                0,
-                                50,
-                                100
-                            ],
-                            "labels": [
-                                "0",
-                                "50",
-                                "100"
-                            ]
-                        }
-                    ]
-                }*/
 
                 setData(etapa);
                 // 🔥 Registrar as perguntas no contexto para transformação posterior
@@ -168,28 +90,64 @@ const PassoScreen = () => {
     const handleNext = async () => {
         if (!data || !avaliacaoId) return;
 
-        // Busca a próxima etapa (ordem + 1)
-        const proxima = await etapaService.getProximaEtapa(data.ordem + 1, avaliacaoId);
+        try {
+            // Busca a próxima etapa (ordem + 1)
+            const proxima = await etapaService.getProximaEtapa(data.ordem + 1, avaliacaoId);
 
-        if (proxima?.etapaUuid) {
-            router.push(
-                `/(autoavaliacao)/PassoScreen?etapaId=${proxima.etapaUuid}&avaliacaoId=${avaliacaoId}`
-            );
-        } else {
-            // ✅ Transformar respostas para formato final
-            const respostasTransformadas = transformarRespostas(dadosForm, perguntasMap);
-            
-            console.log('Payload final original:', dadosForm);
-            console.log('Mapa de perguntas:', perguntasMap);
-            console.log('Payload final transformado:', respostasTransformadas);
+            if (proxima?.etapaUuid) {
+                router.push(
+                    `/(autoavaliacao)/PassoScreen?etapaId=${proxima.etapaUuid}&avaliacaoId=${avaliacaoId}`
+                );
+            } else {
+                // ✅ Transformar respostas para formato final
+                const respostasBase = transformarRespostas(dadosForm, perguntasMap);
 
-            /* await fetch('https://sua-api.com/autoavaliacao', {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify(respostasTransformadas),
-             });*/
+                // Obter dados do usuário
+                const { data: sessionData } = await supabase.auth.getSession();
+                const userSession = sessionData?.session?.user;
+                if (!userSession) return;
 
-            //router.replace('/(autoavaliacao)/PassoFinaliza');
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', userSession.id)
+                    .single();
+
+                const dadosUser = {
+                    idUsuario: userSession.id ?? '',
+                    email: userSession.email ?? '',
+                    nome: profile?.nome ?? '',
+                    apelido: profile?.apelido ?? '',
+                    nascimento: profile?.nascimento ?? '',
+                    genero: profile?.genero ?? '',
+                };
+
+                const respostasTransformadas = {
+                    ...respostasBase,
+                    dadosUser,
+                };
+
+                console.log('Payload final original:', dadosForm);
+                console.log('Mapa de perguntas:', perguntasMap);
+                console.log('Payload final transformado:', respostasTransformadas);
+
+               /* const { data: webhookData, error: webhookError } = await supabase.functions.invoke("n8n-webhook-questions-psios2", {
+                    body: respostasTransformadas
+                })
+
+                if (webhookError) {
+                    console.error("Erro ao chamar webhook:", webhookError);
+                } else {
+                    console.log("Resposta do webhook:", webhookData);
+                }
+*/
+
+                console.log('Formulário enviado com sucesso!', respostasTransformadas);
+                router.push('/(outros)/DiagnosticoScreen');
+            }
+        } catch (error) {
+            console.error('Erro no handleNext:', error);
+            Alert.alert('Erro', 'Ocorreu um erro ao processar a próxima etapa. Tente novamente.');
         }
     };
 

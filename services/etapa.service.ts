@@ -26,9 +26,11 @@ class EtapaService {
             nota,
             faixas,
             legendas,
+            image,
             respostas (
               id,
               descricao,
+              subdescricao,
               emoji,
               color,
               ordem 
@@ -97,6 +99,7 @@ class EtapaService {
       titulo: pergunta.titulo ?? '',
       descricao: pergunta.descricao,
       nota: pergunta.nota,
+      image: pergunta.image,
       ordem: item.ordem,
       analisavel: item.eletiva_ia ?? false,
     };
@@ -119,8 +122,12 @@ class EtapaService {
             emoji: r.emoji,
             label: r.descricao,
             color: r.color,
+            subdescricao: r.subdescricao,
           }
-          : r.descricao
+          : {
+            descricao: r.descricao,
+            subdescricao: r.subdescricao,
+          }
       ),
     };
   }

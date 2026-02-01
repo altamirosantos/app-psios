@@ -58,6 +58,14 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
 
     const [nome, setNome] = useState<string | null>(null);
 
+    const getImageUrl = (imagePath: string) => {
+        const { data } = supabase
+            .storage
+            .from("psios_public")
+            .getPublicUrl(imagePath);
+        return data.publicUrl;
+    };
+
     useEffect(() => {
         const buscarUsuario = async () => {
             const { data, error } = await supabase.auth.getSession();
@@ -219,17 +227,17 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
 
                             return (
                                 <>
-                                    {pergunta.opcoes.map((item: string) => (
+                                    {pergunta.opcoes.map((item: any) => (
                                         <TouchableOpacity
-                                            key={item}
+                                            key={item.descricao}
                                             style={[
                                                 styles.opcao,
-                                                respostaAtual === item && {
+                                                respostaAtual === item.descricao && {
                                                     backgroundColor: inputBg,
                                                 },
                                             ]}
                                             onPress={() => {
-                                                if (item === 'Outro') {
+                                                if (item.descricao === 'Outro') {
                                                     setResposta(
                                                         etapaUuid,
                                                         pergunta.questionUuid,
@@ -239,20 +247,27 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                                     setResposta(
                                                         etapaUuid,
                                                         pergunta.questionUuid,
-                                                        item
+                                                        item.descricao
                                                     );
                                                 }
                                             }}
                                         >
                                             <View style={styles.radioCirculo}>
-                                                {(respostaAtual === item ||
-                                                    (item === 'Outro' && outroSelecionado)) && (
+                                                {(respostaAtual === item.descricao ||
+                                                    (item.descricao === 'Outro' && outroSelecionado)) && (
                                                         <View style={styles.radioSelecionado} />
                                                     )}
                                             </View>
-                                            <Text style={[styles.opcaoTexto, { color: textColor }]}>
-                                                {item}
-                                            </Text>
+                                            <View style={styles.opcaoTextContainer}>
+                                                <Text style={[styles.opcaoTexto, { color: textColor }]}>
+                                                    {item.descricao}
+                                                </Text>
+                                                {item.subdescricao && (
+                                                    <Text style={styles.opcaoSubTexto}>
+                                                        {item.subdescricao}
+                                                    </Text>
+                                                )}
+                                            </View>
                                         </TouchableOpacity>
                                     ))}
 
@@ -288,17 +303,17 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
 
                             return (
                                 <>
-                                    {pergunta.opcoes.map((item: string) => (
+                                    {pergunta.opcoes.map((item: any) => (
                                         <TouchableOpacity
-                                            key={item}
+                                            key={item.descricao}
                                             style={[
                                                 styles.opcao,
-                                                resposta.includes(item) && {
+                                                resposta.includes(item.descricao) && {
                                                     backgroundColor: inputBg,
                                                 },
                                             ]}
                                             onPress={() => {
-                                                if (item === 'Outro') {
+                                                if (item.descricao === 'Outro') {
                                                     if (!outroSelecionado) {
                                                         setResposta(
                                                             etapaUuid,
@@ -310,21 +325,28 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                                     setResposta(
                                                         etapaUuid,
                                                         pergunta.questionUuid,
-                                                        resposta.includes(item)
-                                                            ? resposta.filter(v => v !== item)
-                                                            : [...resposta, item]
+                                                        resposta.includes(item.descricao)
+                                                            ? resposta.filter(v => v !== item.descricao)
+                                                            : [...resposta, item.descricao]
                                                     );
                                                 }
                                             }}
                                         >
                                             <View style={styles.checkbox}>
-                                                {resposta.includes(item) && (
+                                                {resposta.includes(item.descricao) && (
                                                     <View style={styles.checkboxChecked} />
                                                 )}
                                             </View>
-                                            <Text style={[styles.opcaoTexto, { color: textColor }]}>
-                                                {item}
-                                            </Text>
+                                            <View style={styles.opcaoTextContainer}>
+                                                <Text style={[styles.opcaoTexto, { color: textColor }]}>
+                                                    {item.descricao}
+                                                </Text>
+                                                {item.subdescricao && (
+                                                    <Text style={styles.opcaoSubTexto}>
+                                                        {item.subdescricao}
+                                                    </Text>
+                                                )}
+                                            </View>
                                         </TouchableOpacity>
                                     ))}
 
@@ -482,6 +504,11 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                                 >
                                                     {item.label}
                                                 </Text>
+                                                {item.subdescricao && (
+                                                    <Text style={styles.emojiSubLabel}>
+                                                        {item.subdescricao}
+                                                    </Text>
+                                                )}
                                             </TouchableOpacity>
                                         );
                                     })}
@@ -519,12 +546,26 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                     )}
 
                     {data.perguntas.map((pergunta: any) => (
-                        <View
-                            key={pergunta.questionUuid}
-                            style={[styles.card, { backgroundColor: cardColor }]}
-                        >
-                            {renderPergunta(pergunta)}
-                        </View>
+                        <>
+                            {/* CARD COM IMAGEM (RENDERIZADO APENAS NA PRIMEIRA PERGUNTA) */}
+                            {pergunta.image && data.perguntas.indexOf(pergunta) === 0 && (
+                                <View style={[styles.card, styles.cardImagem, { backgroundColor: cardColor }]}>
+                                    <Image
+                                        source={{ uri: getImageUrl(pergunta.image) }}
+                                        style={styles.imagemCard}
+                                        resizeMode="contain"
+                                    />
+                                </View>
+                            )}
+
+                            {/* CARD COM PERGUNTAS */}
+                            <View
+                                key={pergunta.questionUuid}
+                                style={[styles.card, { backgroundColor: cardColor }]}
+                            >
+                                {renderPergunta(pergunta)}
+                            </View>
+                        </>
                     ))}
 
                     <CustomButton title="Próximo..." onPress={handleNext} disabled={!todasRespondidas()} />
@@ -563,6 +604,19 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         width: '100%',
         maxWidth: 400,
+        overflow: 'hidden',
+    },
+
+    cardImagem: {
+        padding: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    imagemCard: {
+        width: '100%',
+        height: Math.min(width - 20, 400) * 0.75,
+        borderRadius: 12,
     },
 
     title: {
@@ -609,6 +663,19 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginEnd: 20,
         flex: 1,
+    },
+
+    opcaoTextContainer: {
+        flex: 1,
+        flexDirection: 'column',
+    },
+
+    opcaoSubTexto: {
+        fontSize: 12,
+        marginEnd: 20,
+        flex: 1,
+        color: '#666',
+        marginTop: 2,
     },
 
     /* ---------- RADIO (SELECT) ---------- */
@@ -719,6 +786,12 @@ const styles = StyleSheet.create({
         marginTop: 4,
         fontSize: 12,
         textAlign: 'center',
+    },
+    emojiSubLabel: {
+        marginTop: 2,
+        fontSize: 10,
+        textAlign: 'center',
+        color: '#666',
     },
     inputOutro: {
         borderRadius: 8,
