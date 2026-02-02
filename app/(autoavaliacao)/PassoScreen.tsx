@@ -1,5 +1,6 @@
 import { useAuth } from '@/context/AuthContext';
 import { useForm } from '@/context/FormContext2';
+import { useThemeColor } from '@/hooks/useThemeColor';
 import { supabase } from '@/lib/supabase';
 import { transformarRespostas } from '@/lib/transformRespostas';
 import { etapaService } from '@/services/etapa.service';
@@ -27,6 +28,7 @@ const PassoScreen = () => {
     const [loading, setLoading] = useState(true);
     const { dadosForm, registrarPerguntas, perguntasMap } = useForm();
     const { user } = useAuth();
+    const textColor = useThemeColor('text');
 
     useEffect(() => {
         console.log('📦 Estado global:', dadosForm);
@@ -82,7 +84,7 @@ const PassoScreen = () => {
     if (!data) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Não foi possível carregar os dados.</Text>
+                <Text style={{ color: textColor }}>Não foi possível carregar os dados.</Text>
             </View>
         );
     }
@@ -127,8 +129,8 @@ const PassoScreen = () => {
                     dadosUser,
                 };
 
-                console.log('Payload final original:', dadosForm);
-                console.log('Mapa de perguntas:', perguntasMap);
+                //console.log('Payload final original:', dadosForm);
+                //console.log('Mapa de perguntas:', perguntasMap);
                 console.log('Payload final transformado:', respostasTransformadas);
 
                 const { data: webhookData, error: webhookError } = await supabase.functions.invoke("n8n-webhook-questions-psios2", {

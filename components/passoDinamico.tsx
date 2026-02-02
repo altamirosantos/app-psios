@@ -38,6 +38,124 @@ type Respostas = {
     etapas: EtapaResposta[];
 };
 
+// Componente separado para o Slider de Escala
+const SliderEscala = ({
+    pergunta,
+    etapaUuid,
+    respostaAtual,
+    setResposta,
+    textColor,
+    setScrollEnabled,
+}: {
+    pergunta: any;
+    etapaUuid: string;
+    respostaAtual: any;
+    setResposta: (etapaUuid: string, questionUuid: string, valor: any) => void;
+    textColor: string;
+    setScrollEnabled: (enabled: boolean) => void;
+}) => {
+    const min = pergunta.faixas[0];
+    const max = pergunta.faixas[pergunta.faixas.length - 1];
+
+    // Debug: Verificar valores
+    console.log('🎚️ Slider Debug:', {
+        min,
+        max,
+        respostaAtual,
+        questionUuid: pergunta.questionUuid
+    });
+
+    // Inicializa com o valor do contexto ou com o mínimo
+    const savedValue = typeof respostaAtual === 'number' ? respostaAtual : null;
+    const initialValue = savedValue !== null ? savedValue : min;
+
+    // Usa estado local para melhor responsividade no Android
+    const [localValue, setLocalValue] = React.useState(initialValue);
+
+    console.log('🎚️ Valor local:', localValue);
+
+    // Sincroniza o estado local quando a resposta salva mudar
+    React.useEffect(() => {
+        if (typeof savedValue === 'number') {
+            console.log('🔄 Sincronizando valor:', savedValue);
+            setLocalValue(savedValue);
+        }
+    }, [savedValue]);
+
+    // Inicializa a resposta com o valor mínimo se estiver vazia
+    React.useEffect(() => {
+        if (savedValue === null) {
+            console.log('🆕 Inicializando com valor mínimo:', min);
+            setResposta(etapaUuid, pergunta.questionUuid, min);
+            setLocalValue(min);
+        }
+    }, [min, savedValue, etapaUuid, pergunta.questionUuid]);
+
+    const handleValueChange = (v: number) => {
+        console.log('📊 Valor mudando:', v);
+        setLocalValue(v);
+    };
+
+    const handleSlidingComplete = (v: number) => {
+        console.log('✅ Deslize completo:', v);
+        setScrollEnabled(true);
+        setResposta(etapaUuid, pergunta.questionUuid, v);
+    };
+
+    return (
+        <>
+            <View style={styles.sliderValueContainer}>
+                <Text style={[styles.sliderValueText, { color: textColor }]}>
+                    {localValue}
+                </Text>
+            </View>
+
+            {Platform.OS === 'web' ? (
+                <input
+                    type="range"
+                    min={min}
+                    max={max}
+                    step={1}
+                    value={localValue}
+                    onChange={(e) => {
+                        const newValue = Number(e.target.value);
+                        setLocalValue(newValue);
+                        setResposta(etapaUuid, pergunta.questionUuid, newValue);
+                    }}
+                    style={{ width: '100%' }}
+                />
+            ) : (
+                <Slider
+                    minimumValue={min}
+                    maximumValue={max}
+                    step={1}
+                    value={localValue}
+                    disabled={false}
+                    onValueChange={handleValueChange}
+                    onSlidingStart={() => {
+                        console.log('👆 Iniciou deslize');
+                        setScrollEnabled(false);
+                    }}
+                    onSlidingComplete={handleSlidingComplete}
+                    minimumTrackTintColor="#4CAF50"
+                    maximumTrackTintColor="#ddd"
+                    thumbTintColor="#4CAF50"
+                    style={{ width: '100%', height: 40 }}
+                />
+            )}
+
+            <View style={styles.sliderLabels}>
+                {pergunta.labels.map((label: string, i: number) => (
+                    <View key={i} style={styles.labelContainer}>
+                        <Text style={[styles.labelText, { color: textColor }]}>
+                            {label}
+                        </Text>
+                    </View>
+                ))}
+            </View>
+        </>
+    );
+};
 
 const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
 
@@ -50,7 +168,7 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
     });
 
     const [selecionado, setSelecionado] = useState<any | null>(null);
-
+    const [scrollEnabled, setScrollEnabled] = useState(true);
 
     const etapaUuid = data.etapaUuid;
 
@@ -263,7 +381,7 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                                     {item.descricao}
                                                 </Text>
                                                 {item.subdescricao && (
-                                                    <Text style={styles.opcaoSubTexto}>
+                                                    <Text style={[styles.opcaoSubTexto, { color: textColor, opacity: 0.6 }]}>
                                                         {item.subdescricao}
                                                     </Text>
                                                 )}
@@ -342,7 +460,7 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                                     {item.descricao}
                                                 </Text>
                                                 {item.subdescricao && (
-                                                    <Text style={styles.opcaoSubTexto}>
+                                                    <Text style={[styles.opcaoSubTexto, { color: textColor, opacity: 0.6 }]}>
                                                         {item.subdescricao}
                                                     </Text>
                                                 )}
@@ -386,78 +504,17 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                         }
 
 
-                        case 'ESCALA': {
-                            const min = pergunta.faixas[0];
-                            const max =
-                                pergunta.faixas[
-                                pergunta.faixas.length - 1
-                                ];
-                            const value =
-                                (respostaAtual as number) ?? min;
-
+                        case 'ESCALA':
                             return (
-                                <>
-                                    <View style={styles.sliderValueContainer}>
-                                        <Text
-                                            style={styles.sliderValueText}
-                                        >
-                                            {value}
-                                        </Text>
-                                    </View>
-
-                                    {Platform.OS === 'web' ? (
-                                        <input
-                                            type="range"
-                                            min={min}
-                                            max={max}
-                                            step={1}
-                                            value={value}
-                                            onChange={(e) =>
-                                                setResposta(etapaUuid, pergunta.questionUuid, e.target.value)
-                                            }
-                                            style={{ width: '100%' }}
-                                        />
-                                    ) : (
-                                        <Slider
-                                            minimumValue={min}
-                                            maximumValue={max}
-                                            step={1}
-                                            value={value}
-                                            onValueChange={(v) =>
-                                                setResposta(etapaUuid, pergunta.questionUuid, v)
-                                            }
-                                            minimumTrackTintColor="#4CAF50"
-                                            maximumTrackTintColor="#ddd"
-                                            thumbTintColor="#4CAF50"
-                                        />
-                                    )}
-
-                                    <View style={styles.sliderLabels}>
-                                        {pergunta.labels.map(
-                                            (label: string, i: number) => (
-                                                <View
-                                                    key={i}
-                                                    style={
-                                                        styles.labelContainer
-                                                    }
-                                                >
-                                                    <Text
-                                                        style={[
-                                                            styles.labelText,
-                                                            {
-                                                                color: textColor,
-                                                            },
-                                                        ]}
-                                                    >
-                                                        {label}
-                                                    </Text>
-                                                </View>
-                                            )
-                                        )}
-                                    </View>
-                                </>
+                                <SliderEscala
+                                    pergunta={pergunta}
+                                    etapaUuid={etapaUuid}
+                                    respostaAtual={respostaAtual}
+                                    setResposta={setResposta}
+                                    textColor={textColor}
+                                    setScrollEnabled={setScrollEnabled}
+                                />
                             );
-                        }
 
                         case 'SELECT_EMOJI':
                             return (
@@ -498,14 +555,15 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                                     {item.emoji}
                                                 </Text>
                                                 <Text
-                                                    style={
-                                                        styles.emojiLabel
-                                                    }
+                                                    style={[
+                                                        styles.emojiLabel,
+                                                        { color: textColor }
+                                                    ]}
                                                 >
                                                     {item.label}
                                                 </Text>
                                                 {item.subdescricao && (
-                                                    <Text style={styles.emojiSubLabel}>
+                                                    <Text style={[styles.emojiSubLabel, { color: textColor, opacity: 0.6 }]}>
                                                         {item.subdescricao}
                                                     </Text>
                                                 )}
@@ -526,7 +584,7 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
 
     return (
         <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
-            <ScrollView>
+            <ScrollView scrollEnabled={scrollEnabled}>
                 <View style={styles.container}>
                     <Image
                         source={require('@/assets/images/logo.png')}
@@ -674,7 +732,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginEnd: 20,
         flex: 1,
-        color: '#666',
         marginTop: 2,
     },
 
@@ -729,7 +786,6 @@ const styles = StyleSheet.create({
     sliderValueText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#4CAF50',
     },
 
     sliderLabels: {
@@ -791,7 +847,6 @@ const styles = StyleSheet.create({
         marginTop: 2,
         fontSize: 10,
         textAlign: 'center',
-        color: '#666',
     },
     inputOutro: {
         borderRadius: 8,
