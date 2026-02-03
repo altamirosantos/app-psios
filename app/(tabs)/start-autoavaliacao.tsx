@@ -20,13 +20,6 @@ export default function WelcomeScreen() {
 
                 <Text style={styles.title}>🌻 AUTOAVALIAÇÃO</Text>
 
-                <Text style={styles.subtitle}>
-                    Pronto(a) para tranformar sua vida?{'\n'}
-                    Mude a forma de pensar, sentir e agir
-                    com novas conexões e
-                    autoconsciência.
-                </Text>
-
                 <View style={styles.card}>
                     <Text style={styles.cardText}>
                         📝 A autoavaliação é um pequeno

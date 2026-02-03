@@ -245,7 +245,7 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
         return (
             <>
                 {pergunta.descricao && (
-                    <Text style={[styles.title, { color: textColor }]}>
+                    <Text style={[styles.enunciado, { color: textColor }]}>
                         {descricaoInterpolada}
                     </Text>
                 )}
@@ -350,17 +350,25 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                             key={item.descricao}
                                             style={[
                                                 styles.opcao,
-                                                respostaAtual === item.descricao && {
+                                                (respostaAtual === item.descricao || (item.descricao === 'Outro' && outroSelecionado)) && {
                                                     backgroundColor: inputBg,
                                                 },
                                             ]}
                                             onPress={() => {
                                                 if (item.descricao === 'Outro') {
-                                                    setResposta(
-                                                        etapaUuid,
-                                                        pergunta.questionUuid,
-                                                        'Outro:'
-                                                    );
+                                                    if (outroSelecionado) {
+                                                        setResposta(
+                                                            etapaUuid,
+                                                            pergunta.questionUuid,
+                                                            null
+                                                        );
+                                                    } else {
+                                                        setResposta(
+                                                            etapaUuid,
+                                                            pergunta.questionUuid,
+                                                            'Outro:'
+                                                        );
+                                                    }
                                                 } else {
                                                     setResposta(
                                                         etapaUuid,
@@ -426,13 +434,19 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                             key={item.descricao}
                                             style={[
                                                 styles.opcao,
-                                                resposta.includes(item.descricao) && {
+                                                (resposta.includes(item.descricao) || (item.descricao === 'Outro' && outroSelecionado)) && {
                                                     backgroundColor: inputBg,
                                                 },
                                             ]}
                                             onPress={() => {
                                                 if (item.descricao === 'Outro') {
-                                                    if (!outroSelecionado) {
+                                                    if (outroSelecionado) {
+                                                        setResposta(
+                                                            etapaUuid,
+                                                            pergunta.questionUuid,
+                                                            resposta.filter(v => !v.startsWith('Outro'))
+                                                        );
+                                                    } else {
                                                         setResposta(
                                                             etapaUuid,
                                                             pergunta.questionUuid,
@@ -451,7 +465,7 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                             }}
                                         >
                                             <View style={styles.checkbox}>
-                                                {resposta.includes(item.descricao) && (
+                                                {(resposta.includes(item.descricao) || (item.descricao === 'Outro' && outroSelecionado)) && (
                                                     <View style={styles.checkboxChecked} />
                                                 )}
                                             </View>
