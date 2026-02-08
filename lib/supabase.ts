@@ -37,6 +37,22 @@ export async function getPlanoAtivo(userId: string) {
     return data.plano_id; // Ex: 'gratis', 'basico', 'premium'
 }
 
+/**
+ * Constrói URL completa do arquivo no storage Supabase
+ * @param fileName - Nome do arquivo (ex: 'respiracao.mp3')
+ * @param bucket - Nome do bucket (padrão: 'psios_midias')
+ * @returns URL pública completa do arquivo
+ */
+export function getStorageUrl(fileName: string | null, bucket: string = 'psios_midias'): string | null {
+    if (!fileName) return null;
+    // Se for URL completa já, retorna como está
+    if (fileName.startsWith('http://') || fileName.startsWith('https://')) {
+        return fileName;
+    }
+    // Constrói URL do storage Supabase
+    return `${supabaseUrl}/storage/v1/object/public/${bucket}/${fileName}`;
+}
+
 export async function getPlanosDisponiveis() {
     const { data, error } = await supabase
         .from('planos')

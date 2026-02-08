@@ -1,0 +1,305 @@
+// This is your Prisma schema for the PSIOS database
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Main Tables
+
+model Profile {
+  id             String   @id @db.Uuid
+  nome           String?
+  apelido        String?
+  nascimento     DateTime? @db.Date
+  genero         String?
+  email          String?
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  autoavaliacao  Autoavaliacao[]
+  chat           Chat[]
+  planoUsuario   PlanoUsuario[]
+  userResourceHistory UserResourceHistory[]
+
+  @@map("profiles")
+}
+
+model Avaliacao {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nome           String?
+  descricao      String?
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  autoavaliacao  Autoavaliacao[]
+  contexto       Contexto[]
+
+  @@map("avaliacao")
+}
+
+model Autoavaliacao {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  userId         String   @map("user_id") @db.Uuid
+  dadosEntrada   Json?    @map("dados_entrada")
+  diagnostico    String?
+  sugestao       String?
+  avaliacaoId    String?  @map("avaliacao_id") @db.Uuid
+
+  user            Profile  @relation(fields: [userId], references: [id])
+  avaliacao       Avaliacao? @relation(fields: [avaliacaoId], references: [id])
+  avaliacaoConteudo AvaliacaoConteudo[]
+
+  @@map("autoavaliacao")
+}
+
+model ConteudoAuxiliar {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  nome           String?
+  descricao      String?
+  source         String?
+  type           String?  @db.VarChar
+  mimetype       String?  @db.VarChar
+
+  avaliacaoConteudo AvaliacaoConteudo[]
+
+  @@map("conteudo_auxiliar")
+}
+
+model AvaliacaoConteudo {
+  autoavaliacaoId     String   @map("autoavaliacao_id") @db.Uuid
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  conteudoAuxiliarId  String   @map("conteudo_auxiliar_id") @db.Uuid
+
+  autoavaliacao      Autoavaliacao @relation(fields: [autoavaliacaoId], references: [id])
+  conteudoAuxiliar   ConteudoAuxiliar @relation(fields: [conteudoAuxiliarId], references: [id])
+
+  @@id([autoavaliacaoId, conteudoAuxiliarId])
+  @@map("avaliacao_conteudo")
+}
+
+model Contexto {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  avaliacaoId    String   @map("avaliacao_id") @db.Uuid
+  nome           String   @db.VarChar
+  descricao      String?
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  ordem          Int?     @default(0) @db.SmallInt
+
+  avaliacao      Avaliacao @relation(fields: [avaliacaoId], references: [id])
+  etapa          Etapa[]
+
+  @@map("contexto")
+}
+
+model Etapa {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  contextoId     String   @map("contexto_id") @db.Uuid
+  titulo         String
+  subtitulo      String?
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  ordem          Int?     @db.SmallInt
+
+  contexto       Contexto @relation(fields: [contextoId], references: [id])
+  etapaPergunta  EtapaPergunta[]
+
+  @@map("etapa")
+}
+
+model Pergunta {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nome           String?
+  descricao      String?
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  tipo           String?  @db.VarChar
+  faixas         String?  @db.VarChar
+  legendas       String?  @db.VarChar
+  titulo         String?  @db.VarChar
+  nota           String?
+  image          String?  @db.VarChar
+
+  respostas      Resposta[]
+  etapaPergunta  EtapaPergunta[]
+
+  @@map("perguntas")
+}
+
+model Resposta {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  perguntaId     String?  @default(dbgenerated("gen_random_uuid()")) @map("pergunta_id") @db.Uuid
+  descricao      String?
+  devolutiva     String?
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  sugestao       String?
+  emoji          String?  @db.VarChar
+  color          String?  @db.VarChar
+  ordem          Int?     @db.SmallInt
+  subdescricao   String?
+
+  pergunta       Pergunta? @relation(fields: [perguntaId], references: [id])
+
+  @@map("respostas")
+}
+
+model EtapaPergunta {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  etapaId        String   @map("etapa_id") @db.Uuid
+  perguntaId     String   @map("pergunta_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  ordem          Int?     @db.SmallInt
+  analisavel     Boolean  @default(true)
+
+  etapa          Etapa @relation(fields: [etapaId], references: [id])
+  pergunta       Pergunta @relation(fields: [perguntaId], references: [id])
+
+  @@map("etapa_pergunta")
+}
+
+// Chat Tables
+
+model Chat {
+  id             Int      @id @default(autoincrement())
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  sessionId      String   @map("session_id")
+  userId         String   @map("user_id") @db.Uuid
+  mensagens      Json     @default("[]")
+  favorito       Boolean  @default(false)
+
+  user           Profile @relation(fields: [userId], references: [id])
+
+  @@map("chat")
+}
+
+model ChatMemory {
+  id             BigInt   @id @default(autoincrement())
+  userId         String   @map("user_id") @db.Uuid
+  role           String
+  message        String
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp()
+
+  @@map("chat_memory")
+}
+
+model N8nChatHistories {
+  id             Int      @id @default(autoincrement())
+  sessionId      String   @map("session_id") @db.VarChar(255)
+  message        Json
+
+  @@map("n8n_chat_histories")
+}
+
+// Plans and Resources
+
+model Plano {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nome           String?  @db.VarChar
+  descricao      String?
+  valor          Decimal? @db.Decimal(10, 2)
+  beneficios     Json?
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  planoUsuario   PlanoUsuario[]
+
+  @@map("planos")
+}
+
+model PlanoUsuario {
+  userId         String   @map("user_id") @db.Uuid
+  planoId        String   @map("plano_id") @db.Uuid
+  status         String   @db.VarChar
+  validade       DateTime? @db.Date
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user           Profile @relation(fields: [userId], references: [id])
+  plano          Plano @relation(fields: [planoId], references: [id])
+
+  @@id([userId, planoId, status])
+  @@map("plano_usuario")
+}
+
+model Resource {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title          String   @db.VarChar(255)
+  description    String?
+  type           String   @db.VarChar(50)
+  url            String?
+  duration       Int?
+  tags           String[]
+  interactiveData Json?   @map("interactive_data")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp()
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp()
+
+  resourceCategories ResourceCategories[]
+  userResourceHistory UserResourceHistory[]
+  agendaResources    AgendaResources[]
+
+  @@map("resources")
+}
+
+model Category {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String   @db.VarChar(100)
+  description    String?
+
+  resourceCategories ResourceCategories[]
+
+  @@map("categories")
+}
+
+model ResourceCategories {
+  resourceId     String   @map("resource_id") @db.Uuid
+  categoryId     String   @map("category_id") @db.Uuid
+
+  resource       Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  category       Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([resourceId, categoryId])
+  @@map("resource_categories")
+}
+
+model UserResourceHistory {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String?  @map("user_id") @db.Uuid
+  resourceId     String?  @map("resource_id") @db.Uuid
+  consumedAt     DateTime @default(now()) @map("consumed_at") @db.Timestamp()
+  completed      Boolean  @default(false)
+
+  user           Profile? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resource       Resource? @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@map("user_resource_history")
+}
+
+// Agenda
+
+model Agenda {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  title          String?
+  description    String?
+  scheduledAt    DateTime @map("scheduled_at") @db.Timestamptz(6)
+  status         String   @default("pending") @db.VarChar
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  agendaResources AgendaResources[]
+
+  @@map("agenda")
+}
+
+model AgendaResources {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agendaId       String   @map("agenda_id") @db.Uuid
+  resourceId     String   @map("resource_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  agenda         Agenda @relation(fields: [agendaId], references: [id], onDelete: Cascade)
+  resource       Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@unique([agendaId, resourceId])
+  @@map("agenda_resources")
+}
