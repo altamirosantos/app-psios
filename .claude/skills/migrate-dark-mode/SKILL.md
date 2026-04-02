@@ -1,9 +1,10 @@
-# Skill: Migrar Tela para Dark Mode
-
-## 📋 Descrição
-
-Skill para migrar uma tela React Native existente (com cores hardcoded) para seguir o sistema de Dark Mode do projeto. Transforma componentes estáticos em componentes responsivos ao tema.
-
+---
+name: migrate-dark-mode
+description: Migra telas React Native existentes para suportar Dark Mode, transformando cores hardcoded em componentes responsivos ao tema dinâmico do projeto. Use quando precisar migrar uma tela com cores estáticas ou ao adicionar novas telas que devem suportar ambos os temas.
+compatibility: React Native com sistema de cores do app-psios (theme/theme.ts)
+metadata:
+  version: "1.0"
+  tags: ["dark-mode", "react-native", "theming"]
 ---
 
 ## 🎯 Quando Usar Esta Skill
@@ -12,8 +13,6 @@ Use esta skill quando:
 - Você precisa migrar uma tela existente para suportar Dark Mode
 - A tela tem cores hardcoded em `styles.js` ou inline
 - Quer validar que a migração segue os padrões da rule `dark-mode.md`
-
----
 
 ## 📋 Checklist de Migração
 
@@ -222,8 +221,6 @@ git add app/(pasta)/sua-tela.tsx
 git commit -m "feat: dark mode para [SCREEN_NAME]"
 ```
 
----
-
 ## 📚 Exemplo Prático: Migração Completa
 
 ### Tela ANTES
@@ -335,8 +332,6 @@ const styles = StyleSheet.create({
 });
 ```
 
----
-
 ## 🔍 Checklist de Validação Final
 
 Antes de fazer commit, verificar:
@@ -351,8 +346,6 @@ Antes de fazer commit, verificar:
 - [ ] `npm run lint` passa sem erros
 - [ ] Commit foi feito com mensagem clara
 
----
-
 ## ⚠️ Armadilhas Comuns
 
 | Armadilha | Solução |
@@ -365,11 +358,9 @@ Antes de fazer commit, verificar:
 | Testar só em Light Mode | SEMPRE testar em ambos light/dark |
 | Modificar cores brand accidentalmente | Manter `#9333ea` e `#FFA45E` sempre iguais |
 
----
-
 ## 📞 Referências
 
-- **Rule**: `.claude/rules/dark-mode.md` - Padrões e cores
-- **Exemplo Implementado**: `app/(tabs)/home.tsx` - Tela completa com dark mode
-- **Arquivo de Cores**: `theme/theme.ts` - Definiçoes de cores
-- **Helpers**: `theme/themeUtils.ts` - Funções auxiliares
+Consulte a documentação completa de Dark Mode na regra do projeto:
+- **Rule**: `rules/dark-mode.md` - Padrões e cores do sistema
+- **Exemplo**: `app/(tabs)/home.tsx` - Tela completa implementada
+- **Cores**: `theme/theme.ts` - Definições das cores
