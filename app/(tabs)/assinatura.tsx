@@ -1,5 +1,6 @@
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { getPlanoAtivo, getPlanosDisponiveis, supabase } from '@/lib/supabase';
+import { getThemeColors } from '@/theme/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import {
@@ -8,10 +9,15 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
+  useColorScheme
 } from 'react-native';
 
 export default function PlanosScreen() {
+  const colorScheme = useColorScheme();
+  const colors = getThemeColors(colorScheme);
+  const dynamicStyles = createDynamicStyles(colors);
+  
   const textColor = useThemeColor('text');
   const cardColor = useThemeColor('cardBackground');
   const placeholder = useThemeColor('placeholder');
@@ -52,16 +58,16 @@ export default function PlanosScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loading}>
+      <View style={[styles.loading, { backgroundColor: colors.background }]}>
         <ActivityIndicator size="large" color="#3399ff" />
-        <Text style={{ marginTop: 12 }}>Carregando planos...</Text>
+        <Text style={{ marginTop: 12, color: colors.text }}>Carregando planos...</Text>
       </View>
     );
   }
 
   if (erro) {
     return (
-      <View style={styles.loading}>
+      <View style={[styles.loading, { backgroundColor: colors.background }]}>
         <Text style={{ color: 'red' }}>{erro}</Text>
       </View>
     );
@@ -78,28 +84,29 @@ export default function PlanosScreen() {
             resizeMode="contain"
           />
         </View>
-        <Text style={[styles.titulo]}>Escolha o plano ideal para suas necessidades</Text>
+        <Text style={[styles.titulo, { color: '#fff' }]}>Escolha o plano ideal para suas necessidades</Text>
         {planos.map((plano) => (
           <View
             key={plano.id}
             style={[
               styles.planoCard,
-              plano.id === planoAtivo ? styles.planoAtivo : null,
+              dynamicStyles.planoCard,
+              plano.id === planoAtivo ? [styles.planoAtivo, dynamicStyles.planoAtivo] : null,
             ]}
           >
-            <Text style={styles.nome}>{plano.nome}</Text>
-            <Text style={styles.descricao}>{plano.descricao}</Text>
+            <Text style={[styles.nome, { color: colors.text }]}>{plano.nome}</Text>
+            <Text style={[styles.descricao, { color: colors.textSecondary }]}>{plano.descricao}</Text>
             <Text style={styles.valor}>R$ {Number(plano.valor).toFixed(2)}</Text>
             {Array.isArray(plano.beneficios) ? (
               plano.beneficios.map((b: string, index: number) => (
-                <Text key={index} style={styles.beneficio}>
+                <Text key={index} style={[styles.beneficio, { color: colors.text }]}>
                   • {b}
                 </Text>
               ))
             ) : (
               <>
                 {JSON.parse(plano.beneficios || '[]').map((b: string, index: number) => (
-                  <Text key={index} style={styles.beneficio}>
+                  <Text key={index} style={[styles.beneficio, { color: colors.text }]}>
                     • {b}
                   </Text>
                 ))}
@@ -114,6 +121,21 @@ export default function PlanosScreen() {
     </LinearGradient>
   );
 }
+
+// 🎨 Factory function para criar estilos dinâmicos baseados no tema
+const createDynamicStyles = (colors: ReturnType<typeof getThemeColors>) => ({
+  planoCard: {
+    backgroundColor: colors.cardBackground,
+    borderColor: colors.borderLight,
+    shadowColor: colors.text,
+    shadowOpacity: 0.05,
+  },
+  planoAtivo: {
+    backgroundColor: colors.cardBackground,
+    borderColor: '#3399ff',
+    borderWidth: 2,
+  },
+});
 
 const styles = StyleSheet.create({
   loading: {
@@ -136,28 +158,21 @@ const styles = StyleSheet.create({
   planoCard: {
     marginBottom: 16,
     padding: 20,
-    backgroundColor: '#f9f9f9',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#ddd',
-    shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
   },
   planoAtivo: {
-    backgroundColor: '#e0f7ff',
-    borderColor: '#3399ff',
     borderWidth: 2,
   },
   nome: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   descricao: {
     fontSize: 14,
-    color: '#666',
     marginVertical: 4,
   },
   valor: {
@@ -173,7 +188,6 @@ const styles = StyleSheet.create({
   },
   beneficio: {
     fontSize: 13,
-    color: '#444',
     marginTop: 4,
     marginLeft: 8,
   },

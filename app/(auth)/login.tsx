@@ -3,17 +3,23 @@ import { useColorScheme } from '@/hooks/useColorScheme.web';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { supabase } from '@/lib/supabase';
 import { loginWithEmail, signInWithFacebook, signInWithGoogle } from '@/services/auth.service';
+import { getThemeColors } from '@/theme/theme';
 import { Feather } from '@expo/vector-icons';
 import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View, useColorScheme as useRNColorScheme } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 
 
 export default function LoginScreen() {
+    // 🎨 Dark Mode
+    const colorSchemeRN = useRNColorScheme();
+    const colors = getThemeColors(colorSchemeRN);
+    const dynamicStyles = createDynamicStyles(colors);
+
     const textColor = useThemeColor('text');
     const cardColor = useThemeColor('cardBackground');
     const placeholder = useThemeColor('placeholder');
@@ -155,16 +161,16 @@ export default function LoginScreen() {
 
     return (
         <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.container}>
-            <View style={styles.container}>
+            <View style={[styles.container, { backgroundColor: colors.background }]}>
                 <Image source={require('../../assets/images/logo.png')} style={styles.logoImage} resizeMode="contain" />
-                <View style={[styles.card, { backgroundColor: cardColor }]}>
-                    <Text style={[styles.title, { color: textColor }]}>Iniciar</Text>
-                    <Text style={[styles.subtitle, { color: textColor }]}>Preencha os dados abaixo</Text>
+                <View style={[styles.card, dynamicStyles.card]}>
+                    <Text style={[styles.title, { color: colors.text }]}>Iniciar</Text>
+                    <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Preencha os dados abaixo</Text>
 
                     <TextInput
                         placeholder="E-mail"
                         placeholderTextColor={placeholder}
-                        style={[styles.input, { backgroundColor: inputBg, color: textColor }]}
+                        style={[styles.input, dynamicStyles.input]}
                         value={email}
                         onChangeText={setEmail}
                     />
@@ -174,7 +180,7 @@ export default function LoginScreen() {
                             placeholder="Senha"
                             placeholderTextColor={placeholder}
                             secureTextEntry={!showPassword}
-                            style={[styles.inputPassword, { backgroundColor: inputBg, color: textColor }]}
+                            style={[styles.inputPassword, dynamicStyles.input]}
                             value={password}
                             onChangeText={setPassword}
                         />
@@ -215,7 +221,7 @@ export default function LoginScreen() {
 */}
 
                     <Pressable onPress={() => router.push('/(auth)/signup')}>
-                        <Text style={[styles.signupText, { color: textColor }]}>
+                        <Text style={[styles.signupText, { color: colors.text }]}>
                             Não tem uma conta?
                             <Text style={styles.link}> Cadastre-se aqui</Text>
                         </Text>
@@ -225,6 +231,19 @@ export default function LoginScreen() {
         </LinearGradient>
     );
 }
+
+// 🎨 Factory function para criar estilos dinâmicos baseados no tema
+const createDynamicStyles = (colors: ReturnType<typeof getThemeColors>) => ({
+  card: {
+    backgroundColor: colors.cardBackground,
+    shadowColor: colors.text,
+    shadowOpacity: 0.05,
+  },
+  input: {
+    backgroundColor: colors.inputBackground,
+    color: colors.text,
+  },
+});
 
 const styles = StyleSheet.create({
     container: {
@@ -236,7 +255,6 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 20,
         alignItems: 'center',
-        shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowRadius: 6,
         elevation: 4,

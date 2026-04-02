@@ -1,19 +1,23 @@
 import { supabase } from '@/lib/supabase';
+import { getThemeColors } from '@/theme/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-  Dimensions,
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    Dimensions,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    useColorScheme,
+    View
 } from 'react-native';
 
 
 const FeedbackScreen = () => {
+  const colorScheme = useColorScheme();
+  const colors = getThemeColors(colorScheme);
   const [nome, setNome] = useState<string | null>(null);
 
   useEffect(() => {
@@ -50,33 +54,33 @@ const FeedbackScreen = () => {
     <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
       <ScrollView>
         <View style={styles.container}>
-          <View style={styles.card}>
+          <View style={[styles.card, { backgroundColor: colors.cardBackground }]}>
 
             <View style={styles.containerImage}>
               <Image source={require("@/assets/images/avatar-autoavaliacao.png")} style={styles.imagem} resizeMode="contain" />
             </View>
 
             <View>
-              <Text style={styles.title}>
+              <Text style={[styles.title, { color: colors.text }]}>
                 ✨ ✨🤩 🥳 ✨ ✨
               </Text>
-              <Text style={styles.title}>
+              <Text style={[styles.title, { color: colors.text }]}>
                 Olá {nome}! Que bom ter você por aqui! Eu sou a Ana 😊
               </Text>
 
-              <Text style={styles.subtitle}>
-                Psios: Cuidar de Si com Conexão  💜
+              <Text style={[styles.subtitle, { color: colors.text }]}>
+                Psios: Cuidar de Si com Conexão  💜
               </Text>
 
-              <Text style={styles.subtitle}>
+              <Text style={[styles.subtitle, { color: colors.text }]}>
                 É mais que um aplicativo — é um espaço acolhedor no seu celular para cuidar da mente com leveza, ciência e conexão real.
               </Text>
 
-              <Text style={styles.subtitle}>
+              <Text style={[styles.subtitle, { color: colors.text }]}>
                 Estou aqui com você nessa jornada de bem-estar emocional.
               </Text>
 
-              <Text style={styles.subtitle}>
+              <Text style={[styles.subtitle, { color: colors.text }]}>
                 Vamos dar o primeiro passo juntos?
               </Text>
             </View>
@@ -102,6 +106,14 @@ const FeedbackScreen = () => {
 export default FeedbackScreen;
 const { width } = Dimensions.get('window');
 
+// 🎨 Factory function para criar estilos dinâmicos baseados no tema
+const createDynamicStyles = (colors: ReturnType<typeof getThemeColors>) => ({
+  card: {
+    shadowColor: colors.text,
+    shadowOpacity: 0.05,
+  },
+});
+
 const styles = StyleSheet.create({
   logo: {
     width: 80,
@@ -119,12 +131,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#E0CDFD',
     borderRadius: 12,
     padding: 16,
     marginVertical: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
     shadowRadius: 10,
     alignItems: 'center',
     width: '100%', // ocupa 100% da área do container pai
@@ -139,7 +148,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     textAlign: 'left',
-    color: '#555',
     marginVertical: 6,
   },
   radioCirculo: {

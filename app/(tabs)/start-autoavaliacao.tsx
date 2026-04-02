@@ -1,13 +1,17 @@
 import { useForm } from '@/context/FormContext2';
 import { etapaService } from '@/services/etapa.service';
+import { getThemeColors } from '@/theme/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View, useColorScheme } from 'react-native';
 
 export default function WelcomeScreen() {
     const router = useRouter();
     const { registrarPerguntas, resetForm } = useForm();
+    const colorScheme = useColorScheme();
+    const colors = getThemeColors(colorScheme);
+    const dynamicStyles = createDynamicStyles(colors);
 
     return (
         <LinearGradient colors={['#9333ea', '#d763f8']} style={styles.containerRoot}>
@@ -20,14 +24,14 @@ export default function WelcomeScreen() {
 
                 <Text style={styles.title}>🌻 AUTOAVALIAÇÃO</Text>
 
-                <View style={styles.card}>
-                    <Text style={styles.cardText}>
+                <View style={[styles.card, dynamicStyles.card]}>
+                    <Text style={[styles.cardText, { color: colors.text }]}>
                         📝 A autoavaliação é um pequeno
                         passo com grande impacto. É
                         simples, e pode fazer diferença no
                         seu bem-estar.
                     </Text>
-                    <Text style={[styles.cardText, { fontWeight: 'bold' }]}>
+                    <Text style={[styles.cardText, { fontWeight: 'bold', color: colors.text }]}>
                         💙 Você merece esse cuidado!
                     </Text>
                 </View>
@@ -66,6 +70,15 @@ export default function WelcomeScreen() {
 
 const { width } = Dimensions.get('window');
 
+// 🎨 Factory function para criar estilos dinâmicos baseados no tema
+const createDynamicStyles = (colors: ReturnType<typeof getThemeColors>) => ({
+    card: {
+        backgroundColor: colors.cardBackground,
+        shadowColor: colors.text,
+        shadowOpacity: 0.05,
+    },
+});
+
 const styles = StyleSheet.create({
     containerRoot: {
         flex: 1,
@@ -97,7 +110,6 @@ const styles = StyleSheet.create({
         lineHeight: 24,
     },
     card: {
-        backgroundColor: '#fff',
         borderRadius: 16,
         padding: 20,
         marginBottom: 50,
@@ -105,7 +117,6 @@ const styles = StyleSheet.create({
     },
     cardText: {
         fontSize: 16,
-        color: '#000',
         textAlign: 'center',
         marginBottom: 30,
     },

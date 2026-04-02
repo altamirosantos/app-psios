@@ -11,6 +11,7 @@ const MAPPING = {
   'chevron.left.forwardslash.chevron.right': { name: 'code', library: MaterialIcons },
   'chevron.right': { name: 'chevron-right', library: MaterialIcons },
   'rectangle.portrait.and.arrow.right.fill': { name: 'logout', library: MaterialIcons },
+  'creditcard': { name: 'credit', library: Entypo },
 
   // Exemplo usando Entypo:
   'credit': { name: 'credit', library: Entypo },

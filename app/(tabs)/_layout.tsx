@@ -21,12 +21,12 @@ export default function TabLayout() {
           tabBarBackground: TabBarBackground,
           tabBarStyle: Platform.select({
             ios: {
-              // Use a transparent background on iOS to show the blur effect
               position: 'absolute',
             },
             default: {},
           }),
         }}>
+        
         <Tabs.Screen
           name="home"
           options={{
@@ -34,6 +34,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
           }}
         />
+
         <Tabs.Screen
           name="start-autoavaliacao"
           options={{
@@ -41,19 +42,15 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
           }}
         />
+
         <Tabs.Screen
           name="assinatura"
           options={{
-            title: 'Assinaturas',
-            tabBarIcon: ({ color }) => (
-              <IconSymbol
-                size={28}
-                name="credit" // ícone sugestivo para planos/assinaturas
-                color={color}
-              />
-            ),
+            title: 'Assinatura',
+            tabBarIcon: ({ color }) => <IconSymbol size={28} name="creditcard" color={color} />,
           }}
         />
+
         <Tabs.Screen
           name="logout"
           options={{

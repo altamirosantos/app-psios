@@ -1,6 +1,6 @@
 import BirthDatePicker from '@/components/BirthDatePicker';
-import { useThemeColor } from '@/hooks/useThemeColor';
 import { supabase } from '@/lib/supabase';
+import { getThemeColors } from '@/theme/theme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -12,6 +12,7 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
+    useColorScheme,
     View
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -20,10 +21,8 @@ import Toast from 'react-native-toast-message';
 
 
 export default function updateProfile() {
-    const textColor = useThemeColor('text');
-    const cardColor = useThemeColor('cardBackground');
-    const placeholder = useThemeColor('placeholder');
-    const inputBg = useThemeColor('inputBackground');
+    const colorScheme = useColorScheme();
+    const colors = getThemeColors(colorScheme);
     const [fullName, setFullName] = useState('');
     const [nickname, setNickname] = useState('');
     const [birthDate, setBirthDate] = useState(new Date());
@@ -93,25 +92,25 @@ export default function updateProfile() {
                         resizeMode="contain"
                     />
 
-                    <View style={[styles.card, { backgroundColor: cardColor }]}>
-                        <Text style={[styles.title, { color: textColor }]}>Me conte um pouco mais sobre você...</Text>
-                        <Text style={[styles.subtitle, , { color: textColor }]}>
+                    <View style={[styles.card, { backgroundColor: colors.cardBackground }]}>
+                        <Text style={[styles.title, { color: colors.text }]}>Me conte um pouco mais sobre você...</Text>
+                        <Text style={[styles.subtitle, , { color: colors.text }]}>
                             Assim, poderemos oferecer uma experiência que combine com o seu jeito.
                         </Text>
 
                         {/* Nome completo */}
-                        <Text style={{ fontWeight: '500', marginBottom: 4 }}>Nome Completo</Text>
+                        <Text style={{ fontWeight: '500', marginBottom: 4, color: colors.text }}>Nome Completo</Text>
                         <TextInput
                             placeholder="Nome completo"
-                            placeholderTextColor={placeholder}
-                            style={[styles.input, { backgroundColor: inputBg }]}
+                            placeholderTextColor={colors.placeholder}
+                            style={[styles.input, { backgroundColor: colors.inputBackground, color: colors.text }]}
                             value={fullName}
                             onChangeText={setFullName}
                         />
 
                         {/* Gênero */}
-                        <Text style={{ fontWeight: '500', marginBottom: 4 }}>Gênero</Text>
-                        <View style={[styles.input, { zIndex: 10, backgroundColor: inputBg }]}>
+                        <Text style={{ fontWeight: '500', marginBottom: 4, color: colors.text }}>Gênero</Text>
+                        <View style={[styles.input, { zIndex: 10, backgroundColor: colors.inputBackground }]}>
                             <DropDownPicker
                                 open={open}
                                 value={value}
@@ -121,23 +120,23 @@ export default function updateProfile() {
                                 setValue={setValue}
                                 setItems={setItems}
                                 style={{
-                                    backgroundColor: inputBg,
+                                    backgroundColor: colors.inputBackground,
                                     borderWidth: 0,
                                     minHeight: 20,
                                 }}
                                 dropDownContainerStyle={{
-                                    backgroundColor: inputBg,
+                                    backgroundColor: colors.inputBackground,
                                     borderColor: '#ccc',
                                 }}
                                 textStyle={{
                                     fontSize: 16,
-                                    color: textColor,
+                                    color: colors.text,
                                 }}
                                 placeholderStyle={{
-                                    color: placeholder,
+                                    color: colors.placeholder,
                                 }}
                                 labelStyle={{
-                                    color: textColor,
+                                    color: colors.text,
                                 }}
                                 zIndex={10}
 
@@ -149,18 +148,18 @@ export default function updateProfile() {
                                 placeholder="Informe seu gênero"
                                 value={customGenero}
                                 onChangeText={setCustomGenero}
-                                style={[styles.input, { backgroundColor: inputBg, color: textColor }]}
+                                style={[styles.input, { backgroundColor: colors.inputBackground, color: colors.text }]}
                             />
                         )}
 
                         {/* Apelido */}
-                        <Text style={{ fontWeight: '500', marginBottom: 4 }}>
+                        <Text style={{ fontWeight: '500', marginBottom: 4, color: colors.text }}>
                             Como você gostaria de ser chamado(a)?
                         </Text>
                         <TextInput
                             placeholder="Apelido"
-                            placeholderTextColor={placeholder}
-                            style={[styles.input, { backgroundColor: inputBg, color: textColor }]}
+                            placeholderTextColor={colors.placeholder}
+                            style={[styles.input, { backgroundColor: colors.inputBackground, color: colors.text }]}
                             value={nickname}
                             onChangeText={setNickname}
                         />
@@ -263,7 +262,6 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 16,
         marginVertical: 8,
-        shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowRadius: 10,
         width: '100%',

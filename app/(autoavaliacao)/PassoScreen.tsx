@@ -4,9 +4,10 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import { supabase } from '@/lib/supabase';
 import { transformarRespostas } from '@/lib/transformRespostas';
 import { etapaService } from '@/services/etapa.service';
+import { getThemeColors } from '@/theme/theme';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Text, View, useColorScheme } from 'react-native';
 import PassoDinamico from '../../components/passoDinamico';
 
 type EtapaData = {
@@ -26,8 +27,12 @@ const PassoScreen = () => {
     const avaliacaoId = params.avaliacaoId as string | undefined;
     const [data, setData] = useState<EtapaData | null>(null);
     const [loading, setLoading] = useState(true);
-    const { dadosForm, registrarPerguntas, perguntasMap } = useForm();
+    const { dadosForm, registrarPerguntas, perguntasMap, setRespostasTransformadas } = useForm();
     const { user } = useAuth();
+    
+    // 🎨 Dark Mode
+    const colorScheme = useColorScheme();
+    const colors = getThemeColors(colorScheme);
     const textColor = useThemeColor('text');
 
     useEffect(() => {
@@ -74,7 +79,7 @@ const PassoScreen = () => {
 
     if (loading) {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={[{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }]}>
                 <ActivityIndicator size="large" color="#9333ea" />
             </View>
         );
@@ -83,7 +88,7 @@ const PassoScreen = () => {
 
     if (!data) {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={[{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }]}>
                 <Text style={{ color: textColor }}>Não foi possível carregar os dados.</Text>
             </View>
         );
@@ -129,23 +134,13 @@ const PassoScreen = () => {
                     dadosUser,
                 };
 
-                //console.log('Payload final original:', dadosForm);
-                //console.log('Mapa de perguntas:', perguntasMap);
-                console.log('Payload final transformado:', respostasTransformadas);
+                console.log('Respostas transformadas preparadas:', respostasTransformadas);
 
-                const { data: webhookData, error: webhookError } = await supabase.functions.invoke("n8n-webhook-questions-psios2", {
-                    body: respostasTransformadas
-                })
+                // 🔥 Armazenar no contexto para PassoFinaliza
+                setRespostasTransformadas(respostasTransformadas);
 
-                if (webhookError) {
-                    console.error("Erro ao chamar webhook:", webhookError);
-                } else {
-                    console.log("Resposta do webhook:", webhookData);
-                }
-
-
-                console.log('Formulário enviado com sucesso!', respostasTransformadas);
-                router.push('/(outros)/DiagnosticoScreen');
+                // Navegar para PassoFinaliza (novo passo antes de DiagnosticoScreen)
+                router.push('/(autoavaliacao)/passoFinaliza');
             }
         } catch (error) {
             console.error('Erro no handleNext:', error);

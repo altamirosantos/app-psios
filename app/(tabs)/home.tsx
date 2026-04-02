@@ -12,9 +12,11 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  useColorScheme
 } from 'react-native';
 import { useAuthGuard } from '../../hooks/useAuthGuard';
+import { getThemeColors } from '../../theme/theme';
 
 const data = [
   { id: '1', label: 'Favoritos', icon: <FontAwesome name="heart" size={28} color="#f47c57" />, premium: true },
@@ -36,6 +38,9 @@ const size = Dimensions.get('window').width / numColumns - 60;
 
 export default function DashboardScreen() {
   const { loading } = useAuthGuard();
+  const colorScheme = useColorScheme();
+  const colors = getThemeColors(colorScheme);
+  const dynamicStyles = createDynamicStyles(colors);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
@@ -59,14 +64,14 @@ export default function DashboardScreen() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.text} />
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <LinearGradient
         colors={['#9333ea', '#d763f8']}
         style={styles.header}
@@ -88,7 +93,7 @@ export default function DashboardScreen() {
       </LinearGradient>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.sectionTitle}>Acesso rápido</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Acesso rápido</Text>
 
         <View style={styles.grid}>
           {data.map((item) => {
@@ -97,7 +102,11 @@ export default function DashboardScreen() {
             return (
               <TouchableOpacity
                 key={item.id}
-                style={[styles.card, disabled && styles.cardDisabled]}
+                style={[
+                  styles.card,
+                  dynamicStyles.card,
+                  disabled && [styles.cardDisabled, dynamicStyles.cardDisabled]
+                ]}
                 disabled={false}
                 onPress={() => {
                   if (disabled) {
@@ -111,7 +120,7 @@ export default function DashboardScreen() {
               >
                 <View style={{ alignItems: 'center' }}>
                   {item.icon}
-                  <Text style={[styles.cardLabel, disabled && styles.cardLabelDisabled]}>
+                  <Text style={[styles.cardLabel, { color: disabled ? colors.textTertiary : colors.text }]}>
                     {item.label}
                     {item.premium && (
                       <MaterialCommunityIcons
@@ -128,7 +137,7 @@ export default function DashboardScreen() {
           })}
         </View>
 
-        <Text style={styles.legend}>* Funções disponíveis apenas no plano pago</Text>
+        <Text style={[styles.legend, { color: colors.textSecondary }]}>* Funções disponíveis apenas no plano pago</Text>
 
         <TouchableOpacity
           style={styles.button}
@@ -136,8 +145,6 @@ export default function DashboardScreen() {
         >
           <Text style={styles.buttonText}>Começar minha autoavaliação</Text>
         </TouchableOpacity>
-
-        {/* <Text style={styles.recent}>Atividade Recente</Text> */}
       </ScrollView>
 
       {/* Modal de Assinatura */}
@@ -148,19 +155,19 @@ export default function DashboardScreen() {
         onRequestClose={closeModal}
       >
         <View style={styles.modalBackdrop}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Recurso Premium</Text>
-            <Text style={styles.modalText}>
+          <View style={[styles.modalContent, { backgroundColor: colors.cardBackground }]}>
+            <Text style={[styles.modalTitle, { color: '#9333ea' }]}>Recurso Premium</Text>
+            <Text style={[styles.modalText, { color: colors.text }]}>
               A função <Text style={{ fontWeight: 'bold' }}>{selectedFeature}</Text> está disponível apenas no plano premium.
             </Text>
-            <Text style={styles.modalPrice}>A partir de R$ 9,90/mês</Text>
+            <Text style={[styles.modalPrice, { color: '#4a00e0' }]}>A partir de R$ 9,90/mês</Text>
 
             <TouchableOpacity style={styles.subscribeButton} onPress={goToSubscription}>
               <Text style={styles.subscribeButtonText}>Assinar agora</Text>
             </TouchableOpacity>
 
             <Pressable onPress={closeModal}>
-              <Text style={styles.modalCancel}>Fechar</Text>
+              <Text style={[styles.modalCancel, { color: colors.textSecondary }]}>Fechar</Text>
             </Pressable>
           </View>
         </View>
@@ -171,10 +178,24 @@ export default function DashboardScreen() {
 
 const { width } = Dimensions.get('window');
 
+// 🎨 Factory function para criar estilos dinâmicos baseados no tema
+const createDynamicStyles = (colors: ReturnType<typeof getThemeColors>) => ({
+  card: {
+    backgroundColor: colors.cardBackground,
+    shadowColor: colors.text,
+    shadowOpacity: 0.05,
+  },
+  cardDisabled: {
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    borderStyle: 'dashed' as const,
+  },
+});
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f2f5f9',
     alignItems: 'center',
   },
   header: {
@@ -204,27 +225,22 @@ const styles = StyleSheet.create({
   card: {
     width: size,
     height: size,
-    backgroundColor: '#fff',
     borderRadius: 10,
     marginVertical: 8,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 3,
-    shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 3 },
   },
   cardDisabled: {
-    backgroundColor: '#e4e4e4',
     borderWidth: 1,
-    borderColor: '#ccc',
     borderStyle: 'dashed',
   },
   cardLabel: {
     marginTop: 8,
     fontSize: 12,
-    color: '#333',
     textAlign: 'center',
   },
   cardLabelDisabled: {
@@ -237,7 +253,6 @@ const styles = StyleSheet.create({
   },
   legend: {
     fontSize: 12,
-    color: '#e91e63',
     marginBottom: 10,
     textAlign: 'center',
   },
@@ -283,7 +298,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: '#fff',
     borderRadius: 20,
     padding: 30,
     alignItems: 'center',
@@ -293,19 +307,16 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#9333ea',
     marginBottom: 10,
   },
   modalText: {
     fontSize: 14,
-    color: '#333',
     textAlign: 'center',
     marginBottom: 10,
   },
   modalPrice: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#4a00e0',
     marginBottom: 20,
   },
   subscribeButton: {
@@ -321,7 +332,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   modalCancel: {
-    color: '#777',
     fontSize: 14,
     marginTop: 10,
   },

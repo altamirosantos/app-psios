@@ -2,27 +2,59 @@
 import { ColorSchemeName } from 'react-native';
 
 export const lightColors = {
+    // Textos
     text: '#000',
-    background: '#fff',
-    cardBackground: '#f1f5f9',
-    subtitle: '#666',
+    textSecondary: '#666',
+    textTertiary: '#999',
+    
+    // Backgrounds
+    background: '#f2f5f9',
+    backgroundAlt: '#fff',
+    cardBackground: '#fff',
+    
+    // Borders
     border: '#ccc',
+    borderLight: '#e0e0e0',
+    
+    // Form
     placeholder: '#555',
-    inputBackground: '#ddd',
+    inputBackground: '#fff',
+    
+    // Links e Actions
     link: '#4F46E5',
+    
+    // Legacy (mantém compatibilidade)
+    subtitle: '#666',
 };
 
 export const darkColors = {
+    // Textos
     text: '#fff',
-    background: '#000',
-    cardBackground: '#1f1f1f',
-    subtitle: '#ccc',
-    border: '#555',
+    textSecondary: '#ccc',
+    textTertiary: '#999',
+    
+    // Backgrounds
+    background: '#0a0e27',
+    backgroundAlt: '#1a1f3a',
+    cardBackground: '#16213e',
+    
+    // Borders
+    border: '#444',
+    borderLight: '#333',
+    
+    // Form
     placeholder: '#aaa',
-    inputBackground: '#2d2d2d',
+    inputBackground: '#1a1f3a',
+    
+    // Links e Actions
     link: '#8b5cf6',
+    
+    // Legacy (mantém compatibilidade)
+    subtitle: '#ccc',
 };
 
-export const getThemeColors = (scheme: ColorSchemeName) => {
+export type ThemeColors = typeof lightColors;
+
+export const getThemeColors = (scheme: ColorSchemeName): ThemeColors => {
     return scheme === 'dark' ? darkColors : lightColors;
 };

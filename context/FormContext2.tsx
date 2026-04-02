@@ -42,6 +42,7 @@ export type PerguntasMap = {
 type FormContextType = {
   dadosForm: FormData;
   perguntasMap: PerguntasMap;
+  respostasTransformadas: any;
 
   setResposta: (
     etapaUuid: string,
@@ -63,6 +64,9 @@ type FormContextType = {
     perguntas: Array<{ questionUuid: string; descricao: string; ordem: number }>
   ) => void;
 
+  // 🔥 Novo: Armazenar respostas transformadas para envio em PassoFinaliza
+  setRespostasTransformadas: (respostas: any) => void;
+
   resetForm: () => void;
 };
 
@@ -71,6 +75,7 @@ const FormContext = createContext<FormContextType | undefined>(undefined);
 export const FormProvider = ({ children }: { children: React.ReactNode }) => {
   const [dadosForm, setDadosForm] = useState<FormData>({});
   const [perguntasMap, setPerguntasMap] = useState<PerguntasMap>({});
+  const [respostasTransformadas, setRespostasTransformadas] = useState<any>(null);
 
   const setResposta = (
     etapaUuid: string,
@@ -127,9 +132,11 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         dadosForm,
         perguntasMap,
+        respostasTransformadas,
         setResposta,
         getResposta,
         registrarPerguntas,
+        setRespostasTransformadas,
         resetForm,
       }}
     >
