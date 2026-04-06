@@ -1,3 +1,9 @@
+---
+description: Core para utilizaçao da API supabase
+globs: []
+alwaysApply: true
+---
+
 # API Usage - Rule
 
 ## 📋 Visão Geral

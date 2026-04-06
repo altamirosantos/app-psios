@@ -40,7 +40,7 @@ export const ThemedCard = ({ children, style }: any) => {
  * ✅ Componente: Botão Temático
  * Uso: <ThemedButton title="Clique" onPress={...} />
  */
-export const ThemedButton = ({ title, onPress, style, variant = 'primary' }: any) => {
+export const ThemedButton = ({ title, onPress, style, variant = 'primary' }: { title: string; onPress: () => void; style?: any; variant?: 'primary' | 'secondary' | 'danger' }) => {
   const { colors } = useAppTheme();
   
   const variants = {
@@ -60,7 +60,7 @@ export const ThemedButton = ({ title, onPress, style, variant = 'primary' }: any
     },
   };
 
-  const variantStyle = variants[variant];
+  const variantStyle = variants[variant as 'primary' | 'secondary' | 'danger'];
 
   return (
     <TouchableOpacity
@@ -119,7 +119,7 @@ export const ThemedInput = ({ placeholder, value, onChangeText, style, ...props 
  * ✅ Componente: Texto com Estilos
  * Uso: <ThemedText variant="title">Título</ThemedText>
  */
-export const ThemedText = ({ variant = 'body', style, children }: any) => {
+export const ThemedText = ({ variant = 'body', style, children }: { variant?: 'h1' | 'h2' | 'h3' | 'title' | 'subtitle' | 'body' | 'caption' | 'link'; style?: any; children: React.ReactNode }) => {
   const { colors } = useAppTheme();
 
   const variants = {
@@ -134,7 +134,7 @@ export const ThemedText = ({ variant = 'body', style, children }: any) => {
   };
 
   return (
-    <Text style={[variants[variant], style]}>
+    <Text style={[variants[variant as 'h1' | 'h2' | 'h3' | 'title' | 'subtitle' | 'body' | 'caption' | 'link'], style]}>
       {children}
     </Text>
   );
@@ -164,7 +164,7 @@ export const ThemedDivider = ({ style }: any) => {
  * ✅ Componente: Status Badge
  * Uso: <ThemedBadge status="success">Ativo</ThemedBadge>
  */
-export const ThemedBadge = ({ status = 'info', children, style }: any) => {
+export const ThemedBadge = ({ status = 'info', children, style }: { status?: 'success' | 'error' | 'warning' | 'info'; children: React.ReactNode; style?: any }) => {
   const { colors } = useAppTheme();
 
   const statusColors = {
@@ -174,7 +174,7 @@ export const ThemedBadge = ({ status = 'info', children, style }: any) => {
     info: { bg: '#3b82f6', text: '#1e40af' },
   };
 
-  const { bg, text } = statusColors[status];
+  const { bg, text } = statusColors[status as 'success' | 'error' | 'warning' | 'info'];
 
   return (
     <View
