@@ -424,8 +424,9 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
 
                         case 'MULTISELECT': {
                             const resposta = (respostaAtual as string[]) || [];
-                            const outroSelecionado = isOutroSelecionado(resposta);
-                            const textoOutro = getTextoOutro(resposta);
+                            const nenhumSelecionado = resposta.some(v => v.startsWith('Nenhum dos anteriores'));
+                            const nenhumSimplesSelecionado = resposta.includes('Nenhum');
+                            const textoNenhum = resposta.find(v => v.startsWith('Nenhum dos anteriores:'))?.replace('Nenhum dos anteriores:', '').trim() || '';
 
                             return (
                                 <>
@@ -434,38 +435,63 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                             key={item.descricao}
                                             style={[
                                                 styles.opcao,
-                                                (resposta.includes(item.descricao) || (item.descricao === 'Outro' && outroSelecionado)) && {
+                                                (resposta.includes(item.descricao) || (item.descricao === 'Nenhum dos anteriores (outro)' && nenhumSelecionado)) && {
                                                     backgroundColor: inputBg,
                                                 },
                                             ]}
                                             onPress={() => {
-                                                if (item.descricao === 'Outro') {
-                                                    if (outroSelecionado) {
+                                                if (item.descricao === 'Nenhum') {
+                                                    // Se marcar "Nenhum", desmarcar todas as outras opções
+                                                    if (nenhumSimplesSelecionado) {
                                                         setResposta(
                                                             etapaUuid,
                                                             pergunta.questionUuid,
-                                                            resposta.filter(v => !v.startsWith('Outro'))
+                                                            resposta.filter(v => v !== 'Nenhum')
                                                         );
                                                     } else {
                                                         setResposta(
                                                             etapaUuid,
                                                             pergunta.questionUuid,
-                                                            [...resposta, 'Outro:']
+                                                            ['Nenhum']
+                                                        );
+                                                    }
+                                                } else if (item.descricao === 'Nenhum dos anteriores (outro)') {
+                                                    // Se marcar "Nenhum dos anteriores", desmarcar todos os outros
+                                                    if (nenhumSelecionado) {
+                                                        setResposta(
+                                                            etapaUuid,
+                                                            pergunta.questionUuid,
+                                                            resposta.filter(v => !v.startsWith('Nenhum dos anteriores'))
+                                                        );
+                                                    } else {
+                                                        setResposta(
+                                                            etapaUuid,
+                                                            pergunta.questionUuid,
+                                                            ['Nenhum dos anteriores:']
                                                         );
                                                     }
                                                 } else {
-                                                    setResposta(
-                                                        etapaUuid,
-                                                        pergunta.questionUuid,
-                                                        resposta.includes(item.descricao)
-                                                            ? resposta.filter(v => v !== item.descricao)
-                                                            : [...resposta, item.descricao]
-                                                    );
+                                                    // Se marcar qualquer outra opção, desmarcar "Nenhum" e "Nenhum dos anteriores"
+                                                    const novaResposta = resposta.filter(v => v !== 'Nenhum' && !v.startsWith('Nenhum dos anteriores'));
+                                                    
+                                                    if (novaResposta.includes(item.descricao)) {
+                                                        setResposta(
+                                                            etapaUuid,
+                                                            pergunta.questionUuid,
+                                                            novaResposta.filter(v => v !== item.descricao)
+                                                        );
+                                                    } else {
+                                                        setResposta(
+                                                            etapaUuid,
+                                                            pergunta.questionUuid,
+                                                            [...novaResposta, item.descricao]
+                                                        );
+                                                    }
                                                 }
                                             }}
                                         >
                                             <View style={styles.checkbox}>
-                                                {(resposta.includes(item.descricao) || (item.descricao === 'Outro' && outroSelecionado)) && (
+                                                {(resposta.includes(item.descricao) || (item.descricao === 'Nenhum dos anteriores (outro)' && nenhumSelecionado)) && (
                                                     <View style={styles.checkboxChecked} />
                                                 )}
                                             </View>
@@ -482,8 +508,8 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                         </TouchableOpacity>
                                     ))}
 
-                                    {/* INPUT DO OUTRO */}
-                                    {outroSelecionado && (
+                                    {/* INPUT PARA "NENHUM DOS ANTERIORES (OUTRO)" */}
+                                    {nenhumSelecionado && (
                                         <TextInput
                                             style={[
                                                 styles.inputOutro,
@@ -491,23 +517,19 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                             ]}
                                             placeholder="Digite aqui..."
                                             placeholderTextColor="#999"
-                                            value={textoOutro}
+                                            value={textoNenhum}
                                             onChangeText={(texto: any) => {
-                                                const semOutro = resposta.filter(
-                                                    v => !v.startsWith('Outro')
-                                                );
-
                                                 if (texto.trim()) {
                                                     setResposta(
                                                         etapaUuid,
                                                         pergunta.questionUuid,
-                                                        [...semOutro, `Outro: ${texto}`]
+                                                        [`Nenhum dos anteriores: ${texto}`]
                                                     );
                                                 } else {
                                                     setResposta(
                                                         etapaUuid,
                                                         pergunta.questionUuid,
-                                                        semOutro
+                                                        ['Nenhum dos anteriores:']
                                                     );
                                                 }
                                             }}
