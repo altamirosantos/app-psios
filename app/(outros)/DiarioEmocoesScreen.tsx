@@ -7,27 +7,27 @@ import { Dimensions, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOp
 interface Emocao {
   id: string;
   nome: string;
-  tipo: 'positiva' | 'negativa';
+  peso: number;
   icone: string;
 }
 
 const EMOCOES: Emocao[] = [
-  { id: '1', nome: 'Otimista', tipo: 'positiva', icone: 'emoticon-happy' },
-  { id: '2', nome: 'Gratidão', tipo: 'positiva', icone: 'heart' },
-  { id: '3', nome: 'Felicidade', tipo: 'positiva', icone: 'emoticon-excited' },
-  { id: '4', nome: 'Amor', tipo: 'positiva', icone: 'heart-multiple' },
-  { id: '5', nome: 'Tranquilidade', tipo: 'positiva', icone: 'spa' },
-  { id: '6', nome: 'Ansiedade', tipo: 'negativa', icone: 'alert-circle' },
-  { id: '7', nome: 'Culpa', tipo: 'negativa', icone: 'gavel' },
-  { id: '8', nome: 'Medo', tipo: 'negativa', icone: 'emoticon-sad' },
-  { id: '9', nome: 'Vergonha', tipo: 'negativa', icone: 'eye-off' },
-  { id: '10', nome: 'Irritação', tipo: 'negativa', icone: 'emoticon-angry' },
-  { id: '11', nome: 'Arrependimento', tipo: 'negativa', icone: 'undo' },
-  { id: '12', nome: 'Raiva', tipo: 'negativa', icone: 'fire' },
-  { id: '13', nome: 'Tristeza', tipo: 'negativa', icone: 'emoticon-sad-outline' },
-  { id: '14', nome: 'Insegurança', tipo: 'negativa', icone: 'help-circle' },
-  { id: '15', nome: 'Mágoa', tipo: 'negativa', icone: 'heart-broken' },
-  { id: '16', nome: 'Estresse', tipo: 'negativa', icone: 'dumbbell' },
+  { id: '1', nome: 'Otimista', peso: 1, icone: 'emoticon-happy' },
+  { id: '2', nome: 'Gratidão', peso: 1, icone: 'heart' },
+  { id: '3', nome: 'Felicidade', peso: 1, icone: 'emoticon-excited' },
+  { id: '4', nome: 'Amor', peso: 1, icone: 'heart-multiple' },
+  { id: '5', nome: 'Tranquilidade', peso: 1, icone: 'spa' },
+  { id: '6', nome: 'Ansiedade', peso: -1, icone: 'alert-circle' },
+  { id: '7', nome: 'Culpa', peso: -1, icone: 'gavel' },
+  { id: '8', nome: 'Medo', peso: -1, icone: 'emoticon-sad' },
+  { id: '9', nome: 'Vergonha', peso: -1, icone: 'eye-off' },
+  { id: '10', nome: 'Irritação', peso: -1, icone: 'emoticon-angry' },
+  { id: '11', nome: 'Arrependimento', peso: -1, icone: 'undo' },
+  { id: '12', nome: 'Raiva', peso: -1, icone: 'fire' },
+  { id: '13', nome: 'Tristeza', peso: -1, icone: 'emoticon-sad-outline' },
+  { id: '14', nome: 'Insegurança', peso: -1, icone: 'help-circle' },
+  { id: '15', nome: 'Mágoa', peso: -1, icone: 'heart-broken' },
+  { id: '16', nome: 'Estresse', peso: -1, icone: 'dumbbell' },
 ];
 
 const MENSAGENS_POSITIVAS = [
@@ -46,17 +46,36 @@ const MENSAGENS_NEGATIVAS = [
 
 const DiarioEmocoesScreen = () => {
   const [emocaoSelecionada, setEmocaoSelecionada] = useState<Emocao | null>(null);
+  const [intensidadeSelecionada, setIntensidadeSelecionada] = useState<number | null>(null);
   const [mensagem, setMensagem] = useState('');
+  const [showIntensidade, setShowIntensidade] = useState(false);
+  const [showMensagem, setShowMensagem] = useState(false);
   const [showNovaEmocao, setShowNovaEmocao] = useState(false);
   const [novaEmocao, setNovaEmocao] = useState('');
 
   const selecionarEmocao = (emocao: Emocao) => {
     setEmocaoSelecionada(emocao);
-    if (emocao.tipo === 'positiva') {
+    setIntensidadeSelecionada(null);
+    setMensagem('');
+    setShowMensagem(false);
+    setShowIntensidade(true);
+  };
+
+  const selecionarIntensidade = (intensidade: number) => {
+    setIntensidadeSelecionada(intensidade);
+
+    if (!emocaoSelecionada) {
+      return;
+    }
+
+    if (emocaoSelecionada.peso > 0) {
       setMensagem(MENSAGENS_POSITIVAS[Math.floor(Math.random() * MENSAGENS_POSITIVAS.length)]);
     } else {
       setMensagem(MENSAGENS_NEGATIVAS[Math.floor(Math.random() * MENSAGENS_NEGATIVAS.length)]);
     }
+
+    setShowIntensidade(false);
+    setShowMensagem(true);
   };
 
   const adicionarNovaEmocao = () => {
@@ -64,7 +83,7 @@ const DiarioEmocoesScreen = () => {
       const novaEmocaoObj: Emocao = {
         id: Date.now().toString(),
         nome: novaEmocao,
-        tipo: 'negativa',
+        peso: -1,
         icone: 'circle',
       };
       selecionarEmocao(novaEmocaoObj);
@@ -75,19 +94,19 @@ const DiarioEmocoesScreen = () => {
 
   const getCorIcone = (emocao: Emocao | null) => {
     if (!emocao || emocaoSelecionada?.id !== emocao.id) {
-      return emocao?.tipo === 'positiva' ? '#10b981' : '#ef4444';
+      return (emocao?.peso ?? 0) >= 0 ? '#10b981' : '#ef4444';
     }
     return '#fff';
   };
 
   const getEstiloMensagem = () => {
     if (!emocaoSelecionada) return styles.mensagemPositiva;
-    return emocaoSelecionada.tipo === 'positiva' ? styles.mensagemPositiva : styles.mensagemNegativa;
+    return emocaoSelecionada.peso > 0 ? styles.mensagemPositiva : styles.mensagemNegativa;
   };
 
   const getCorIconeMensagem = () => {
     if (!emocaoSelecionada) return '#10b981';
-    return emocaoSelecionada.tipo === 'positiva' ? '#10b981' : '#ef4444';
+    return emocaoSelecionada.peso > 0 ? '#10b981' : '#ef4444';
   };
 
   return (
@@ -119,9 +138,9 @@ const DiarioEmocoesScreen = () => {
               style={[
                 styles.cartaoEmocao,
                 emocaoSelecionada?.id === emocao.id && styles.cartaoEmocaoSelecionado,
-                emocao.tipo === 'positiva' ? styles.emocaoPositiva : styles.emocaoNegativa,
-                emocaoSelecionada?.id === emocao.id && emocao.tipo === 'positiva' && styles.emocaoPositivaAtiva,
-                emocaoSelecionada?.id === emocao.id && emocao.tipo === 'negativa' && styles.emocaoNegativaAtiva,
+                emocao.peso > 0 ? styles.emocaoPositiva : styles.emocaoNegativa,
+                emocaoSelecionada?.id === emocao.id && emocao.peso > 0 && styles.emocaoPositivaAtiva,
+                emocaoSelecionada?.id === emocao.id && emocao.peso < 0 && styles.emocaoNegativaAtiva,
               ]}
               onPress={() => selecionarEmocao(emocao)}
             >
@@ -151,25 +170,70 @@ const DiarioEmocoesScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Mensagem */}
-        {emocaoSelecionada && mensagem ? (
+      </ScrollView>
+
+      <Modal visible={showIntensidade && !!emocaoSelecionada} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <TouchableOpacity
+            style={styles.modalBackdrop}
+            activeOpacity={1}
+            onPress={() => setShowIntensidade(false)}
+          />
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitulo}>Qual a intensidade dessa emoção?</Text>
+            <Text style={styles.modalSubtitulo}>Quero entender melhor como você está se sentindo agora. Escolha a intensidade dessa emoção de 0 a 5.</Text>
+            <View style={styles.intensidadeGrid}>
+              {[0, 1, 2, 3, 4, 5].map((valor) => (
+                <TouchableOpacity
+                  key={valor}
+                  style={styles.botaoIntensidade}
+                  onPress={() => selecionarIntensidade(valor)}
+                >
+                  <Text style={styles.textoBotaoIntensidade}>{valor}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={showMensagem && !!emocaoSelecionada && !!mensagem} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <TouchableOpacity
+            style={styles.modalBackdrop}
+            activeOpacity={1}
+            onPress={() => setShowMensagem(false)}
+          />
           <View
             style={[
-              styles.containerMensagem,
+              styles.modalMensagem,
               getEstiloMensagem(),
             ]}
           >
-            <View style={styles.iconeContainer}>
-              <MaterialCommunityIcons
-                name={emocaoSelecionada.icone as any}
-                size={40}
-                color={getCorIconeMensagem()}
-              />
+            <View style={styles.modalMensagemHeader}>
+              <View />
+              <TouchableOpacity onPress={() => setShowMensagem(false)} style={styles.botaoFecharMensagem}>
+                <Feather name="x" size={20} color="#666" />
+              </TouchableOpacity>
             </View>
-            <Text style={styles.textoMensagem}>{mensagem}</Text>
+            <View style={styles.conteudoMensagemModal}>
+              <View style={styles.iconeMensagemModal}>
+                <MaterialCommunityIcons
+                  name={emocaoSelecionada?.icone as any}
+                  size={40}
+                  color={getCorIconeMensagem()}
+                />
+              </View>
+              {intensidadeSelecionada !== null && (
+                <View style={styles.badgeIntensidade}>
+                  <Text style={styles.textoBadgeIntensidade}>Intensidade {intensidadeSelecionada}/5</Text>
+                </View>
+              )}
+              <Text style={styles.textoMensagemModal}>{mensagem}</Text>
+            </View>
           </View>
-        ) : null}
-      </ScrollView>
+        </View>
+      </Modal>
 
       {/* Modal Adicionar Emoção */}
       <Modal visible={showNovaEmocao} transparent animationType="fade">
@@ -277,6 +341,62 @@ const styles = StyleSheet.create({
   mensagemNegativa: { backgroundColor: '#fee2e2', borderLeftWidth: 5, borderLeftColor: '#ef4444' },
   iconeContainer: { marginRight: 15 },
   textoMensagem: { fontSize: 14, fontWeight: '600', color: '#333', flex: 1, lineHeight: 20 },
+  modalBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  modalMensagem: {
+    width: width * 0.85,
+    borderRadius: 20,
+    padding: 20,
+    flexDirection: 'column',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  modalMensagemHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 4,
+  },
+  conteudoMensagemModal: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  iconeMensagemModal: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  botaoFecharMensagem: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.65)',
+  },
+  textoMensagemModal: {
+    width: '100%',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    lineHeight: 24,
+    textAlign: 'center',
+  },
+  badgeIntensidade: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.65)',
+  },
+  textoBadgeIntensidade: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#4b5563',
+  },
 
   /* Modal */
   modalOverlay: {
@@ -296,6 +416,34 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalTitulo: { fontSize: 18, fontWeight: '700', color: '#333', marginBottom: 15 },
+  modalSubtitulo: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  intensidadeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  botaoIntensidade: {
+    width: '30%',
+    minWidth: 72,
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f3e8ff',
+    borderWidth: 1,
+    borderColor: '#d8b4fe',
+  },
+  textoBotaoIntensidade: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#7e22ce',
+  },
   inputNovaEmocao: {
     borderWidth: 1,
     borderColor: '#e5e7eb',

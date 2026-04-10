@@ -269,6 +269,25 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
         );
     };
 
+    const multiselectTemRespostaValida = (resposta: RespostaValor) => {
+        if (!Array.isArray(resposta) || resposta.length === 0) {
+            return false;
+        }
+
+        const nenhumDosAnteriores = resposta.find((valor) =>
+            valor.startsWith('Nenhum dos anteriores')
+        );
+
+        if (!nenhumDosAnteriores) {
+            return true;
+        }
+
+        return nenhumDosAnteriores
+            .replace('Nenhum dos anteriores:', '')
+            .trim()
+            .length > 0;
+    };
+
     const todasRespondidas = () => {
         return data.perguntas.every((pergunta: any) => {
             const resposta = getResposta(etapaUuid, pergunta.questionUuid);
@@ -278,6 +297,10 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
             }
 
             if (Array.isArray(resposta)) {
+                if (pergunta.tipo === 'MULTISELECT') {
+                    return multiselectTemRespostaValida(resposta);
+                }
+
                 return resposta.length > 0;
             }
 
@@ -425,7 +448,9 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                         case 'MULTISELECT': {
                             const resposta = (respostaAtual as string[]) || [];
                             const nenhumSelecionado = resposta.some(v => v.startsWith('Nenhum dos anteriores'));
-                            const nenhumSimplesSelecionado = resposta.includes('Nenhum');
+                            const nenhumExclusivoSelecionado = resposta.find(
+                                v => v.startsWith('Nenhum') && !v.startsWith('Nenhum dos anteriores')
+                            );
                             const textoNenhum = resposta.find(v => v.startsWith('Nenhum dos anteriores:'))?.replace('Nenhum dos anteriores:', '').trim() || '';
 
                             return (
@@ -440,19 +465,23 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                                 },
                                             ]}
                                             onPress={() => {
-                                                if (item.descricao === 'Nenhum') {
-                                                    // Se marcar "Nenhum", desmarcar todas as outras opções
-                                                    if (nenhumSimplesSelecionado) {
+                                                const ehNenhumExclusivo =
+                                                    item.descricao.startsWith('Nenhum') &&
+                                                    item.descricao !== 'Nenhum dos anteriores (outro)';
+
+                                                if (ehNenhumExclusivo) {
+                                                    // Se marcar qualquer opção exclusiva iniciada por "Nenhum", desmarcar todas as outras
+                                                    if (resposta.includes(item.descricao)) {
                                                         setResposta(
                                                             etapaUuid,
                                                             pergunta.questionUuid,
-                                                            resposta.filter(v => v !== 'Nenhum')
+                                                            resposta.filter(v => v !== item.descricao)
                                                         );
                                                     } else {
                                                         setResposta(
                                                             etapaUuid,
                                                             pergunta.questionUuid,
-                                                            ['Nenhum']
+                                                            [item.descricao]
                                                         );
                                                     }
                                                 } else if (item.descricao === 'Nenhum dos anteriores (outro)') {
@@ -471,8 +500,12 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                                                         );
                                                     }
                                                 } else {
-                                                    // Se marcar qualquer outra opção, desmarcar "Nenhum" e "Nenhum dos anteriores"
-                                                    const novaResposta = resposta.filter(v => v !== 'Nenhum' && !v.startsWith('Nenhum dos anteriores'));
+                                                    // Se marcar qualquer outra opção, desmarcar opções exclusivas iniciadas por "Nenhum" e "Nenhum dos anteriores"
+                                                    const novaResposta = resposta.filter(
+                                                        v =>
+                                                            !(v.startsWith('Nenhum') && !v.startsWith('Nenhum dos anteriores')) &&
+                                                            !v.startsWith('Nenhum dos anteriores')
+                                                    );
                                                     
                                                     if (novaResposta.includes(item.descricao)) {
                                                         setResposta(
@@ -556,48 +589,58 @@ const PassoDinamico = ({ data, onNext }: { data: any; onNext: () => void }) => {
                             return (
                                 <View style={styles.emojis}>
                                     {pergunta.opcoes.map((item: any) => {
-                                        const sel =
-                                            selecionado?.label === item.label;
+                                        const sel = respostaAtual === item.label || selecionado?.label === item.label;
 
                                         return (
                                             <TouchableOpacity
                                                 key={item.label}
                                                 style={styles.emojiItem}
+                                                activeOpacity={0.85}
                                                 onPress={() => {
                                                     setSelecionado(item);
                                                     setResposta(etapaUuid, pergunta.questionUuid, item.label);
                                                 }}
                                             >
-                                                <Text
-                                                    style={[
-                                                        styles.emoji,
-                                                        {
-                                                            borderColor:
-                                                                item.color,
-                                                            backgroundColor: sel
-                                                                ? item.color +
-                                                                '33'
-                                                                : 'transparent',
-                                                            transform: [
-                                                                {
-                                                                    scale: sel
-                                                                        ? 1.2
-                                                                        : 1,
-                                                                },
-                                                            ],
-                                                        },
-                                                    ]}
-                                                >
-                                                    {item.emoji}
-                                                </Text>
+                                                <View style={[
+                                                    styles.emojiContainer,
+                                                    sel && {
+                                                        borderColor: item.color,
+                                                        backgroundColor: item.color + '18',
+                                                        shadowColor: item.color,
+                                                        shadowOpacity: 0.35,
+                                                        shadowRadius: 10,
+                                                        elevation: 6,
+                                                    }
+                                                ]}>
+                                                    <Text
+                                                        style={[
+                                                            styles.emoji,
+                                                            {
+                                                                transform: [
+                                                                    {
+                                                                        scale: sel
+                                                                            ? 1.08
+                                                                            : 1,
+                                                                    },
+                                                                ],
+                                                            },
+                                                        ]}
+                                                    >
+                                                        {item.emoji}
+                                                    </Text>
+                                                </View>
                                                 <Text
                                                     style={[
                                                         styles.emojiLabel,
-                                                        { color: textColor }
+                                                        {
+                                                            color: sel ? item.color : textColor,
+                                                            fontWeight: sel ? '700' : 'normal',
+                                                        }
                                                     ]}
                                                 >
                                                     {item.label}
                                                 </Text>
+                                                {sel && <View style={[styles.emojiIndicator, { backgroundColor: item.color }]} />}
                                                 {item.subdescricao && (
                                                     <Text style={[styles.emojiSubLabel, { color: textColor, opacity: 0.6 }]}>
                                                         {item.subdescricao}
@@ -861,26 +904,42 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 20,
+        gap: 8,
     },
     emojiItem: {
         alignItems: 'center',
         flex: 1,
+        paddingVertical: 5,
+        paddingHorizontal: 4,
+    },
+    emojiContainer: {
+        width: 54,
+        height: 54,
+        borderRadius: 27,
+        borderWidth: 3,
+        borderColor: 'transparent',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 2,
+        backgroundColor: 'transparent',
     },
     emoji: {
         fontSize: 28,
-        borderWidth: 2,
-        borderRadius: 30,
-        padding: 6,
         textAlign: 'center',
-        overflow: 'hidden',
     },
     emojiLabel: {
-        marginTop: 4,
+        marginTop: 2,
         fontSize: 12,
         textAlign: 'center',
     },
+    emojiIndicator: {
+        width: 22,
+        height: 4,
+        borderRadius: 999,
+        marginTop: 4,
+    },
     emojiSubLabel: {
-        marginTop: 2,
+        marginTop: 1,
         fontSize: 10,
         textAlign: 'center',
     },
