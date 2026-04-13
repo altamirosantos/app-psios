@@ -1,50 +1,22 @@
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from "expo-router";
-import React, { useState } from 'react';
-import { Dimensions, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Dimensions, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+import { supabase } from '@/lib/supabase';
 
 interface Emocao {
-  id: string;
+  id: number | string;
   nome: string;
   peso: number;
   icone: string;
 }
 
-const EMOCOES: Emocao[] = [
-  { id: '1', nome: 'Otimista', peso: 1, icone: 'emoticon-happy' },
-  { id: '2', nome: 'Gratidão', peso: 1, icone: 'heart' },
-  { id: '3', nome: 'Felicidade', peso: 1, icone: 'emoticon-excited' },
-  { id: '4', nome: 'Amor', peso: 1, icone: 'heart-multiple' },
-  { id: '5', nome: 'Tranquilidade', peso: 1, icone: 'spa' },
-  { id: '6', nome: 'Ansiedade', peso: -1, icone: 'alert-circle' },
-  { id: '7', nome: 'Culpa', peso: -1, icone: 'gavel' },
-  { id: '8', nome: 'Medo', peso: -1, icone: 'emoticon-sad' },
-  { id: '9', nome: 'Vergonha', peso: -1, icone: 'eye-off' },
-  { id: '10', nome: 'Irritação', peso: -1, icone: 'emoticon-angry' },
-  { id: '11', nome: 'Arrependimento', peso: -1, icone: 'undo' },
-  { id: '12', nome: 'Raiva', peso: -1, icone: 'fire' },
-  { id: '13', nome: 'Tristeza', peso: -1, icone: 'emoticon-sad-outline' },
-  { id: '14', nome: 'Insegurança', peso: -1, icone: 'help-circle' },
-  { id: '15', nome: 'Mágoa', peso: -1, icone: 'heart-broken' },
-  { id: '16', nome: 'Estresse', peso: -1, icone: 'dumbbell' },
-];
-
-const MENSAGENS_POSITIVAS = [
-  '🌟 Que maravilhoso! Seu bem-estar emocional está em destaque.',
-  '✨ Continue irradiando essa energia positiva para o mundo!',
-  '🎉 Você merece toda a felicidade que está sentindo!',
-  '💫 Que momento lindo para se sentir assim!',
-];
-
-const MENSAGENS_NEGATIVAS = [
-  '💜 Está tudo bem sentir isso. Estou aqui para acolher você.',
-  '🌿 Sua emoção é válida e importante. Vamos respirar juntas.',
-  '💪 Este é um momento de crescimento. Você é forte!',
-  '🤗 Não está sozinha. Pratique autocompaixão neste momento.',
-];
-
 const DiarioEmocoesScreen = () => {
+  const [emocoes, setEmocoes] = useState<Emocao[]>([]);
+  const [loadingEmocoes, setLoadingEmocoes] = useState(true);
+  const [loadingMensagem, setLoadingMensagem] = useState(false);
   const [emocaoSelecionada, setEmocaoSelecionada] = useState<Emocao | null>(null);
   const [intensidadeSelecionada, setIntensidadeSelecionada] = useState<number | null>(null);
   const [mensagem, setMensagem] = useState('');
@@ -53,43 +25,227 @@ const DiarioEmocoesScreen = () => {
   const [showNovaEmocao, setShowNovaEmocao] = useState(false);
   const [novaEmocao, setNovaEmocao] = useState('');
 
+  const carregarEmocoes = async () => {
+    setLoadingEmocoes(true);
+
+    const { data, error } = await supabase
+      .from('emocao')
+      .select('id, nome, peso, icone')
+      .order('nome', { ascending: true });
+
+    if (error) {
+      console.error('Erro ao buscar emoções:', error.message);
+      setEmocoes([]);
+      setLoadingEmocoes(false);
+      return;
+    }
+
+    setEmocoes((data ?? []) as Emocao[]);
+    setLoadingEmocoes(false);
+  };
+
+  useEffect(() => {
+    carregarEmocoes();
+  }, []);
+
+  const extrairDetalhesErroEdgeFunction = async (error: any) => {
+    const detalhes: Record<string, unknown> = {
+      name: error?.name,
+      message: error?.message,
+    };
+
+    const context = error?.context;
+
+    if (context instanceof Response) {
+      detalhes.status = context.status;
+      detalhes.statusText = context.statusText;
+
+      try {
+        detalhes.responseBody = await context.clone().text();
+      } catch (responseError) {
+        detalhes.responseBodyError = String(responseError);
+      }
+    } else if (context) {
+      detalhes.context = context;
+    }
+
+    return detalhes;
+  };
+
+  const buscarMensagemExistente = async (emocaoId: number, intensidade: number) => {
+    const { data, error } = await supabase
+      .from('emocao_mensagem')
+      .select('mensagem')
+      .eq('emocao_id', emocaoId)
+      .eq('intensidade', intensidade)
+      .limit(1);
+
+    if (error) {
+      console.error('Erro ao buscar mensagem da emoção em cache:', {
+        emocao_id: emocaoId,
+        intensidade,
+        error: error.message,
+      });
+      return null;
+    }
+
+    return data?.[0]?.mensagem ?? null;
+  };
+
+  const salvarMensagemEmocao = async (
+    emocaoId: number,
+    intensidade: number,
+    mensagemGerada: string,
+  ) => {
+    const { error } = await supabase
+      .from('emocao_mensagem')
+      .insert({
+        emocao_id: emocaoId,
+        intensidade,
+        mensagem: mensagemGerada,
+      });
+
+    if (error) {
+      console.error('Erro ao salvar mensagem da emoção em cache:', {
+        emocao_id: emocaoId,
+        intensidade,
+        error: error.message,
+      });
+    }
+  };
+
   const selecionarEmocao = (emocao: Emocao) => {
     setEmocaoSelecionada(emocao);
     setIntensidadeSelecionada(null);
     setMensagem('');
+    setLoadingMensagem(false);
     setShowMensagem(false);
     setShowIntensidade(true);
   };
 
-  const selecionarIntensidade = (intensidade: number) => {
+  const salvarDiarioEmocao = async (
+    emocao: Emocao,
+    intensidade: number,
+    mensagemRetornada: string,
+  ) => {
+    const emocaoId =
+      typeof emocao.id === 'string' && emocao.id.startsWith('temp-')
+        ? null
+        : emocao.id;
+
+    const { error } = await supabase
+      .from('diario_de_emocoes')
+      .insert({
+        emocao_id: emocaoId,
+        emocao: emocao.nome,
+        mensagem: mensagemRetornada,
+        intensidade,
+      });
+
+    if (error) {
+      console.error('Erro ao salvar diário de emoções:', {
+        emocao_id: emocaoId,
+        emocao: emocao.nome,
+        intensidade,
+        error: error.message,
+      });
+    }
+  };
+
+  const selecionarIntensidade = async (intensidade: number) => {
     setIntensidadeSelecionada(intensidade);
 
     if (!emocaoSelecionada) {
       return;
     }
 
-    if (emocaoSelecionada.peso > 0) {
-      setMensagem(MENSAGENS_POSITIVAS[Math.floor(Math.random() * MENSAGENS_POSITIVAS.length)]);
-    } else {
-      setMensagem(MENSAGENS_NEGATIVAS[Math.floor(Math.random() * MENSAGENS_NEGATIVAS.length)]);
-    }
+    setLoadingMensagem(true);
 
-    setShowIntensidade(false);
-    setShowMensagem(true);
+    const payload = {
+      emocao: emocaoSelecionada.nome,
+      peso: emocaoSelecionada.peso,
+      intensidade,
+    };
+
+    const emocaoIdValido = typeof emocaoSelecionada.id === 'number' ? emocaoSelecionada.id : null;
+
+    try {
+      if (emocaoIdValido !== null) {
+        const mensagemExistente = await buscarMensagemExistente(emocaoIdValido, intensidade);
+
+        if (mensagemExistente) {
+          console.log('Mensagem encontrada na tabela emocao_mensagem:', {
+            emocao_id: emocaoIdValido,
+            intensidade,
+          });
+          await salvarDiarioEmocao(emocaoSelecionada, intensidade, mensagemExistente);
+          setMensagem(mensagemExistente);
+          return;
+        }
+      }
+
+      console.log('Chamando edge function n8n-msg-emocoes com payload:', payload);
+
+      const { data, error } = await supabase.functions.invoke('n8n-msg-emocoes', {
+        body: payload,
+      });
+
+      if (error) {
+        const detalhesErro = await extrairDetalhesErroEdgeFunction(error);
+        console.error('Erro ao gerar mensagem da emoção via edge function:', {
+          payload,
+          detalhesErro,
+          data,
+        });
+        setMensagem('Estou aqui com você. Vamos acolher essa emoção com gentileza.');
+      } else {
+        console.log('Resposta recebida da edge function n8n-msg-emocoes:', data);
+        const mensagemGerada =
+          (typeof data === 'string' ? data : null) ||
+          data?.mensagem ||
+          data?.message ||
+          data?.output ||
+          'Estou aqui com você. Vamos acolher essa emoção com gentileza.';
+
+        if (emocaoIdValido !== null) {
+          await salvarMensagemEmocao(emocaoIdValido, intensidade, mensagemGerada);
+        }
+
+        await salvarDiarioEmocao(emocaoSelecionada, intensidade, mensagemGerada);
+        setMensagem(mensagemGerada);
+      }
+    } catch (error) {
+      const detalhesErro = await extrairDetalhesErroEdgeFunction(error);
+      console.error('Erro inesperado ao chamar edge function n8n-msg-emocoes:', {
+        payload,
+        detalhesErro,
+      });
+      setMensagem('Estou aqui com você. Vamos acolher essa emoção com gentileza.');
+    } finally {
+      setLoadingMensagem(false);
+      setShowIntensidade(false);
+      setShowMensagem(true);
+    }
   };
 
   const adicionarNovaEmocao = () => {
-    if (novaEmocao.trim()) {
-      const novaEmocaoObj: Emocao = {
-        id: Date.now().toString(),
-        nome: novaEmocao,
-        peso: -1,
-        icone: 'circle',
-      };
-      selecionarEmocao(novaEmocaoObj);
-      setNovaEmocao('');
-      setShowNovaEmocao(false);
+    const nomeEmocao = novaEmocao.trim();
+
+    if (!nomeEmocao) {
+      return;
     }
+
+    const novaEmocaoTemporaria: Emocao = {
+      id: `temp-${Date.now()}`,
+      nome: nomeEmocao,
+      peso: 0,
+      icone: 'circle',
+    };
+
+    selecionarEmocao(novaEmocaoTemporaria);
+
+    setNovaEmocao('');
+    setShowNovaEmocao(false);
   };
 
   const getCorIcone = (emocao: Emocao | null) => {
@@ -107,6 +263,11 @@ const DiarioEmocoesScreen = () => {
   const getCorIconeMensagem = () => {
     if (!emocaoSelecionada) return '#10b981';
     return emocaoSelecionada.peso > 0 ? '#10b981' : '#ef4444';
+  };
+
+  const finalizarFluxo = () => {
+    setShowMensagem(false);
+    router.push('/(outros)/GamificacaoScreen');
   };
 
   return (
@@ -132,7 +293,15 @@ const DiarioEmocoesScreen = () => {
 
         {/* Grade de Emoções */}
         <View style={styles.gridEmocoes}>
-          {EMOCOES.map((emocao) => (
+          {loadingEmocoes ? (
+            <Text style={styles.estadoListaTexto}>Carregando emoções...</Text>
+          ) : null}
+
+          {!loadingEmocoes && emocoes.length === 0 ? (
+            <Text style={styles.estadoListaTexto}>Nenhuma emoção cadastrada no momento.</Text>
+          ) : null}
+
+          {emocoes.map((emocao) => (
             <TouchableOpacity
               key={emocao.id}
               style={[
@@ -186,13 +355,20 @@ const DiarioEmocoesScreen = () => {
               {[0, 1, 2, 3, 4, 5].map((valor) => (
                 <TouchableOpacity
                   key={valor}
-                  style={styles.botaoIntensidade}
+                  style={[styles.botaoIntensidade, loadingMensagem && styles.botaoIntensidadeDesabilitado]}
+                  disabled={loadingMensagem}
                   onPress={() => selecionarIntensidade(valor)}
                 >
                   <Text style={styles.textoBotaoIntensidade}>{valor}</Text>
                 </TouchableOpacity>
               ))}
             </View>
+            {loadingMensagem && (
+              <View style={styles.loadingMensagemContainer}>
+                <ActivityIndicator size="small" color="#9333ea" />
+                <Text style={styles.loadingMensagemTexto}>Preparando uma mensagem para você...</Text>
+              </View>
+            )}
           </View>
         </View>
       </Modal>
@@ -202,7 +378,7 @@ const DiarioEmocoesScreen = () => {
           <TouchableOpacity
             style={styles.modalBackdrop}
             activeOpacity={1}
-            onPress={() => setShowMensagem(false)}
+            onPress={finalizarFluxo}
           />
           <View
             style={[
@@ -212,7 +388,7 @@ const DiarioEmocoesScreen = () => {
           >
             <View style={styles.modalMensagemHeader}>
               <View />
-              <TouchableOpacity onPress={() => setShowMensagem(false)} style={styles.botaoFecharMensagem}>
+              <TouchableOpacity onPress={finalizarFluxo} style={styles.botaoFecharMensagem}>
                 <Feather name="x" size={20} color="#666" />
               </TouchableOpacity>
             </View>
@@ -292,6 +468,13 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
     lineHeight: 20,
+  },
+  estadoListaTexto: {
+    width: '100%',
+    textAlign: 'center',
+    color: '#666',
+    fontSize: 14,
+    marginBottom: 12,
   },
 
   /* Grade de Emoções */
@@ -439,10 +622,24 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#d8b4fe',
   },
+  botaoIntensidadeDesabilitado: {
+    opacity: 0.6,
+  },
   textoBotaoIntensidade: {
     fontSize: 18,
     fontWeight: '700',
     color: '#7e22ce',
+  },
+  loadingMensagemContainer: {
+    marginTop: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  loadingMensagemTexto: {
+    color: '#666',
+    fontSize: 13,
   },
   inputNovaEmocao: {
     borderWidth: 1,

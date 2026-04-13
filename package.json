@@ -9,6 +9,7 @@
     "web": "expo start --web",
     "prebuild": "expo prebuild",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "package": "eas build --platform android --profile preview --local",
     "build:android:dev": "eas build --platform android --profile development --local",
     "build:android:preview": "eas build --platform android --profile preview",
     "build:ios:dev": "eas build --platform ios --profile development --local",
