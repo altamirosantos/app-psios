@@ -41,4 +41,4 @@ app-example
 
 #/android
 #/ios
-app-psios.code-workspace
+*.code-workspace

@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../supabase-schema"
+		},
+		{
+			"path": "../../Angular/adminpsios"
 		}
 	],
 	"settings": {}
