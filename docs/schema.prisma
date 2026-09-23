@@ -195,15 +195,21 @@ model N8nChatHistories {
 // Plans and Resources
 
 model Plano {
-  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  nome           String?  @db.VarChar
-  descricao      String?
-  valor          Decimal? @db.Decimal(10, 2)
-  beneficios     Json?
-  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nome                 String?  @db.VarChar
+  descricao            String?
+  valor                Decimal? @db.Decimal(10, 2)
+  beneficios           Json?
+  ciclo                String?  @db.VarChar(10) @default("MENSAL")
+  tipo_acesso          String?  @db.VarChar(10) @default("FREE")
+  codigo_identificador String?  @db.VarChar(255)
+  desconto_aplicado    Float?   @default(0) // Percentual de desconto (0-100)
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   planoUsuario   PlanoUsuario[]
 
+  @@index([ciclo, tipo_acesso])
   @@map("planos")
 }
 

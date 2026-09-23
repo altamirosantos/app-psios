@@ -1,8 +1,9 @@
+import { CycleSwitcher } from '@/components/CycleSwitcher';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { getPlanoAtivo, getPlanosDisponiveis, supabase } from '@/lib/supabase';
 import { getThemeColors } from '@/theme/theme';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -27,6 +28,26 @@ export default function PlanosScreen() {
   const [planos, setPlanos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const [cicloSelecionado, setCicloSelecionado] = useState<'MENSAL' | 'ANUAL'>('MENSAL');
+
+  // Filtra planos conforme o ciclo selecionado e o tipo de acesso
+  const planosFiltrados = useMemo(() => {
+    if (!planos || planos.length === 0) return [];
+
+    return planos.filter((plano) => {
+      // Plano Gratuito (FREE) sempre visível
+      if (plano.tipo_acesso === 'FREE') {
+        return true;
+      }
+
+      // Planos pagos (BASIC/FULL) filtrados pelo ciclo
+      if (plano.tipo_acesso === 'BASIC' || plano.tipo_acesso === 'FULL') {
+        return plano.ciclo === cicloSelecionado;
+      }
+
+      return false;
+    });
+  }, [planos, cicloSelecionado]);
 
   useEffect(() => {
     async function carregar() {
@@ -85,38 +106,89 @@ export default function PlanosScreen() {
           />
         </View>
         <Text style={[styles.titulo, { color: '#fff' }]}>Escolha o plano ideal para suas necessidades</Text>
-        {planos.map((plano) => (
-          <View
-            key={plano.id}
-            style={[
-              styles.planoCard,
-              dynamicStyles.planoCard,
-              plano.id === planoAtivo ? [styles.planoAtivo, dynamicStyles.planoAtivo] : null,
-            ]}
-          >
-            <Text style={[styles.nome, { color: colors.text }]}>{plano.nome}</Text>
-            <Text style={[styles.descricao, { color: colors.textSecondary }]}>{plano.descricao}</Text>
-            <Text style={styles.valor}>R$ {Number(plano.valor).toFixed(2)}</Text>
-            {Array.isArray(plano.beneficios) ? (
-              plano.beneficios.map((b: string, index: number) => (
-                <Text key={index} style={[styles.beneficio, { color: colors.text }]}>
-                  • {b}
+        
+        {/* Seletor de Ciclo (MENSAL/ANUAL) */}
+        <CycleSwitcher
+          selectedCycle={cicloSelecionado}
+          onCycleChange={setCicloSelecionado}
+          activeColor="#3399ff"
+          inactiveColor={colors.inputBackground}
+          textColor={colors.text}
+        />
+
+        {/* Planos Filtrados */}
+        {planosFiltrados.length > 0 ? (
+          planosFiltrados.map((plano) => (
+            <View
+              key={plano.id}
+              style={[
+                styles.planoCard,
+                dynamicStyles.planoCard,
+                plano.id === planoAtivo ? [styles.planoAtivo, dynamicStyles.planoAtivo] : null,
+              ]}
+            >
+              <Text style={[styles.nome, { color: colors.text }]}>{plano.nome}</Text>
+              <Text style={[styles.descricao, { color: colors.textSecondary }]}>{plano.descricao}</Text>
+              
+              {/* Exibição de Preço com Ciclo e Desconto */}
+              <View style={styles.precoContainer}>
+                {plano.desconto_aplicado && plano.desconto_aplicado > 0 ? (
+                  <>
+                    <Text style={[styles.valorOriginal, { color: colors.textSecondary }]}>
+                      R$ {Number(plano.valor).toFixed(2)}
+                    </Text>
+                    <Text style={[styles.descontoPercentual, { color: '#ff6b6b' }]}>
+                      {plano.desconto_aplicado}% OFF
+                    </Text>
+                  </>
+                ) : null}
+                <Text style={[styles.valor, plano.desconto_aplicado && plano.desconto_aplicado > 0 ? styles.valorDestaque : null]}>
+                  R$ {(Number(plano.valor) * (1 - (plano.desconto_aplicado || 0) / 100)).toFixed(2)}
                 </Text>
-              ))
-            ) : (
-              <>
-                {JSON.parse(plano.beneficios || '[]').map((b: string, index: number) => (
+                {plano.tipo_acesso !== 'FREE' && (
+                  <Text style={[styles.cicloLabel, { color: colors.textSecondary }]}>
+                    / {cicloSelecionado.toLowerCase()}
+                  </Text>
+                )}
+              </View>
+
+              {/* Benefícios */}
+              {Array.isArray(plano.beneficios) ? (
+                plano.beneficios.map((b: string, index: number) => (
                   <Text key={index} style={[styles.beneficio, { color: colors.text }]}>
                     • {b}
                   </Text>
-                ))}
-              </>
-            )}
-            {plano.id === planoAtivo && (
-              <Text style={styles.ativo}>✅ Seu plano atual</Text>
-            )}
+                ))
+              ) : (
+                <>
+                  {JSON.parse(plano.beneficios || '[]').map((b: string, index: number) => (
+                    <Text key={index} style={[styles.beneficio, { color: colors.text }]}>
+                      • {b}
+                    </Text>
+                  ))}
+                </>
+              )}
+
+              {/* Código Identificador para Checkout */}
+              {plano.codigo_identificador && (
+                <Text style={[styles.codigoIdentificador, { color: colors.textSecondary }]}>
+                  ID: {plano.codigo_identificador}
+                </Text>
+              )}
+
+              {/* Badge Plano Ativo */}
+              {plano.id === planoAtivo && (
+                <Text style={styles.ativo}>✅ Seu plano atual</Text>
+              )}
+            </View>
+          ))
+        ) : (
+          <View style={[styles.emptyState, { backgroundColor: colors.inputBackground }]}>
+            <Text style={[styles.emptyStateText, { color: colors.text }]}>
+              Nenhum plano disponível para este período
+            </Text>
           </View>
-        ))}
+        )}
       </ScrollView>
     </LinearGradient>
   );
@@ -180,6 +252,53 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: '#007aff',
     fontWeight: '500',
+  },
+  valorDestaque: {
+    color: '#ff6b6b',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  valorOriginal: {
+    fontSize: 13,
+    marginRight: 8,
+    textDecorationLine: 'line-through',
+    fontWeight: '400',
+  },
+  descontoPercentual: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginRight: 8,
+    backgroundColor: '#ffe5e5',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  precoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  cicloLabel: {
+    fontSize: 13,
+    marginLeft: 4,
+    fontStyle: 'italic',
+  },
+  codigoIdentificador: {
+    fontSize: 11,
+    marginTop: 8,
+    fontFamily: 'monospace',
+  },
+  emptyState: {
+    marginVertical: 20,
+    padding: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyStateText: {
+    fontSize: 14,
+    fontWeight: '500',
+    textAlign: 'center',
   },
   ativo: {
     marginTop: 10,
